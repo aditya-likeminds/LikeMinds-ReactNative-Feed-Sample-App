@@ -1,14 +1,28 @@
-import { View, Text ,TouchableOpacity} from 'react-native'
-import React from 'react'
-import { NavigationService } from '../../navigation'
-import { Button } from 'react-native-paper'
+import React, { useState } from 'react'
+import { View, Text } from 'react-native'
+import {LMPost} from '../../components'
+import { PostStateProps } from '../../Models/PostModels'
+
 
 const UniversalFeed = () => {
-  return (
-    <TouchableOpacity onPress={() => {NavigationService.navigate('SinglePost')}}>
-      <Text>UniversalFeed</Text>
-    </TouchableOpacity>
-  )
+    
+    // readonly props consumed by UI component
+    const props: PostStateProps = {
+        showBookMarkIcon: true,
+        showShareIcon: true,
+        likedState: true,
+        savedState: false,
+        likePlaceholder: 'Like',
+        likeCount: 10,
+        commentPlaceholder: 'Comment',
+        noCommentPlaceholder: 'Add Comment',
+        commentCount: 0,
+        footerTextStyle: {}
+    };
+
+    return(
+        <LMPost {...props}/>
+    )
 }
 
 export default UniversalFeed

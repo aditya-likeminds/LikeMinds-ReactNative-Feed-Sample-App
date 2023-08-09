@@ -1,7 +1,6 @@
 import { TextStyle } from "react-native";
 
-  
-  export interface SinglePostStateProps {
+export interface PostStateProps {
     showBookMarkIcon?: boolean,
     showShareIcon?: boolean,
     likedState?: boolean,
@@ -12,22 +11,20 @@ import { TextStyle } from "react-native";
     noCommentPlaceholder?: string,
     commentCount?: number,
     footerTextStyle?: TextStyle
-  }
-  
-  // Functions to handle user interactions
-  export interface SinglePostCallbacks {
+}
+
+// Functions to handle user interactions
+export interface PostCallbacks {
     likeIcon?: () => void;
     commentIcon?: () => void;
     shareIcon?: () => void;
     bookMarkIcon?: () => void;
-    likePress?: () => void;
-    commentPress?: () => void;
-    sharePress?: () => void;
-    bookmarkPress?: () => void;
-  }
-  
-  
-  export declare type SinglePostProps = SinglePostStateProps &
-  SinglePostCallbacks;
+    onLikeButtonClick?: () => void;
+    onCommentButtonClick?: () => void;
+    onShareButtonClick?: () => void;
+    onBookmarkButtonClick?: () => void;
+}
+
+  export declare type PostProps = PostStateProps & PostCallbacks;
 
   

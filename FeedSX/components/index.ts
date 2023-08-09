@@ -1,5 +1,9 @@
-import IconComponent from "./IconComponent";
+import LMIcon from "./LMIcon";
+import AvatarIcon from "./AvatarIcon";
+import LMPost from "./LMPost";
 
 export {
-    IconComponent
+    LMIcon,
+    AvatarIcon,
+    LMPost
 }

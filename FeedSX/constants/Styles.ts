@@ -2,6 +2,7 @@ export default {
     $COLORS: {
       darkTextColor: '#000000',
       lightTextColor: '#00000066',
+      whiteTextColor: '#ffffff',
       RED: 'red'
     },
     $FONT_SIZES: {
@@ -31,6 +32,11 @@ export default {
       SMALL: 10,
       MEDIUM: 15,
       LARGE: 20,
+    },
+    $AVATAR: {
+      WIDTH: 52,
+      HEIGHT: 52,
+      BORDER_RADIUS: 25,
     },
   };
   
