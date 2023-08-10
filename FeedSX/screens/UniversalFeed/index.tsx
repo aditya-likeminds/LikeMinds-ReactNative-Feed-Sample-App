@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { View, Text } from 'react-native'
 import {LMPost} from '../../components'
-import { PostStateProps } from '../../Models/PostModels'
+import { PostStateProps } from '../../Models/PostModel'
 
 
 const UniversalFeed = () => {

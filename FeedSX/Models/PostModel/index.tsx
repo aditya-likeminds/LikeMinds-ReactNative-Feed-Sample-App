@@ -15,16 +15,16 @@ export interface PostStateProps {
 
 // Functions to handle user interactions
 export interface PostCallbacks {
-    likeIcon?: () => void;
-    commentIcon?: () => void;
-    shareIcon?: () => void;
-    bookMarkIcon?: () => void;
+    likeIcon?: () => React.ReactNode;
+    commentIcon?: () => React.ReactNode;
+    shareIcon?: () => React.ReactNode;
+    bookMarkIcon?: () => React.ReactNode;
     onLikeButtonClick?: () => void;
     onCommentButtonClick?: () => void;
     onShareButtonClick?: () => void;
     onBookmarkButtonClick?: () => void;
 }
 
-  export declare type PostProps = PostStateProps & PostCallbacks;
+export declare type PostUI = PostStateProps & PostCallbacks;
 
   

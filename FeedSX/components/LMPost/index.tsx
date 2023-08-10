@@ -1,7 +1,7 @@
 import { View, Text, Image } from 'react-native'
 import React, { useState } from 'react'
 import styles from './styles';
-import { PostProps } from '../../Models/PostModels'
+import { PostUI } from '../../Models/PostModel'
 import PostFooter from './PostFooter';
 
 const LMPost = ({
@@ -23,7 +23,7 @@ const LMPost = ({
   noCommentPlaceholder,
   commentCount,
   footerTextStyle
-}: PostProps) => {
+}: PostUI) => {
 
   const[liked, setLiked] = useState(likedState);
   const [saved, setSaved] = useState(savedState);

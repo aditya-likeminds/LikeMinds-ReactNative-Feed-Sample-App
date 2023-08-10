@@ -1,11 +1,10 @@
-import { View, Text } from 'react-native'
+import { View, Text, Image } from 'react-native'
 import React from 'react'
 import styles from './styles'
 import LMIcon from '../../LMIcon'
-import { BOOKMARKED_ICON, BOOKMARK_ICON, COMMENT_ICON, LIKED_ICON, LIKE_ICON, SHARE_ICON } from '../../../constants/Strings';
 import STYLES from '../../../constants/Styles';
-import { PostProps } from '../../../Models/PostModels';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { PostUI } from '../../../Models/PostModel';
+import Layout from '../../../constants/Layout';
 
 const PostFooter = ({
     likeIcon,
@@ -26,55 +25,67 @@ const PostFooter = ({
     noCommentPlaceholder,
     commentCount,
     footerTextStyle
-  }: PostProps
+  }: PostUI
 ) => {
-  
+
   // this function gives a default like icon to be displayed 
   const defaultLikeIcon = () => {
     if (likedState) {
-      return <Icon name={LIKED_ICON} size={22} color={STYLES.$COLORS.RED} />
+      return <Image source={require('../../../assets/images/heart_red_icon3x.png')} resizeMode={'contain'} style={styles.likeIconSize} /> 
     } else {
-      return <Icon name={LIKE_ICON} size={22} color={STYLES.$COLORS.lightTextColor} />
+      return <Image source={require('../../../assets/images/heart_icon3x.png')} resizeMode={'contain'} style={styles.likeIconSize}/>
     }
   }
 
   // this function gives a default comment icon to be displayed
   const defaultCommentIcon = () => {
     return (
-    <Icon name={COMMENT_ICON} size={22} color={STYLES.$COLORS.lightTextColor} />
+    <Image source={require('../../../assets/images/comment_icon3x.png')} resizeMode={'contain'} style={styles.commentIconSize} />
     )
   }
 
   // this function gives a default bookmark icon to be displayed
   const defaultBookmarkIcon = () => {
     if (savedState) {
-      return <Icon name={BOOKMARKED_ICON} size={22} color={STYLES.$COLORS.darkTextColor} />
+      return <Image source={require('../../../assets/images/saved_bookmark_icon3x.png')} resizeMode={'contain'}  style={styles.iconSize} />
     } else {
-      return <Icon name={BOOKMARK_ICON} size={22} color={STYLES.$COLORS.lightTextColor} />
+      return <Image source={require('../../../assets/images/bookmark_icon3x.png')} resizeMode={'contain'}  style={styles.iconSize}/>
     }
   }
 
   // this function gives a default share icon to be displayed
   const defaultShareIcon = () => {
     return (
-    <Icon name={SHARE_ICON} size={22} color={STYLES.$COLORS.lightTextColor} />
+    <Image source={require('../../../assets/images/share_icon3x.png')} resizeMode={'contain'} style={styles.iconSize}/>
     )
   }
 
   return (
     <View style={styles.postFooter}>
+
+      {/* like and comment view */}
       <View style={styles.alignRow}>
+
+        {/* like section */}
         <View style={styles.alignRow}>
           <LMIcon displayIcon={likeIcon ? likeIcon : defaultLikeIcon} onIconPress={onLikeButtonClick} />
           <Text style={[styles.postFooterText, footerTextStyle]}>{likeCount ? likePlaceholder ? `${likeCount} ${likePlaceholder}` : `${likeCount} Like` : likePlaceholder ?`${likePlaceholder}` : 'Like'}</Text>
         </View>
+
+        {/* comment section */}
         <View style={[styles.alignRow, { marginLeft: STYLES.$MARGINS.LARGE }]}>
             <LMIcon displayIcon={commentIcon ? commentIcon : defaultCommentIcon} onIconPress={onCommentButtonClick} />
             <Text style={[styles.postFooterText, footerTextStyle]}>{commentCount && commentCount > 0 ? commentPlaceholder ? `${commentCount} ${commentPlaceholder}` : `${commentCount} Comments` : noCommentPlaceholder ? `${noCommentPlaceholder}` : `Add Comment`}</Text>
         </View>
       </View>
+
+      {/* save and share view */}
         <View style={[styles.alignRow, showBookMarkIcon && showShareIcon && { width: '20%', justifyContent: 'space-between'}]}>
+          
+          {/* save section */}
           {showBookMarkIcon && <LMIcon displayIcon={bookMarkIcon ? bookMarkIcon : defaultBookmarkIcon} onIconPress={onBookmarkButtonClick} />}
+
+          {/* share section */}
           {showShareIcon && <LMIcon displayIcon={shareIcon ? shareIcon : defaultShareIcon} onIconPress={onShareButtonClick} />}
         </View>
     </View>
