@@ -34,16 +34,21 @@ const PostHeader = ({
   const [modalPosition, setModalPosition] = useState({x:0, y:0});
   const [pinPost, setPinPost] = useState(showPin)
   
+  // this function gives a default three dot icon to be displayed
   const defaultThreeDotIcon = () => {
         return (
         <Image source={require('../../../assets/images/three_dots3x.png')} resizeMode={'contain'}  style={styles.iconSize}/>
         )
   }
+  
+  // this function gives a default pin icon to be displayed
   const defaultPinIcon = () => {
         return (
         <Image source={require('../../../assets/images/pin_icon3x.png')} resizeMode={'contain'}  style={styles.iconSize}/>
         )
   }
+
+  // this function handles the functionality on the click of three dots
   const onThreedotsClick = (event: any) => {
       const {pageX, pageY} = event.nativeEvent;
       setShowModal(true)
@@ -51,10 +56,12 @@ const PostHeader = ({
       onThreeDotClick && onThreeDotClick()
   }
 
+  // this function closes the post action list modal
   const closePostActionListModal =() => {
     setShowModal(false)
   }
 
+  // this function handles the pin post functionality 
   const handlePinPost = () => {
     setPinPost(!pinPost)
   }
@@ -92,6 +99,8 @@ const PostHeader = ({
          {pinPost && <LMIcon displayIcon={pinIcon? pinIcon : defaultPinIcon} />}
           <LMIcon displayIcon={threeDotIcon? threeDotIcon : defaultThreeDotIcon} onIconPress={onThreedotsClick} />
         </View>
+
+        {/* posts action list modal that is displayed on the click of three dots */}
        <PostActionListModal
        position={modalPosition}
        visible={showModal}

@@ -8,11 +8,13 @@ const styles = StyleSheet.create({
         paddingHorizontal:15
     },
     previewContainer: {
-        backgroundColor: '#f7f7f8',
-        borderRadius: 20,
-        marginTop: 16,
-        overflow: 'hidden',
-      },
+        borderColor: STYLES.$BORDER_COLORS.LIGHT,
+        borderWidth:0.5,
+        borderRadius: 10,
+        marginTop: STYLES.$MARGINS.MEDIUM,
+        marginBottom: STYLES.$MARGINS.XS,
+        overflow: 'hidden'
+    },
 });
 
 export default styles;
