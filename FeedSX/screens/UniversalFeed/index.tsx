@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, ScrollView } from 'react-native'
 import {LMPost} from '../../components'
 import { PostStateProps } from '../../Models/PostModel'
 
@@ -17,11 +17,22 @@ const UniversalFeed = () => {
         commentPlaceholder: 'Comment',
         noCommentPlaceholder: 'Add Comment',
         commentCount: 0,
-        footerTextStyle: {}
+        footerTextStyle: {},
+        authorName: 'Theresa Webb',
+        postedTime: '2h',
+        showEdited: true,
+        showLabel: true,
+        labelType: 'Admin',
+        showPin: false,
+        mediaUrl:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJhNhTcdpoN6c-rzLj336_o2WpgLgeqirPchSSBerB&s',
+        postText:`Here is a list of social media tools to help you get started with your marketing initiatives.`,
+        attachment_type: [3]
     };
 
     return(
-        <LMPost {...props}/>
+        <ScrollView>
+            <LMPost {...props}/>
+        </ScrollView>
     )
 }
 

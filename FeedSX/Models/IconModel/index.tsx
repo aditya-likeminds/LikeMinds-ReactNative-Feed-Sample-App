@@ -1,6 +1,6 @@
 // Functions to handle user interactions
 export interface IconCallbacks {
-    onIconPress?: () => void;
+    onIconPress?: (val:any) => void;
     displayIcon: () => React.ReactNode;
 }
 
