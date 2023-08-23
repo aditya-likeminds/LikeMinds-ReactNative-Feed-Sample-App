@@ -2,35 +2,67 @@ import {View, Text, Image} from 'react-native';
 import React from 'react';
 import styles from './styles';
 import SwiperFlatList from 'react-native-swiper-flatlist';
-import { PostUI } from '../../../Models/PostModel';
+import {PostUI} from '../../../Models/PostModel';
 import STYLES from '../../../constants/Styles';
+import { IMAGE_ATTACHMENT_TYPE, VIDEO_ATTACHMENT_TYPE } from '../../../constants/Strings';
 
 const CarouselPost = ({
   carauselActiveItemColor,
   carauselInActiveItemColor,
-  carouselPaginationStyle
+  carouselPaginationStyle,
+  postAttachments,
 }: PostUI) => {
-  const data = [1, 2, 3, 4];
+  // filtering out the attachments which contains images and videos
+  const carouselData = postAttachments?.filter(
+    item => item.attachmentType === IMAGE_ATTACHMENT_TYPE || item.attachmentType === VIDEO_ATTACHMENT_TYPE,
+  );
 
   return (
     <View style={styles.postMedia}>
       <SwiperFlatList
-        data={data}
-        showPagination
+        data={carouselData}
+        showPagination={carouselData && carouselData?.length > 1 ? true : false} // this handles the pagination component for single and multiple attachments
         style={styles.swiperView}
         paginationStyle={styles.paginationView}
-        paginationStyleItemActive={carouselPaginationStyle ? carouselPaginationStyle : styles.paginationItemStyle}
-        paginationStyleItemInactive={carouselPaginationStyle ? carouselPaginationStyle : styles.paginationItemStyle}
-        paginationActiveColor={carauselActiveItemColor ? carauselActiveItemColor : STYLES.$COLORS.carouselActiveItem}
-        paginationDefaultColor={carauselInActiveItemColor ? carauselInActiveItemColor : STYLES.$COLORS.carouselInActiveItem}
+        // handling custom style of active pagination item
+        paginationStyleItemActive={
+          carouselPaginationStyle
+            ? carouselPaginationStyle
+            : styles.paginationItemStyle
+        }
+        // handling custom style of inactive pagination item
+        paginationStyleItemInactive={
+          carouselPaginationStyle
+            ? carouselPaginationStyle
+            : styles.paginationItemStyle
+        }
+        // handle custom color of active pagination item
+        paginationActiveColor={
+          carauselActiveItemColor
+            ? carauselActiveItemColor
+            : STYLES.$COLORS.carouselActiveItem
+        }
+        // handle custom color of inactive pagination item
+        paginationDefaultColor={
+          carauselInActiveItemColor
+            ? carauselInActiveItemColor
+            : STYLES.$COLORS.carouselInActiveItem
+        }
         renderItem={({item}) => (
-          <View>
-            <Image
-              source={require('../../../assets/images/media.png')}
-              resizeMode={'contain'}
-              style={styles.mediaDimensions}
-            />
-          </View>
+          <>
+            {/* this section render image */}
+            {item?.attachmentType === IMAGE_ATTACHMENT_TYPE && (
+              <Image
+                source={{uri: item?.attachmentMeta.url}}
+                resizeMode={'contain'}
+                style={styles.mediaDimensions}
+              />
+            )}
+            {/* this section render video */}
+            {item?.attachmentType === VIDEO_ATTACHMENT_TYPE && (
+              <View style={styles.mediaDimensions}></View>
+            )}
+          </>
         )}
       />
     </View>

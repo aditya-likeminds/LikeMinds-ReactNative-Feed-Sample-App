@@ -1,15 +1,14 @@
-import { View, Text, Image } from 'react-native'
-import React, { useState } from 'react'
+import {View} from 'react-native';
+import React, {useState} from 'react';
 import styles from './styles';
-import { PostUI } from '../../Models/PostModel'
+import {PostUI} from '../../Models/PostModel';
 import PostFooter from './PostFooter';
 import PostHeader from './PostHeader';
-import ImagePost from './ImagePost';
 import PostContent from './PostContent';
 import CarouselPost from './CarouselPost';
 import DocumentPost from './DocumentPost';
-import VideoPost from './VideoPost';
 import LinkPost from './LinkPost';
+import { DOCUMENT_ATTACHMENT_TYPE, IMAGE_ATTACHMENT_TYPE, LINK_ATTACHMENT_TYPE, VIDEO_ATTACHMENT_TYPE } from '../../constants/Strings';
 
 const LMPost = ({
   likeIcon,
@@ -51,15 +50,13 @@ const LMPost = ({
   threeDotIcon,
   onThreeDotClick,
 
-  mediaUrl,
   postText,
   postTextStyle,
-  attachment_type,
+  postAttachments,
   carauselActiveItemColor,
   carauselInActiveItemColor,
-  carouselPaginationStyle
+  carouselPaginationStyle,
 }: PostUI) => {
-
   const [liked, setLiked] = useState(likedState);
   const [saved, setSaved] = useState(savedState);
 
@@ -67,28 +64,29 @@ const LMPost = ({
   const handleLikeButton = () => {
     setLiked(!liked);
     onLikeButtonClick && onLikeButtonClick();
-  }
+  };
 
   // this function handles the functionality on bookmark button
   const handleBookmarkButton = () => {
-    setSaved(!saved)
+    setSaved(!saved);
     onBookmarkButtonClick && onBookmarkButtonClick();
-  }
+  };
 
   // this function handles the functionality on comment button
   const handleCommentButton = () => {
     onCommentButtonClick && onCommentButtonClick();
-  }
+  };
 
   // this function handles the functionality on share button
   const handleShareButton = () => {
     onShareButtonClick && onShareButtonClick();
-  }
+  };
+
   return (
     <View style={styles.mainContainer}>
-
       {/* Post header section UI */}
-      <PostHeader avatarStyle={avatarStyle}
+      <PostHeader
+        avatarStyle={avatarStyle}
         avatarUrl={avatarUrl}
         defaultAvatarImage={defaultAvatarImage}
         authorName={authorName}
@@ -106,28 +104,66 @@ const LMPost = ({
         showPin={showPin}
         pinIcon={pinIcon}
         threeDotIcon={threeDotIcon}
-        onThreeDotClick={onThreeDotClick} />
+        onThreeDotClick={onThreeDotClick}
+      />
 
       {/* Post description section */}
-      <PostContent postText={postText}
-        postTextStyle={postTextStyle} />
+      <PostContent
+        postText={postText}
+        postTextStyle={postTextStyle}
+        postAttachments={postAttachments}
+      />
 
       {/* Post media section */}
-      {attachment_type && attachment_type?.length > 1 ?
-      attachment_type.filter((curr) => curr === 1 || curr ===2).length >= 2 ?
-      <CarouselPost carauselActiveItemColor={carauselActiveItemColor} carauselInActiveItemColor={carauselInActiveItemColor} carouselPaginationStyle={carouselPaginationStyle} />
-      : 
-      <>{attachment_type?.find((e) => e===1) && <ImagePost mediaUrl={mediaUrl} />}
-      {attachment_type?.find((e) => e===2) && <VideoPost />}
-      {attachment_type?.find((e) => e===3) && <DocumentPost />}</>
-      :
-      <>{attachment_type && attachment_type?.[0] === 1 && <ImagePost mediaUrl={mediaUrl} />}
-      {attachment_type && attachment_type?.[0] === 2 && <VideoPost />}
-      {attachment_type && attachment_type?.[0] === 3 && <DocumentPost />}
-      {attachment_type && attachment_type?.[0] === 4 && <LinkPost />}</>}
+      {/* condition for rendering different types of post UI */}
+      {postAttachments ? (
+        postAttachments?.length > 1 ? (
+          // this section renders if there are multiple attachments
+          <>
+          {/* this renders carousel component if there are multiple images and videos */}
+            {postAttachments?.find(
+              item => item.attachmentType === IMAGE_ATTACHMENT_TYPE || item.attachmentType === VIDEO_ATTACHMENT_TYPE,
+            ) && (
+              <CarouselPost
+                carauselActiveItemColor={carauselActiveItemColor}
+                carauselInActiveItemColor={carauselInActiveItemColor}
+                carouselPaginationStyle={carouselPaginationStyle}
+                postAttachments={postAttachments}
+              />
+            )}
+            {/* this renders document component with multiple document attachments */}
+            {postAttachments?.find(item => item.attachmentType === DOCUMENT_ATTACHMENT_TYPE) && (
+              <DocumentPost postAttachments={postAttachments} />
+            )}
+          </>
+        ) : (
+          // this section renders if there is a single attachment
+          <>
+          {/* this renders carousel component if there is a single image or video */}
+            {(postAttachments[0]?.attachmentType === IMAGE_ATTACHMENT_TYPE ||
+              postAttachments[0]?.attachmentType === VIDEO_ATTACHMENT_TYPE) && (
+              <CarouselPost
+                carauselActiveItemColor={carauselActiveItemColor}
+                carauselInActiveItemColor={carauselInActiveItemColor}
+                carouselPaginationStyle={carouselPaginationStyle}
+                postAttachments={postAttachments}
+              />
+            )}
+             {/* this renders document component with single document attachment */}
+            {postAttachments[0]?.attachmentType === DOCUMENT_ATTACHMENT_TYPE && (
+              <DocumentPost postAttachments={postAttachments} />
+            )}
+            {/* this renders link preview component for single link attachment */}
+            {postAttachments[0]?.attachmentType === LINK_ATTACHMENT_TYPE && (
+              <LinkPost postAttachments={postAttachments} />
+            )}
+          </>
+        )
+      ) : null}
 
       {/* Post bottom section UI */}
-      <PostFooter likeIcon={likeIcon}
+      <PostFooter
+        likeIcon={likeIcon}
         commentIcon={commentIcon}
         shareIcon={shareIcon}
         bookMarkIcon={bookMarkIcon}
@@ -147,7 +183,7 @@ const LMPost = ({
         footerTextStyle={footerTextStyle}
       />
     </View>
-  )
-}
+  );
+};
 
-export default LMPost
+export default LMPost;

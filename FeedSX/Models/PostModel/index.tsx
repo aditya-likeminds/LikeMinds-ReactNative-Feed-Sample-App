@@ -34,8 +34,8 @@ export interface PostStateProps {
     // post media
     mediaUrl?: string,
     postText?: string,
-    postTextStyle?: TextStyle
-    attachment_type?: Array<number>
+    postTextStyle?: TextStyle,
+    postAttachments?: Array<any>,
     carouselPaginationStyle?: ViewStyle,
     carauselActiveItemColor?: string,
     carauselInActiveItemColor?: string

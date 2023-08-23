@@ -8,7 +8,8 @@ const styles = StyleSheet.create({
     },
     mediaDimensions:{
         width: Layout.window.width,
-        height: 325
+        height: 325,
+        backgroundColor:'black'
     },
     swiperView: {
         marginBottom: STYLES.$MARGINS.XXL

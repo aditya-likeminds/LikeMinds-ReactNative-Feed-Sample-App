@@ -10,6 +10,9 @@ const styles = StyleSheet.create({
     contentText:{
         fontSize:STYLES.$FONT_SIZES.LARGE,
         color: STYLES.$COLORS.postDescriptionTextColor
+    },
+    linkText:{
+        color:'blue'
     }
 });
 

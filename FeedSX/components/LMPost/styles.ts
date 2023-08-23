@@ -6,6 +6,8 @@ const styles = StyleSheet.create({
     mainContainer: {
         width: Layout.window.width,
         backgroundColor: STYLES.$BACKGROUND_COLORS.LIGHT,
+        marginBottom:STYLES.$MARGINS.SMALL,
+        paddingTop: STYLES.$PADDINGS.SMALL
     },
     postDescription: {
         width: '100%',

@@ -4,7 +4,7 @@ import { IconUI } from '../../Models/IconModel'
 
 const LMIcon = ({onIconPress,displayIcon}: IconUI) => {
   return (
-    <TouchableOpacity onPress={onIconPress? (e) => onIconPress(e) : () => null}>  
+    <TouchableOpacity onPress={onIconPress? (event) => onIconPress(event) : () => null}>  
         {displayIcon()}
      </TouchableOpacity>
   )
