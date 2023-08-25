@@ -4,7 +4,10 @@ import styles from './styles';
 import SwiperFlatList from 'react-native-swiper-flatlist';
 import {PostUI} from '../../../Models/PostModel';
 import STYLES from '../../../constants/Styles';
-import { IMAGE_ATTACHMENT_TYPE, VIDEO_ATTACHMENT_TYPE } from '../../../constants/Strings';
+import {
+  IMAGE_ATTACHMENT_TYPE,
+  VIDEO_ATTACHMENT_TYPE,
+} from '../../../constants/Strings';
 
 const CarouselPost = ({
   carauselActiveItemColor,
@@ -12,16 +15,19 @@ const CarouselPost = ({
   carouselPaginationStyle,
   postAttachments,
 }: PostUI) => {
+
   // filtering out the attachments which contains images and videos
   const carouselData = postAttachments?.filter(
-    item => item.attachmentType === IMAGE_ATTACHMENT_TYPE || item.attachmentType === VIDEO_ATTACHMENT_TYPE,
+    item =>
+      item?.attachmentType === IMAGE_ATTACHMENT_TYPE ||
+      item?.attachmentType === VIDEO_ATTACHMENT_TYPE,
   );
 
   return (
     <View style={styles.postMedia}>
       <SwiperFlatList
         data={carouselData}
-        showPagination={carouselData && carouselData?.length > 1 ? true : false} // this handles the pagination component for single and multiple attachments
+        showPagination
         style={styles.swiperView}
         paginationStyle={styles.paginationView}
         // handling custom style of active pagination item
@@ -53,7 +59,7 @@ const CarouselPost = ({
             {/* this section render image */}
             {item?.attachmentType === IMAGE_ATTACHMENT_TYPE && (
               <Image
-                source={{uri: item?.attachmentMeta.url}}
+                source={{uri: item?.attachmentMeta?.url}}
                 resizeMode={'contain'}
                 style={styles.mediaDimensions}
               />

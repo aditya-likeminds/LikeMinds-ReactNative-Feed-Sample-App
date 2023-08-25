@@ -24,6 +24,7 @@ const PostHeader = ({
     modalStyle,
     modalTextStyle,
     modalBackdropColor,
+    postMenuItems,
     showPin,
     threeDotIcon,
     pinIcon,
@@ -108,6 +109,7 @@ const PostHeader = ({
        modalStyle={modalStyle}
        modalTextStyle={modalTextStyle}
        modalBackdropColor={modalBackdropColor}
+       postMenuItems={postMenuItems}
        handlePin={handlePinPost}/>
     </View>
   )

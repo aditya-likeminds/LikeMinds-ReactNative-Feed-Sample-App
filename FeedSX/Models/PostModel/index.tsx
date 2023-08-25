@@ -32,10 +32,11 @@ export interface PostStateProps {
     showPin?: boolean,
 
     // post media
-    mediaUrl?: string,
+    // todo: remove these different props and create one single interface for post detail  
     postText?: string,
     postTextStyle?: TextStyle,
     postAttachments?: Array<any>,
+    postMenuItems?: Array<any>,
     carouselPaginationStyle?: ViewStyle,
     carauselActiveItemColor?: string,
     carauselInActiveItemColor?: string

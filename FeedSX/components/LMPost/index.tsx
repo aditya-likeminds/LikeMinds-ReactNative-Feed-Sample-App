@@ -8,7 +8,14 @@ import PostContent from './PostContent';
 import CarouselPost from './CarouselPost';
 import DocumentPost from './DocumentPost';
 import LinkPost from './LinkPost';
-import { DOCUMENT_ATTACHMENT_TYPE, IMAGE_ATTACHMENT_TYPE, LINK_ATTACHMENT_TYPE, VIDEO_ATTACHMENT_TYPE } from '../../constants/Strings';
+import {
+  DOCUMENT_ATTACHMENT_TYPE,
+  IMAGE_ATTACHMENT_TYPE,
+  LINK_ATTACHMENT_TYPE,
+  VIDEO_ATTACHMENT_TYPE,
+} from '../../constants/Strings';
+import VideoPost from './VideoPost';
+import ImagePost from './ImagePost';
 
 const LMPost = ({
   likeIcon,
@@ -53,6 +60,7 @@ const LMPost = ({
   postText,
   postTextStyle,
   postAttachments,
+  postMenuItems,
   carauselActiveItemColor,
   carauselInActiveItemColor,
   carouselPaginationStyle,
@@ -98,6 +106,7 @@ const LMPost = ({
         labelType={labelType}
         labelViewStyle={labelViewStyle}
         labelTextStyle={labelTextStyle}
+        postMenuItems={postMenuItems}
         modalStyle={modalStyle}
         modalTextStyle={modalTextStyle}
         modalBackdropColor={modalBackdropColor}
@@ -116,50 +125,60 @@ const LMPost = ({
 
       {/* Post media section */}
       {/* condition for rendering different types of post UI */}
-      {postAttachments ? (
-        postAttachments?.length > 1 ? (
-          // this section renders if there are multiple attachments
-          <>
-          {/* this renders carousel component if there are multiple images and videos */}
-            {postAttachments?.find(
-              item => item.attachmentType === IMAGE_ATTACHMENT_TYPE || item.attachmentType === VIDEO_ATTACHMENT_TYPE,
-            ) && (
-              <CarouselPost
-                carauselActiveItemColor={carauselActiveItemColor}
-                carauselInActiveItemColor={carauselInActiveItemColor}
-                carouselPaginationStyle={carouselPaginationStyle}
-                postAttachments={postAttachments}
-              />
-            )}
-            {/* this renders document component with multiple document attachments */}
-            {postAttachments?.find(item => item.attachmentType === DOCUMENT_ATTACHMENT_TYPE) && (
-              <DocumentPost postAttachments={postAttachments} />
-            )}
-          </>
+      {postAttachments && postAttachments?.length > 1 ? (
+        // this section renders if there are multiple attachments
+        postAttachments?.filter(
+          item =>
+            item?.attachmentType === IMAGE_ATTACHMENT_TYPE ||
+            item?.attachmentType === VIDEO_ATTACHMENT_TYPE,
+        ).length >= 2 ? (
+          // this section renders if the images and videos attachment are more than or eqaul to 2
+          <CarouselPost
+            carauselActiveItemColor={carauselActiveItemColor}
+            carauselInActiveItemColor={carauselInActiveItemColor}
+            carouselPaginationStyle={carouselPaginationStyle}
+            postAttachments={postAttachments}
+          />
         ) : (
-          // this section renders if there is a single attachment
+          // this section renders if there are multiple attachments but the image or video attachments are less than 2
           <>
-          {/* this renders carousel component if there is a single image or video */}
-            {(postAttachments[0]?.attachmentType === IMAGE_ATTACHMENT_TYPE ||
-              postAttachments[0]?.attachmentType === VIDEO_ATTACHMENT_TYPE) && (
-              <CarouselPost
-                carauselActiveItemColor={carauselActiveItemColor}
-                carauselInActiveItemColor={carauselInActiveItemColor}
-                carouselPaginationStyle={carouselPaginationStyle}
-                postAttachments={postAttachments}
-              />
-            )}
-             {/* this renders document component with single document attachment */}
-            {postAttachments[0]?.attachmentType === DOCUMENT_ATTACHMENT_TYPE && (
-              <DocumentPost postAttachments={postAttachments} />
-            )}
-            {/* this renders link preview component for single link attachment */}
-            {postAttachments[0]?.attachmentType === LINK_ATTACHMENT_TYPE && (
-              <LinkPost postAttachments={postAttachments} />
-            )}
+            {postAttachments?.find(
+              item => item?.attachmentType === IMAGE_ATTACHMENT_TYPE,
+            ) && <ImagePost postAttachments={postAttachments} />}
+            {postAttachments?.find(
+              item => item?.attachmentType === VIDEO_ATTACHMENT_TYPE,
+            ) && <VideoPost postAttachments={postAttachments} />}
+            {postAttachments?.find(
+              item => item?.attachmentType === DOCUMENT_ATTACHMENT_TYPE,
+            ) && <DocumentPost postAttachments={postAttachments} />}
           </>
         )
-      ) : null}
+      ) : (
+        // this section renders if there is a single attachment
+        <>
+          {postAttachments
+            ? postAttachments[0]?.attachmentType === IMAGE_ATTACHMENT_TYPE && (
+                <ImagePost postAttachments={postAttachments} />
+              )
+            : null}
+          {postAttachments
+            ? postAttachments[0]?.attachmentType === VIDEO_ATTACHMENT_TYPE && (
+                <VideoPost postAttachments={postAttachments} />
+              )
+            : null}
+          {postAttachments
+            ? postAttachments[0]?.attachmentType ===
+                DOCUMENT_ATTACHMENT_TYPE && (
+                <DocumentPost postAttachments={postAttachments} />
+              )
+            : null}
+          {postAttachments
+            ? postAttachments[0]?.attachmentType === LINK_ATTACHMENT_TYPE && (
+                <LinkPost postAttachments={postAttachments} />
+              )
+            : null}
+        </>
+      )}
 
       {/* Post bottom section UI */}
       <PostFooter

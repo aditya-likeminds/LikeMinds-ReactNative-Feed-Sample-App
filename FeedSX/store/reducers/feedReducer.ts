@@ -1,26 +1,26 @@
 import {
-  FEED_DATA_SUCCESS,
-  INIT_API_SUCCESS, PROFILE_DATA_SUCCESS,
+  UNIVERSAL_FEED_SUCCESS,
+  INITIATE_API_SUCCESS, MEMBER_STATE_SUCCESS,
 } from '../types/types';
 
 const initialState = {
-  community: {} as any,
-  user: {} as any,
+  community: {},
+  user: {},
   memberRights: [],
-  feed: {} as any
+  feed: {}
 };
 
 export function feedReducer(state = initialState, action: any) {
   switch (action.type) {
-    case INIT_API_SUCCESS: {
+    case INITIATE_API_SUCCESS: {
       const {community = {}} = action.body;
       return {...state, community: community};
     }
-    case PROFILE_DATA_SUCCESS: {
+    case MEMBER_STATE_SUCCESS: {
       const {member = {}, member_rights = []} = action.body;
       return {...state, user: member, memberRights: member_rights};
     }
-    case FEED_DATA_SUCCESS: {
+    case UNIVERSAL_FEED_SUCCESS: {
       const {posts = {}} = action.body;
       return {...state, feed: posts};
     }

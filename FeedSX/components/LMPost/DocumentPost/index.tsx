@@ -1,9 +1,10 @@
-import {View, Text, Image, FlatList} from 'react-native';
+import {View, Text, Image} from 'react-native';
 import React from 'react';
 import styles from './styles';
 import STYLES from '../../../constants/Styles';
 import {PostUI} from '../../../Models/PostModel';
 import { DOCUMENT_ATTACHMENT_TYPE } from '../../../constants/Strings';
+import { FlashList } from '@shopify/flash-list';
 
 const DocumentPost = ({postAttachments}: PostUI) => {
   // filtering out the attachments which contains documents
@@ -12,7 +13,7 @@ const DocumentPost = ({postAttachments}: PostUI) => {
   );
 
   return (
-    <FlatList
+    <FlashList
       data={documentData}
       renderItem={({item}) => (
         // document View

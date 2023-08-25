@@ -2,30 +2,30 @@ import {Dispatch} from '@reduxjs/toolkit';
 import {Alert} from 'react-native';
 import {CALL_API} from '../apiMiddleware';
 import {
-  FEED_DATA,
-  FEED_DATA_FAILED,
-  FEED_DATA_SUCCESS,
-  INIT_API,
-  INIT_API_FAILED,
-  INIT_API_SUCCESS,
-  PROFILE_DATA,
-  PROFILE_DATA_FAILED,
-  PROFILE_DATA_SUCCESS
+  UNIVERSAL_FEED_DATA,
+  UNIVERSAL_FEED_FAILED,
+  UNIVERSAL_FEED_SUCCESS,
+  INITIATE_API,
+  INITIATE_API_FAILED,
+  INITIATE_API_SUCCESS,
+  MEMBER_STATE_DATA,
+  MEMBER_STATE_FAILED,
+  MEMBER_STATE_SUCCESS
 } from '../types/types';
 import { lmFeedClient } from '../../..';
 import { InitiateUserRequest } from 'likeminds-sdk';
 
 // initiateUser API action
-export const initAPI = (payload?: any) => async (dispatch: Dispatch) => {
+export const initiateUser = (payload?: any) => async (dispatch: Dispatch) => {
   const { userUniqueId,userName, isGuest} = payload
   try {
-    const params = InitiateUserRequest.builder().setUUID(userUniqueId).setIsGuest(isGuest).setUserName(userName).build()
+    const initiateUserRequest = InitiateUserRequest.builder().setUUID(userUniqueId).setIsGuest(isGuest).setUserName(userName).build()
     return await dispatch({
-      type: INIT_API_SUCCESS,
+      type: INITIATE_API_SUCCESS,
       [CALL_API]: {
-        func: lmFeedClient?.initiateUser(params),
-        body: params,
-        types: [INIT_API, INIT_API_SUCCESS, INIT_API_FAILED],
+        func: lmFeedClient?.initiateUser(initiateUserRequest),
+        body: initiateUserRequest,
+        types: [INITIATE_API, INITIATE_API_SUCCESS, INITIATE_API_FAILED],
         showLoader: true,
       },
     });
@@ -38,11 +38,11 @@ export const initAPI = (payload?: any) => async (dispatch: Dispatch) => {
 export const getMemberState = (payload?: any) => async (dispatch: Dispatch) => {
   try {
     return await dispatch({
-      type: PROFILE_DATA_SUCCESS,
+      type: MEMBER_STATE_SUCCESS,
       [CALL_API]: {
         func: lmFeedClient?.getMemberState(),
         body: payload,
-        types: [PROFILE_DATA, PROFILE_DATA_SUCCESS, PROFILE_DATA_FAILED],
+        types: [MEMBER_STATE_DATA, MEMBER_STATE_SUCCESS, MEMBER_STATE_FAILED],
         showLoader: true,
       },
     });
@@ -52,14 +52,14 @@ export const getMemberState = (payload?: any) => async (dispatch: Dispatch) => {
 };
 
 // get universal feed API action
-export const getAllFeed = (payload?: any) => async (dispatch: Dispatch) => {
+export const getFeed = (payload?: any) => async (dispatch: Dispatch) => {
   try {
     return await dispatch({
-      type: FEED_DATA_SUCCESS,
+      type: UNIVERSAL_FEED_SUCCESS,
       [CALL_API]: {
         func: lmFeedClient?.getFeed(payload),
         body: payload,
-        types: [FEED_DATA, FEED_DATA_SUCCESS, FEED_DATA_FAILED],
+        types: [UNIVERSAL_FEED_DATA, UNIVERSAL_FEED_SUCCESS, UNIVERSAL_FEED_FAILED],
         showLoader: true,
       },
     });

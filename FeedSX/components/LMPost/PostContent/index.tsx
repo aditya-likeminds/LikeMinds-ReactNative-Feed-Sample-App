@@ -1,8 +1,9 @@
-import {View, Text, FlatList} from 'react-native';
+import {View, Text} from 'react-native';
 import React from 'react';
 import styles from './styles';
 import {PostUI} from '../../../Models/PostModel';
 import { LINK_ATTACHMENT_TYPE } from '../../../constants/Strings';
+import { FlashList } from '@shopify/flash-list';
 
 const PostContent = ({postText, postTextStyle, postAttachments}: PostUI) => {
   // filtering out the attachments which contains link
@@ -15,7 +16,7 @@ const PostContent = ({postText, postTextStyle, postAttachments}: PostUI) => {
 
       {/* this renders all the links url attached */}
       {linkData && (
-        <FlatList
+        <FlashList
           data={linkData}
           renderItem={({item}) => (
             <Text style={styles.linkText}>
