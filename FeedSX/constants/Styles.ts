@@ -23,6 +23,14 @@ export default {
       MEDIUM: '500' as '500',
       BOLD: '700' as '700',
     },
+    $FONT_FAMILY: {
+      LIGHT: 'Roboto-Light',
+      THIN: 'Roboto-Thin',
+      REGULAR: 'Roboto-Regular',
+      MEDIUM: 'Roboto-Medium',
+      BOLD: 'Roboto-Bold',
+      BLACK: 'Roboto-Black'
+    },
     $BACKGROUND_COLORS: {
       LIGHT: '#ffffff',
       DARK: '#000000',
