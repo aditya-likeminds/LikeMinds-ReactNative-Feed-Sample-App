@@ -34,6 +34,7 @@ export default {
     $BACKGROUND_COLORS: {
       LIGHT: '#ffffff',
       DARK: '#000000',
+      DARKTRANSPARENT: '#00000088'
     },
     $BORDER_COLORS:{
       LIGHT: '#00000066'
@@ -52,11 +53,6 @@ export default {
       LARGE: 20,
       XL: 25,
       XXL: 30
-    },
-    $AVATAR: {
-      WIDTH: 52,
-      HEIGHT: 52,
-      BORDER_RADIUS: 25,
     },
   };
   

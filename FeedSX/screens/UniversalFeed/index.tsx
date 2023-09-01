@@ -1,19 +1,30 @@
 import React, {useEffect, useLayoutEffect, useState} from 'react';
-import {View, Text, ScrollView, Image} from 'react-native';
-import {LMPost} from '../../components';
+import {Image, Text, View} from 'react-native';
+import {LMLoader, LMPost} from '../../components';
 import {PostStateProps} from '../../Models/PostModel';
-import Layout from '../../constants/Layout';
 import {lmFeedClient} from '../../..';
-import {GetFeedRequest, InitiateUserRequest} from 'likeminds-sdk';
+import {GetFeedRequest, LikePostRequest, SavePostRequest} from 'likeminds-sdk';
 import {useDispatch} from 'react-redux';
-import {getFeed, getMemberState, initiateUser} from '../../store/actions/feed';
+import {
+  getFeed,
+  getMemberState,
+  initiateUser,
+  likePost,
+  likePostStateHandler,
+  savePost,
+  savePostStateHandler,
+} from '../../store/actions/feed';
 import {navigationRef} from '../../navigation/RootNavigation';
 import {useAppSelector} from '../../store/store';
 import {FlashList} from '@shopify/flash-list';
+import { styles } from './styles';
 
 const UniversalFeed = () => {
   const dispatch = useDispatch();
   const feedData = useAppSelector(state => state.feed.feed);
+  const userData = useAppSelector(state => state.feed.users);
+  const showLoader = useAppSelector(state => state.loader.count);
+  const [feedPageNumber, setFeedPageNumber] = useState(1);
   const [communityId, setCommunityId] = useState('');
   const [accessToken, setAccessToken] = useState('');
 
@@ -33,6 +44,7 @@ const UniversalFeed = () => {
     if (!!initiateResponse) {
       // calling getMemberState API
       await dispatch(getMemberState() as any);
+      setFeedPageNumber(1);
       setCommunityId(initiateResponse?.community?.id);
       setAccessToken(initiateResponse?.accessToken);
     }
@@ -42,7 +54,7 @@ const UniversalFeed = () => {
   // this functions gets universal feed data
   async function fetchFeed() {
     let payload = {
-      page: 1,
+      page: feedPageNumber,
       pageSize: 10,
     };
     // calling getFeed API
@@ -57,9 +69,42 @@ const UniversalFeed = () => {
     return getFeedResponse;
   }
 
+  // this functions hanldes the post like functionality
+  async function postLikeHandler(id: string) {
+    let payload = {
+      postId: id,
+    };
+    dispatch(likePostStateHandler(payload.postId) as any);
+    // calling like post api
+    let postLikeResponse = await dispatch(
+      likePost(
+        LikePostRequest.builder().setpostId(payload.postId).build(),
+      ) as any,
+    );
+    if (postLikeResponse) {
+    }
+    return postLikeResponse;
+  }
+
+  // this functions hanldes the post save functionality
+  async function savePostHandler(id: string) {
+    let payload = {
+      postId: id,
+    };
+    dispatch(savePostStateHandler(payload.postId) as any);
+    // calling the save post api
+    let savePostResponse = await dispatch(
+      savePost(
+        SavePostRequest.builder().setpostId(payload.postId).build(),
+      ) as any,
+    );
+    if (savePostResponse) {
+    }
+    return savePostResponse;
+  }
+
   useLayoutEffect(() => {
     getInitialData();
-    fetchFeed();
   }, [navigationRef, lmFeedClient]);
 
   // todo: dummy data
@@ -68,33 +113,63 @@ const UniversalFeed = () => {
     showBookMarkIcon: true,
     showShareIcon: true,
     footerTextStyle: {},
-    authorName: 'Theresa Webb',
-    postedTime: '2h',
     showLabel: true,
     labelType: 'Admin',
   };
 
+  useEffect(() => {
+    if (accessToken) {
+      fetchFeed();
+    }
+  }, [accessToken, feedPageNumber]);
+
   return (
-    <>
-      <FlashList
-        data={feedData}
-        renderItem={({item}) => (
-          <LMPost
-            {...props}
-            postAttachments={item.attachments}
-            likedState={item.isLiked}
-            savedState={item.isSaved}
-            likeCount={item.likesCount}
-            commentCount={item.commentsCount}
-            showEdited={item.isEdited}
-            showPin={item.isPinned}
-            postText={item.text}
-            postMenuItems={item.menuItems}
-          />
-        )}
-        estimatedItemSize={15}
-      />
-    </>
+    <View style={{height: '100%'}}>
+      {/* posts list section */}
+      {feedData?.length > 0 ? (
+        <FlashList
+          data={feedData}
+          renderItem={({item}: any) => (
+            <LMPost
+              {...props}
+              postDetail={item}
+              postUserDetail={userData[item.userId]}
+              onLikeButtonClick={() => postLikeHandler(item.Id)}
+              onBookmarkButtonClick={() => savePostHandler(item.Id)}
+            />
+          )}
+          estimatedItemSize={200}
+          onEndReached={() => {
+            setFeedPageNumber(feedPageNumber + 1);
+          }}
+          ListFooterComponent={() => {
+            return <>{showLoader > 0 && <LMLoader />}</>;
+          }}
+        />
+      ) : (
+        <View
+          style={{
+            height: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <LMLoader />
+        </View>
+      )}
+      {/* create post button section */}
+      <View
+        style={styles.newPostButtonView}>
+        <Image
+          source={require('../../assets/images/add_post_icon3x.png')}
+          resizeMode={'contain'}
+          style={{width: 30, height: 30}}
+        />
+        <Text
+          style={styles.newPostText}>
+          NEW POST
+        </Text>
+      </View>
+    </View>
   );
 };
 

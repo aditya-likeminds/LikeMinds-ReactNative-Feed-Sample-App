@@ -17,21 +17,22 @@ const styles = StyleSheet.create({
     },
     postFooterText: {
         fontSize: STYLES.$FONT_SIZES.LARGE,
-        fontWeight: STYLES.$FONT_WEIGHTS.MEDIUM,
+        fontWeight: STYLES.$FONT_WEIGHTS.REGULAR,
         color: STYLES.$COLORS.darkTextColor,
         marginLeft: 8,
+        fontFamily: STYLES.$FONT_FAMILY.LIGHT
     },
     likeIconSize: {
-        width:Layout.normalize(25),
-        height:Layout.normalize(25)
-    },
-    commentIconSize:{
         width:Layout.normalize(21),
         height:Layout.normalize(21)
     },
+    commentIconSize:{
+        width:Layout.normalize(20),
+        height:Layout.normalize(20)
+    },
     iconSize: {
-        width:Layout.normalize(22),
-        height:Layout.normalize(22)
+        width:Layout.normalize(20),
+        height:Layout.normalize(20)
     }
 });
 

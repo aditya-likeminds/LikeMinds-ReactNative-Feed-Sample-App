@@ -11,4 +11,15 @@ export const UNPIN_POST_MENU_ITEM = 3;
 export const REPORT_POST_MENU_ITEM = 4;
 export const EDIT_POST_MENU_ITEM = 5;
 
+// report entity types
+export const POST_REPORT_ENTITY_TYPE = 5;
+export const COMMENT_REPORT_ENTITY_TYPE = 6;
+export const REPLY_REPORT_ENTITY_TYPE = 7;
+
+// post/comment/reply type
+export const POST_TYPE = 'post';
+export const COMMENT_TYPE = 'comment';
+export const REPLY_TYPE = 'reply';
+
+
 

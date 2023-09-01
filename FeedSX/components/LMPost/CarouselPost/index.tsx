@@ -1,4 +1,4 @@
-import {View, Text, Image} from 'react-native';
+import {View, Image} from 'react-native';
 import React from 'react';
 import styles from './styles';
 import SwiperFlatList from 'react-native-swiper-flatlist';
@@ -13,11 +13,12 @@ const CarouselPost = ({
   carauselActiveItemColor,
   carauselInActiveItemColor,
   carouselPaginationStyle,
-  postAttachments,
+  postDetail
 }: PostUI) => {
+  const { attachments} = {...postDetail}
 
   // filtering out the attachments which contains images and videos
-  const carouselData = postAttachments?.filter(
+  const carouselData = attachments?.filter(
     item =>
       item?.attachmentType === IMAGE_ATTACHMENT_TYPE ||
       item?.attachmentType === VIDEO_ATTACHMENT_TYPE,
