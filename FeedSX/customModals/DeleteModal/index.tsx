@@ -2,10 +2,10 @@ import {
   View,
   Text,
   Modal,
-  Pressable,
   TouchableOpacity,
   Image,
   TextInput,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import React, {useState} from 'react';
 import {PostUI} from '../../Models/PostModel';
@@ -43,19 +43,19 @@ const DeleteModal: React.FC<Props> = props => {
       deleteReason: otherReason ? otherReason : deletionReason,
       postId: Id,
     };
+    displayModal(false);
     dispatch(deletePostStateHandler(payload.postId) as any);
     let deletePostResponse = await dispatch(
       deletePost(
         DeletePostRequest.builder()
-          .setdeleteReason(payload.deleteReason)
-          .setpostId(payload.postId)
-          .build(),
-      ) as any,
-    );
-    setDeletionReason('');
-    displayModal(false);
+        .setdeleteReason(payload.deleteReason)
+        .setpostId(payload.postId)
+        .build(),
+        ) as any,
+        );
     // toast message action
     if (deletePostResponse) {
+      setDeletionReason('');
       dispatch(
         showToastMessage({
           isToast: true,
@@ -86,7 +86,7 @@ const DeleteModal: React.FC<Props> = props => {
         transparent={true}
         onRequestClose={() => displayModal(false)}>
         {/* modal backdrop section */}
-        <Pressable
+        <TouchableOpacity
           style={[
             styles.modal,
             {
@@ -95,10 +95,11 @@ const DeleteModal: React.FC<Props> = props => {
                 : STYLES.$BACKGROUND_COLORS.DARKTRANSPARENT,
             },
           ]}
-          onPress={() => displayModal(false)}>
+          onPress={() => displayModal(false)}
+          >
           {/* main modal section */}
-          <View style={styles.modalContainer}>
-            <Text style={styles.textHeading}>Delete {deleteType}?</Text>
+          <TouchableWithoutFeedback>
+          <View style={styles.modalContainer}><Text style={styles.textHeading}>Delete {deleteType}?</Text>
             <Text style={styles.text}>
               Are you sure you want to delete this {deleteType}. This action can
               not be reversed.
@@ -149,12 +150,12 @@ const DeleteModal: React.FC<Props> = props => {
                 <Text style={styles.cancelTextBtn}>CANCEL</Text>
               </TouchableOpacity>
               {/* delete button section  */}
-              <TouchableOpacity onPress={() => postDelete()}>
+              <TouchableOpacity disabled={loggedInUser.userUniqueId != userId ? (otherReason || deletionReason)? false : true : false} onPress={() => postDelete()}>
                 <Text style={styles.deleteTextBtn}>DELETE</Text>
               </TouchableOpacity>
             </View>
-          </View>
-        </Pressable>
+            </View></TouchableWithoutFeedback>
+        </TouchableOpacity>
       </Modal>
       <DeleteReasonsModal
         visible={showReasons}

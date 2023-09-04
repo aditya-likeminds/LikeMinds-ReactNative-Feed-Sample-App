@@ -32,7 +32,7 @@ const UniversalFeed = () => {
   async function getInitialData() {
     //this line of code is for the sample app only, pass your userUniqueID instead of this.
     // const UUID = await AsyncStorage.getItem('userUniqueID');
-    const UUID = '10003';
+        const UUID = '10003';
 
     let payload = {
       userUniqueId: UUID, // user unique ID
@@ -133,9 +133,9 @@ const UniversalFeed = () => {
             <LMPost
               {...props}
               postDetail={item}
-              postUserDetail={userData[item.userId]}
-              onLikeButtonClick={() => postLikeHandler(item.Id)}
-              onBookmarkButtonClick={() => savePostHandler(item.Id)}
+              postUserDetail={userData[item?.userId]}
+              onLikeButtonClick={() => postLikeHandler(item?.Id)}
+              onBookmarkButtonClick={() => savePostHandler(item?.Id)}
             />
           )}
           estimatedItemSize={200}

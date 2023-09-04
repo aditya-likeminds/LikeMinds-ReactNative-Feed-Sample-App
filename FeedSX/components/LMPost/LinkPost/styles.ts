@@ -11,10 +11,31 @@ const styles = StyleSheet.create({
         borderColor: STYLES.$BORDER_COLORS.LIGHT,
         borderWidth:0.5,
         borderRadius: 10,
-        marginTop: STYLES.$MARGINS.MEDIUM,
+        marginTop: STYLES.$MARGINS.SMALL,
         marginBottom: STYLES.$MARGINS.XS,
-        overflow: 'hidden'
     },
+    previewImage: {
+        width:'100%',
+        height:220,
+        borderTopLeftRadius:7,
+        borderTopRightRadius:7
+    },
+    previewTitle: {
+        fontWeight: STYLES.$FONT_WEIGHTS.MEDIUM,
+        color:'#484F67',
+        fontSize:16,
+        fontFamily: STYLES.$FONT_FAMILY.MEDIUM
+    },
+    previewDescription: {
+        color:'#484F6799',
+        paddingVertical:2,
+        fontFamily: STYLES.$FONT_FAMILY.REGULAR
+    },
+    previewLink: {
+        color:'#484F6799',
+        fontSize:12,
+        fontFamily: STYLES.$FONT_FAMILY.REGULAR
+    }
 });
 
 export default styles;

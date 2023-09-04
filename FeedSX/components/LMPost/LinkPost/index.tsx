@@ -1,18 +1,23 @@
-import {View, Text, Image} from 'react-native';
+import {View, Text, Image, TouchableOpacity, Linking} from 'react-native';
 import React from 'react';
-import {LinkPreview} from '@flyerhq/react-native-link-preview';
 import styles from './styles';
 import {PostUI} from '../../../Models/PostModel';
 
-const LinkPost = ({postAttachments}: PostUI) => {
+const LinkPost = ({postDetail}: PostUI) => {
+  const {attachments} = {...postDetail}
   return (
-    <View style={styles.postMedia}>
-      <LinkPreview
-        containerStyle={styles.previewContainer}
-        enableAnimation
-        text={postAttachments && postAttachments[0]?.attachmentMeta?.ogTags.url}
-      />
-    </View>
+    <TouchableOpacity style={styles.postMedia} onPress={() => Linking.openURL(attachments[0]?.attachmentMeta?.ogTags?.url)}>
+      {/* link preview image */}
+      <View style={styles.previewContainer}>
+        <Image source={attachments && { uri : attachments[0]?.attachmentMeta?.ogTags?.image}} style={styles.previewImage}/>
+          {/* link preview data */}
+        <View style={{paddingHorizontal:10, paddingVertical:15}}>
+        <Text style={styles.previewTitle}>{attachments[0]?.attachmentMeta?.ogTags?.title}</Text>
+        <Text style={styles.previewDescription}>{attachments[0]?.attachmentMeta?.ogTags?.description}</Text>
+        <Text style={styles.previewLink}>{attachments[0]?.attachmentMeta?.ogTags?.url}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
   );
 };
 
