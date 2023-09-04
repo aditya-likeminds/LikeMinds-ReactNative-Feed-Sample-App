@@ -1,40 +1,29 @@
 import {
-  CLEAR_CHATROOM_DETAILS,
-  GET_CHATROOM_SUCCESS,
-  GET_CONVERSATIONS_SUCCESS,
-  PAGINATED_CONVERSATIONS_SUCCESS,
-  SET_POSITION,
+  UNIVERSAL_FEED_SUCCESS,
+  INITIATE_API_SUCCESS, MEMBER_STATE_SUCCESS,
 } from '../types/types';
 
 const initialState = {
-  posts: [],
-  postDetails: {} as any,
+  community: {},
+  user: {},
+  memberRights: [],
+  feed: {}
 };
 
 export function feedReducer(state = initialState, action: any) {
   switch (action.type) {
-    // case GET_CONVERSATIONS_SUCCESS: {
-    //   const {conversations = []} = action.body;
-    //   let arr = conversations.reverse();
-    //   return {...state, conversations: arr};
-    // }
-    // case PAGINATED_CONVERSATIONS_SUCCESS: {
-    //   const {conversations = []} = action.body;
-    //   let arr = conversations.reverse();
-    //   return {...state, conversations: [...state.conversations, ...arr]};
-    // }
-    // case GET_CHATROOM_SUCCESS: {
-    //   const chatroomDetails = action.body;
-    //   return {...state, chatroomDetails: chatroomDetails};
-    // }
-    // case CLEAR_CHATROOM_DETAILS: {
-    //   const {chatroomDetails} = action.body;
-    //   return {...state, chatroomDetails: chatroomDetails};
-    // }
-    // case SET_POSITION: {
-    //   const {pageX, pageY} = action.body;
-    //   return {...state, position: {x: pageX, y: pageY}};
-    // }
+    case INITIATE_API_SUCCESS: {
+      const {community = {}} = action.body;
+      return {...state, community: community};
+    }
+    case MEMBER_STATE_SUCCESS: {
+      const {member = {}, member_rights = []} = action.body;
+      return {...state, user: member, memberRights: member_rights};
+    }
+    case UNIVERSAL_FEED_SUCCESS: {
+      const {posts = {}} = action.body;
+      return {...state, feed: posts};
+    }
     default:
       return state;
   }
