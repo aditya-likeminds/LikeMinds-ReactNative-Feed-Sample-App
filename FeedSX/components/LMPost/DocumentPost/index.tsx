@@ -1,4 +1,4 @@
-import {View, Text, Image} from 'react-native';
+import {View, Text, Image, TouchableOpacity, Linking} from 'react-native';
 import React from 'react';
 import styles from './styles';
 import STYLES from '../../../constants/Styles';
@@ -17,7 +17,7 @@ const DocumentPost = ({postDetail}: PostUI) => {
     <View>
       {documentData.map((item, index) => (
          // document View
-         <View key={index} style={styles.postMedia}>
+         <TouchableOpacity onPress={() => Linking.openURL(item?.attachmentMeta?.url)} key={index} style={styles.postMedia}>
          <View style={styles.docView}>
            <Image
              source={require('../../../assets/images/pdf_icon3x.png')}
@@ -26,8 +26,9 @@ const DocumentPost = ({postDetail}: PostUI) => {
            />
            {/* document detail view */}
            <View style={{marginLeft: STYLES.$MARGINS.SMALL}}>
-             <Text style={[styles.docTitle]}>Event Document</Text>
+             <Text style={[styles.docTitle]}>{item?.attachmentMeta?.name}</Text>
              <View style={styles.alignRow}>
+              {/* // todo: remove static data */}
                <Text style={[styles.docDetail]}>2 Pages</Text>
                <Image
                  source={require('../../../assets/images/single_dot3x.png')}
@@ -40,11 +41,11 @@ const DocumentPost = ({postDetail}: PostUI) => {
                  resizeMode={'contain'}
                  style={styles.dotImageSize}
                />
-               <Text style={[styles.docDetail]}>PDF</Text>
+               <Text style={[styles.docDetail, {textTransform:'uppercase'}]}>{item?.attachmentMeta?.format}</Text>
              </View>
            </View>
          </View>
-       </View>
+       </TouchableOpacity>
       ))}
     </View>
   );

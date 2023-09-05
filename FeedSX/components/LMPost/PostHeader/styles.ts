@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     postAuthorName: {
         color: STYLES.$COLORS.darkTextColor,
         fontSize: STYLES.$FONT_SIZES.XL,
-        fontWeight: STYLES.$FONT_WEIGHTS.MEDIUM ,
+        fontWeight: STYLES.$FONT_WEIGHTS.MEDIUM,
         fontFamily: STYLES.$FONT_FAMILY.REGULAR
     },
     postedDetail:{
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     labelText:{
         color: STYLES.$COLORS.whiteTextColor,
         fontSize: STYLES.$FONT_SIZES.MEDIUM,
-        fontWeight: STYLES.$FONT_WEIGHTS.MEDIUM ,
+        fontWeight: STYLES.$FONT_WEIGHTS.MEDIUM,
         fontFamily: STYLES.$FONT_FAMILY.REGULAR
     },
     labelView: {

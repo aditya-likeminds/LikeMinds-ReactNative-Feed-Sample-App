@@ -17,6 +17,7 @@ import {useAppSelector} from '../../store/store';
 import DeleteReasonsModal from '../DeleteReasonsModal';
 import STYLES from '../../constants/Styles';
 import {showToastMessage} from '../../store/actions/toast';
+import { CONFIRM_DELETE, DELETION_REASON, REASON_FOR_DELETION_PLACEHOLDER } from '../../constants/Strings';
 
 // delete modal's props
 interface DeleteModalProps {
@@ -100,10 +101,7 @@ const DeleteModal: React.FC<Props> = props => {
           {/* main modal section */}
           <TouchableWithoutFeedback>
           <View style={styles.modalContainer}><Text style={styles.textHeading}>Delete {deleteType}?</Text>
-            <Text style={styles.text}>
-              Are you sure you want to delete this {deleteType}. This action can
-              not be reversed.
-            </Text>
+            <Text style={styles.text}>{CONFIRM_DELETE(deleteType)}</Text>
 
             {/* delete reason selection section */}
             {loggedInUser.userUniqueId != userId && (
@@ -116,8 +114,7 @@ const DeleteModal: React.FC<Props> = props => {
                   {deletionReason ? (
                     <Text style={styles.text}>{deletionReason}</Text>
                   ) : (
-                    <Text style={styles.reasonText}>
-                      Reason for deletion <Text style={{color: 'red'}}>*</Text>
+                    <Text style={styles.reasonText}>{DELETION_REASON}<Text style={{color: 'red'}}>*</Text>
                     </Text>
                   )}
                   <Image
@@ -135,7 +132,7 @@ const DeleteModal: React.FC<Props> = props => {
                   setOtherReason(e);
                 }}
                 style={styles.otherTextInput}
-                placeholder="Enter the reason for Reporting this post"
+                placeholder={REASON_FOR_DELETION_PLACEHOLDER}
                 value={otherReason}
               />
             ) : null}

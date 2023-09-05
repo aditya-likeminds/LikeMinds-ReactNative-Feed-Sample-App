@@ -36,6 +36,7 @@ export interface PostMediaProps {
     attachments: [
       {
         attachmentMeta: {
+          format? : string,
           duration: number;
           name: string;
           ogTags: {

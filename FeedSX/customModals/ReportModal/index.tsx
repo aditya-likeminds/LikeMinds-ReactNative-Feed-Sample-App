@@ -20,7 +20,13 @@ import {
   COMMENT_TYPE,
   POST_REPORT_ENTITY_TYPE,
   POST_TYPE,
+  REASON_FOR_DELETION_PLACEHOLDER,
   REPLY_REPORT_ENTITY_TYPE,
+  REPORTED_SUCCESSFULLY,
+  REPORT_INSTRUSTION,
+  REPORT_PROBLEM,
+  REPORT_TAGS_TYPE,
+  SOMETHING_WENT_WRONG,
 } from '../../constants/Strings';
 import {showToastMessage} from '../../store/actions/toast';
 
@@ -28,7 +34,7 @@ import {showToastMessage} from '../../store/actions/toast';
 interface ReportRequest {
   entityId: string;
   entityType: number;
-  reason?: string;
+  reason: string;
   tagId: number;
   uuid: string;
 }
@@ -56,7 +62,7 @@ const ReportModal: React.FC<Props> = props => {
   // this function calls the get report tags api for reporting a post
   const fetchReportTags = async () => {
     let payload = {
-      type: 3, // type 3 for report tags
+      type: REPORT_TAGS_TYPE, // type 3 for report tags
     };
     let reportTagsResponse = await dispatch(
       getReportTags(
@@ -81,39 +87,30 @@ const ReportModal: React.FC<Props> = props => {
       tagId: tagId,
       uuid: uuid,
     };
-    // request for reporting post with other reasons
-    let otherReportRequest = PostReportRequest.builder()
-      .setEntityId(payload.entityId)
-      .setEntityType(payload.entityType)
-      .setReason(payload.reason ? payload?.reason : '')
-      .setTagId(payload.tagId)
-      .setUuid(payload.uuid)
-      .build();
-
-    // request for reporting post with given tags
-    let reportRequest = PostReportRequest.builder()
-      .setEntityId(payload.entityId)
-      .setEntityType(payload.entityType)
-      .setTagId(payload.tagId)
-      .setUuid(payload.uuid)
-      .build();
-
     let postReportResponse = await dispatch(
-      postReport(payload.reason ? otherReportRequest : reportRequest) as any,
+      postReport(
+        PostReportRequest.builder()
+          .setEntityId(payload.entityId)
+          .setEntityType(payload.entityType)
+          .setReason(payload.reason)
+          .setTagId(payload.tagId)
+          .setUuid(payload.uuid)
+          .build()
+      ) as any,
     );
     // toast message action
     if (postReportResponse) {
       dispatch(
         showToastMessage({
           isToast: true,
-          message: 'Reported Successfully',
+          message: REPORTED_SUCCESSFULLY,
         }) as any,
       );
     } else {
       dispatch(
         showToastMessage({
           isToast: true,
-          message: 'Something Went Wrong',
+          message: SOMETHING_WENT_WRONG,
         }) as any,
       );
     }
@@ -148,20 +145,15 @@ const ReportModal: React.FC<Props> = props => {
             }}>
             <Image
               source={require('../../assets/images/close_icon3x.png')}
-              style={{width: 18, height: 18}}
+              style={styles.dropdownIcon}
             />
           </TouchableOpacity>
         </View>
 
         {/* modal content */}
         <View style={styles.contentView}>
-          <Text style={styles.textHeading}>
-            Please specify the problem to continue
-          </Text>
-          <Text style={styles.text}>
-            You would be able to report this {reportType} after selecting a
-            problem
-          </Text>
+          <Text style={styles.textHeading}>{REPORT_PROBLEM}</Text>
+          <Text style={styles.text}>{REPORT_INSTRUSTION(reportType)}</Text>
         </View>
 
         {/* report tags list section */}
@@ -213,7 +205,7 @@ const ReportModal: React.FC<Props> = props => {
                 setOtherReason(e);
               }}
               style={styles.otherTextInput}
-              placeholder="Enter the reason for Reporting this post"
+              placeholder={REASON_FOR_DELETION_PLACEHOLDER}
               value={otherReason}
             />
           </View>

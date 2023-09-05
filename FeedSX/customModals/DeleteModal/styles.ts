@@ -1,5 +1,6 @@
 import {StyleSheet} from 'react-native';
 import STYLES from '../../constants/Styles';
+import Layout from '../../constants/Layout';
 
 const styles = StyleSheet.create({
   modal: {
@@ -36,7 +37,6 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderRadius: 8,
     marginTop: STYLES.$MARGINS.XL,
-    marginBottom: STYLES.$MARGINS.SMALL,
     borderColor: STYLES.$COLORS.darkTextColor,
     padding: STYLES.$PADDINGS.SMALL,
     flexDirection: 'row',
@@ -44,13 +44,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   dropdownIcon: {
-    width: 30,
-    height: 30,
+    width: Layout.normalize(30),
+    height: Layout.normalize(30),
   },
   buttonsContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     marginTop: STYLES.$MARGINS.XL,
+    paddingBottom: STYLES.$PADDINGS.XS
   },
   deleteTextBtn: {
     color: '#5046e5',

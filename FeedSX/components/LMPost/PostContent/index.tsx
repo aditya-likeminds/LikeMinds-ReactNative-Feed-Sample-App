@@ -7,7 +7,7 @@ import STYLES from '../../../constants/Styles';
 
 const PostContent = ({postDetail, postTextStyle}: PostUI) => {
   const {text,attachments} = {...postDetail};
-  const [showMoreVisiible, setShowMoreVissible] = useState(false);
+  const [showMoreVisible, setShowMoreVisible] = useState(false);
   const [numberOfLine, setNumOfLine] = useState(0);
 
   // filtering out the attachments which contains link
@@ -16,25 +16,25 @@ const PostContent = ({postDetail, postTextStyle}: PostUI) => {
   );
 
   useEffect(() => {
-    setShowMoreVissible(false);
+    setShowMoreVisible(false);
     // this checks the condition if the text takes more than 3 lines or have more than 500 characters
   if((Dimensions.get('screen').width*2/6.71) < text?.length || text?.length > 500) {
     setNumOfLine(3);
-    setShowMoreVissible(true);  
+    setShowMoreVisible(true);  
   }else {
-    setShowMoreVissible(false);
+    setShowMoreVisible(false);
   }
   }, [text]);
 
   return (
     <View style={styles.postDescription}>
       {/* post description text */}
-      <Text numberOfLines={numberOfLine} style={[styles.contentText, postTextStyle]}>{showMoreVisiible ? text?.substring(0, 500) : text}</Text>
+      <Text numberOfLines={numberOfLine} style={[styles.contentText, postTextStyle]}>{showMoreVisible ? text?.substring(0, 500) : text}</Text>
       {/* show more button section */}
-      {showMoreVisiible && (
+      {showMoreVisible && (
         <TouchableOpacity
           onPress={() => {
-            setShowMoreVissible(false);
+            setShowMoreVisible(false);
             setNumOfLine(0);
           }}>
           <Text style={{fontFamily: STYLES.$FONT_FAMILY.REGULAR}}>Show more</Text>

@@ -1,3 +1,4 @@
+import { PIN_POST_ID, PIN_THIS_POST, UNPIN_POST_ID, UNPIN_THIS_POST } from '../../constants/Strings';
 import {
   UNIVERSAL_FEED_SUCCESS,
   INITIATE_API_SUCCESS,
@@ -96,18 +97,18 @@ export function feedReducer(state = initialState, action: any) {
         !updatedFeed[pinnedPostIndex]['isPinned'];
       // this gets the index of pin/unpin from menu item
       let menuItemIndex = updatedFeed[pinnedPostIndex]['menuItems'].findIndex(
-        (item: any) => item.id === 2 || item.id === 3,
+        (item: any) => item.id === PIN_POST_ID || item.id === UNPIN_POST_ID,
       );
       if (updatedFeed[pinnedPostIndex]['isPinned']) {
         //  this updates the menuItem title to unpin
-        updatedFeed[pinnedPostIndex]['menuItems'][menuItemIndex].id = 3;
+        updatedFeed[pinnedPostIndex]['menuItems'][menuItemIndex].id = UNPIN_POST_ID;
         updatedFeed[pinnedPostIndex]['menuItems'][menuItemIndex].title =
-          'Unpin this Post';
+          UNPIN_THIS_POST;
       } else {
         //  this updates the menuItem title to pin
-        updatedFeed[pinnedPostIndex]['menuItems'][menuItemIndex].id = 2;
+        updatedFeed[pinnedPostIndex]['menuItems'][menuItemIndex].id = PIN_POST_ID;
         updatedFeed[pinnedPostIndex]['menuItems'][menuItemIndex].title =
-          'Pin this Post';
+          PIN_THIS_POST;
       }
 
       return {...state, feed: updatedFeed};

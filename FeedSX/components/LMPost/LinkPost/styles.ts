@@ -35,6 +35,10 @@ const styles = StyleSheet.create({
         color:'#484F6799',
         fontSize:12,
         fontFamily: STYLES.$FONT_FAMILY.REGULAR
+    },
+    previewDetailView: {
+        paddingHorizontal: STYLES.$PADDINGS.SMALL,
+        paddingVertical: STYLES.$PADDINGS.MEDIUM
     }
 });
 

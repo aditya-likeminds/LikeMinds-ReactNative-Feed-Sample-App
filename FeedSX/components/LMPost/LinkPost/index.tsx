@@ -11,7 +11,7 @@ const LinkPost = ({postDetail}: PostUI) => {
       <View style={styles.previewContainer}>
         <Image source={attachments && { uri : attachments[0]?.attachmentMeta?.ogTags?.image}} style={styles.previewImage}/>
           {/* link preview data */}
-        <View style={{paddingHorizontal:10, paddingVertical:15}}>
+        <View style={styles.previewDetailView}>
         <Text style={styles.previewTitle}>{attachments[0]?.attachmentMeta?.ogTags?.title}</Text>
         <Text style={styles.previewDescription}>{attachments[0]?.attachmentMeta?.ogTags?.description}</Text>
         <Text style={styles.previewLink}>{attachments[0]?.attachmentMeta?.ogTags?.url}</Text>

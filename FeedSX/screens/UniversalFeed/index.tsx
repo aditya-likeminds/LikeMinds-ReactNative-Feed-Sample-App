@@ -31,8 +31,9 @@ const UniversalFeed = () => {
   // this function calls initiate user API and sets the access token and community id
   async function getInitialData() {
     //this line of code is for the sample app only, pass your userUniqueID instead of this.
+    // todo: remove static data
     // const UUID = await AsyncStorage.getItem('userUniqueID');
-        const UUID = '10003';
+    const UUID = '0e53748a-969b-44c6-b8fa-a4c8e1eb1208';
 
     let payload = {
       userUniqueId: UUID, // user unique ID

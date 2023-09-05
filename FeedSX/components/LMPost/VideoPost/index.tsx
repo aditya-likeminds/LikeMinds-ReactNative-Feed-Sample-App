@@ -8,12 +8,13 @@ const VideoPost = ({postDetail}: PostUI) => {
   const {attachments} = {...postDetail}
 
   // filtering out the attachment which contains video
-  const VideoData = attachments?.filter(
+  const videoData = attachments?.filter(
     item => item?.attachmentType === VIDEO_ATTACHMENT_TYPE,
   );
   return (
     <View style={styles.postMedia}>
       <View style={styles.mediaDimensions}>
+        {/* // todo: remove the text and implement video player */}
         <Text style={{color:'white'}}>Video view</Text>
       </View>
     </View>

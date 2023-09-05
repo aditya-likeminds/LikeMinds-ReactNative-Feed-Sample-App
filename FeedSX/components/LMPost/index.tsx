@@ -81,6 +81,7 @@ const LMPost = ({
   const onShare = async () => {
     try {
       const result = await Share.share({
+        // todo: static data (replace with the deeplink) 
         message: 'www.google.com',
       });
       if (result.action === Share.sharedAction) {

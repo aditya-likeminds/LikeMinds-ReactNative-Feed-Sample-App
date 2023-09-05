@@ -27,12 +27,12 @@ const styles = StyleSheet.create({
         height:Layout.normalize(21)
     },
     commentIconSize:{
-        width:Layout.normalize(20),
-        height:Layout.normalize(20)
+        width:Layout.normalize(21),
+        height:Layout.normalize(21)
     },
     iconSize: {
-        width:Layout.normalize(20),
-        height:Layout.normalize(20)
+        width:Layout.normalize(19),
+        height:Layout.normalize(19)
     }
 });
 

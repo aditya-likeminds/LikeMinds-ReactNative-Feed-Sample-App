@@ -8,6 +8,7 @@ import {GetReportTagsRequest} from 'likeminds-sdk';
 import {useAppSelector} from '../../store/store';
 import STYLES from '../../constants/Styles';
 import {LMLoader} from '../../components';
+import { DELETE_TAGS_TYPE, DELETION_REASON } from '../../constants/Strings';
 
 // delete reason's modal props
 interface DeleteReasonsModalProps {
@@ -31,7 +32,7 @@ const DeleteReasonsModal: React.FC<Props> = props => {
   // this function calls the get reason tags api for deletion
   const fetchReasonTags = async () => {
     let payload = {
-      type: 0, // type 0 for delete reason tags
+      type: DELETE_TAGS_TYPE, // type 0 for delete reason tags
     };
     let reportTagsResponse = await dispatch(
       getReportTags(
@@ -78,7 +79,7 @@ const DeleteReasonsModal: React.FC<Props> = props => {
         {/* modal view */}
         <View style={styles.modalContainer}>
           <View>
-            <Text style={styles.textHeading}>Reason for deletion</Text>
+            <Text style={styles.textHeading}>{DELETION_REASON}</Text>
 
             {/* delete reasons list */}
             {deleteTags.length > 0 ? (

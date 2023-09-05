@@ -8,13 +8,13 @@ const ImagePost = ({postDetail}: PostUI) => {
   const {attachments} = {...postDetail}
 
   // filtering out the attachment which contains image
-  const ImageData = attachments?.filter(
+  const imageData = attachments?.filter(
     item => item?.attachmentType === IMAGE_ATTACHMENT_TYPE,
   );
   return (
     <View style={styles.postMedia}>
       <Image
-        source={{uri: ImageData?.[0]?.attachmentMeta?.url}}
+        source={{uri: imageData?.[0]?.attachmentMeta?.url}}
         resizeMode={'contain'}
         style={styles.mediaDimensions}
       />

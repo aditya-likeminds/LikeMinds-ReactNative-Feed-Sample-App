@@ -1,5 +1,6 @@
 import {StyleSheet} from 'react-native';
 import STYLES from '../../constants/Styles';
+import Layout from '../../constants/Layout';
 
 const styles = StyleSheet.create({
   page: {
@@ -94,6 +95,10 @@ const styles = StyleSheet.create({
     fontFamily: STYLES.$FONT_FAMILY.LIGHT,
     color: STYLES.$COLORS.darkTextColor,
   },
+  dropdownIcon: {
+    width: Layout.normalize(18),
+    height: Layout.normalize(18)
+  }
 });
 
 export default styles;
