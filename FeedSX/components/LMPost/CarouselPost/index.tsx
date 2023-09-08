@@ -2,7 +2,7 @@ import {View, Image} from 'react-native';
 import React from 'react';
 import styles from './styles';
 import SwiperFlatList from 'react-native-swiper-flatlist';
-import {PostUI} from '../../../Models/PostModel';
+import {PostUI} from '../../../models/postModel';
 import STYLES from '../../../constants/Styles';
 import {
   IMAGE_ATTACHMENT_TYPE,

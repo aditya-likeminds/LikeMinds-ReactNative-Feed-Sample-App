@@ -33,6 +33,7 @@ import {
   PIN_POST_FAILED,
   PIN_POST_STATE,
   DELETE_POST_STATE,
+  AUTO_PLAY_POST_VIDEO,
 } from '../types/types';
 import {lmFeedClient} from '../../..';
 import {InitiateUserRequest} from 'likeminds-sdk';
@@ -254,4 +255,17 @@ export const pinPostStateHandler =
     } catch (error) {
       Alert.alert(`${error}`);
     }
-  };
+};
+
+export const autoPlayPostVideo =
+  (payload?: any) => async (dispatch: Dispatch) => {
+    try {
+      dispatch({
+        type: AUTO_PLAY_POST_VIDEO,
+        body: payload,
+      });
+      return;
+    } catch (error) {
+      Alert.alert(`${error}`);
+    }
+};

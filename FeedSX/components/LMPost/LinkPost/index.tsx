@@ -1,7 +1,7 @@
 import {View, Text, Image, TouchableOpacity, Linking} from 'react-native';
 import React from 'react';
 import styles from './styles';
-import {PostUI} from '../../../Models/PostModel';
+import {PostUI} from '../../../models/postModel';
 
 const LinkPost = ({postDetail}: PostUI) => {
   const {attachments} = {...postDetail}

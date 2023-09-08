@@ -8,7 +8,7 @@ import {
   Image,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {PostUI} from '../../Models/PostModel';
+import {PostUI} from '../../models/postModel';
 import styles from './styles';
 import {useDispatch} from 'react-redux';
 import {getReportTags, postReport} from '../../store/actions/feed';
@@ -95,7 +95,7 @@ const ReportModal: React.FC<Props> = props => {
           .setReason(payload.reason)
           .setTagId(payload.tagId)
           .setUuid(payload.uuid)
-          .build()
+          .build(),
       ) as any,
     );
     // toast message action
@@ -117,6 +117,7 @@ const ReportModal: React.FC<Props> = props => {
     return postReportResponse;
   };
 
+  // this calls the fetchReportTags api when the modal gets visible
   useEffect(() => {
     if (visible) {
       fetchReportTags();

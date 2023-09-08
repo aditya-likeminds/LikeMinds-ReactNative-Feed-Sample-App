@@ -1,21 +1,21 @@
 import {Alert, Share, View} from 'react-native';
 import React, {useState} from 'react';
 import styles from './styles';
-import {PostUI} from '../../Models/PostModel';
-import PostFooter from './PostFooter';
-import PostHeader from './PostHeader';
-import PostContent from './PostContent';
-import CarouselPost from './CarouselPost';
-import DocumentPost from './DocumentPost';
-import LinkPost from './LinkPost';
+import {PostUI} from '../../models/postModel';
+import PostFooter from './postFooter';
+import PostHeader from './postHeader';
+import PostContent from './postContent';
+import CarouselPost from './carouselPost';
+import DocumentPost from './documentPost';
+import LinkPost from './linkPost';
 import {
   DOCUMENT_ATTACHMENT_TYPE,
   IMAGE_ATTACHMENT_TYPE,
   LINK_ATTACHMENT_TYPE,
   VIDEO_ATTACHMENT_TYPE,
 } from '../../constants/Strings';
-import VideoPost from './VideoPost';
-import ImagePost from './ImagePost';
+import VideoPost from './videoPost';
+import ImagePost from './imagePost';
 
 const LMPost = ({
   likeIcon,

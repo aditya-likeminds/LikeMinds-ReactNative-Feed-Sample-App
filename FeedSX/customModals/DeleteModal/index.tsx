@@ -8,13 +8,13 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import React, {useState} from 'react';
-import {PostUI} from '../../Models/PostModel';
+import {PostUI} from '../../models/postModel';
 import styles from './styles';
 import {useDispatch} from 'react-redux';
 import {deletePost, deletePostStateHandler} from '../../store/actions/feed';
 import {DeletePostRequest} from 'likeminds-sdk';
 import {useAppSelector} from '../../store/store';
-import DeleteReasonsModal from '../DeleteReasonsModal';
+import DeleteReasonsModal from '../deleteReasonsModal';
 import STYLES from '../../constants/Styles';
 import {showToastMessage} from '../../store/actions/toast';
 import { CONFIRM_DELETE, DELETION_REASON, REASON_FOR_DELETION_PLACEHOLDER } from '../../constants/Strings';

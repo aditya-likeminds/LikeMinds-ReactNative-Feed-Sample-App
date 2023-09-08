@@ -13,6 +13,7 @@ import {
   PIN_POST_SUCCESS,
   PIN_POST_STATE,
   DELETE_POST_STATE,
+  AUTO_PLAY_POST_VIDEO,
 } from '../types/types';
 
 const initialState = {
@@ -23,6 +24,7 @@ const initialState = {
   member: {},
   feed: [] as any,
   reportTags: [],
+  autoPlayVideoPostId: ''
 };
 
 export function feedReducer(state = initialState, action: any) {
@@ -132,6 +134,9 @@ export function feedReducer(state = initialState, action: any) {
       // removes that post from the data
       updatedFeed.splice(deletedPostIndex, 1);
       return {...state, feed: updatedFeed};
+    }
+    case AUTO_PLAY_POST_VIDEO: {
+      return {...state, autoPlayVideoPostId : action.body};
     }
     default:
       return state;

@@ -1,11 +1,12 @@
 import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {Image, Text, View} from 'react-native';
 import {LMLoader, LMPost} from '../../components';
-import {PostStateProps} from '../../Models/PostModel';
+import {PostStateProps} from '../../models/postModel';
 import {lmFeedClient} from '../../..';
 import {GetFeedRequest, LikePostRequest, SavePostRequest} from 'likeminds-sdk';
 import {useDispatch} from 'react-redux';
 import {
+  autoPlayPostVideo,
   getFeed,
   getMemberState,
   initiateUser,
@@ -17,7 +18,7 @@ import {
 import {navigationRef} from '../../navigation/RootNavigation';
 import {useAppSelector} from '../../store/store';
 import {FlashList} from '@shopify/flash-list';
-import { styles } from './styles';
+import {styles} from './styles';
 
 const UniversalFeed = () => {
   const dispatch = useDispatch();
@@ -33,7 +34,7 @@ const UniversalFeed = () => {
     //this line of code is for the sample app only, pass your userUniqueID instead of this.
     // todo: remove static data
     // const UUID = await AsyncStorage.getItem('userUniqueID');
-    const UUID = '0e53748a-969b-44c6-b8fa-a4c8e1eb1208';
+    const UUID = '10003';
 
     let payload = {
       userUniqueId: UUID, // user unique ID
@@ -118,6 +119,7 @@ const UniversalFeed = () => {
     labelType: 'Admin',
   };
 
+  // this calls the getFeed api whenever the page number gets changed
   useEffect(() => {
     if (accessToken) {
       fetchFeed();
@@ -146,6 +148,14 @@ const UniversalFeed = () => {
           ListFooterComponent={() => {
             return <>{showLoader > 0 && <LMLoader />}</>;
           }}
+          onViewableItemsChanged={({changed, viewableItems}) => {
+            if (changed) {
+              if (viewableItems) {
+                dispatch(autoPlayPostVideo(viewableItems[0]?.item.Id) as any);
+              }
+            }
+          }}
+          viewabilityConfig={{viewAreaCoveragePercentThreshold: 60}}
         />
       ) : (
         <View
@@ -158,17 +168,13 @@ const UniversalFeed = () => {
         </View>
       )}
       {/* create post button section */}
-      <View
-        style={styles.newPostButtonView}>
+      <View style={styles.newPostButtonView}>
         <Image
           source={require('../../assets/images/add_post_icon3x.png')}
           resizeMode={'contain'}
           style={{width: 30, height: 30}}
         />
-        <Text
-          style={styles.newPostText}>
-          NEW POST
-        </Text>
+        <Text style={styles.newPostText}>NEW POST</Text>
       </View>
     </View>
   );

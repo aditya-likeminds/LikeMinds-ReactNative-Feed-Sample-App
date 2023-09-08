@@ -2,7 +2,7 @@ import {Text, Modal, Pressable, Platform, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 import Layout from '../../constants/Layout';
 import {styles} from './styles';
-import {PostUI} from '../../Models/PostModel';
+import {PostUI} from '../../models/postModel';
 import {
   DELETE_POST_MENU_ITEM,
   PIN_POST_MENU_ITEM,
@@ -11,8 +11,8 @@ import {
   UNPIN_POST_MENU_ITEM,
 } from '../../constants/Strings';
 import {useAppDispatch} from '../../store/store';
-import ReportModal from '../ReportModal';
-import DeleteModal from '../DeleteModal';
+import ReportModal from '../reportModal';
+import DeleteModal from '../deleteModal';
 import {pinPost, pinPostStateHandler} from '../../store/actions/feed';
 import {PinPostRequest} from 'likeminds-sdk';
 
