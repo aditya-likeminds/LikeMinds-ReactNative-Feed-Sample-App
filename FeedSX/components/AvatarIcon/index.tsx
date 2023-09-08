@@ -1,17 +1,34 @@
-import { Image } from 'react-native';
+import {Image, Text, View} from 'react-native';
 import React from 'react';
-import STYLES from '../../constants/Styles';
-import { AvatarUI } from '../../Models/AvatarModel';
+import {AvatarUI} from '../../Models/AvatarModel';
+import styles from './styles';
+import { PostUI } from '../../Models/PostModel';
+import { nameInitials } from '../../utils';
 
-const AvatarIcon = ({avatarUrl, avatarStyle}: AvatarUI) => {
+type Props = AvatarUI & PostUI
+const AvatarIcon: React.FC<Props> = props =>  {
+  const {avatarStyle, nameInitialViewStyle, nameInitialTextStyle} = props as AvatarUI;
+  const {postUserDetail} = props as PostUI;
+
+  const {imageUrl, name} ={...postUserDetail}
+
   return (
-    <Image source={avatarUrl ? {uri: avatarUrl}: require('../../assets/images/default_pic.png')} resizeMode={'contain'}
-     style={[{
-        width: STYLES.$AVATAR.WIDTH,
-        height: STYLES.$AVATAR.HEIGHT,
-        borderRadius: STYLES.$AVATAR.BORDER_RADIUS
-    }, avatarStyle]} />
-  )
-}
+    <>
+      {imageUrl ? (
+        // this renders the avatar image
+        <Image
+          source={{uri: imageUrl}}
+          resizeMode={'contain'}
+          style={[styles.avatarView,avatarStyle]}
+        />
+      ) : (
+        // this renders the initial characters of the name in avatar view
+        <View style={[styles.nameInitialView, nameInitialViewStyle]}>
+          <Text style={[styles.nameInitialText, nameInitialTextStyle]}>{nameInitials(name)}</Text>
+        </View>
+      )}
+    </>
+  );
+};
 
-export default AvatarIcon
+export default AvatarIcon;

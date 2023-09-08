@@ -27,11 +27,13 @@ const styles = StyleSheet.create({
     docTitle: {
         color: STYLES.$COLORS.darkGreyTextColor,
         fontSize: STYLES.$FONT_SIZES.XL,
-        fontWeight: STYLES.$FONT_WEIGHTS.MEDIUM 
+        fontWeight: STYLES.$FONT_WEIGHTS.MEDIUM,
+        fontFamily: STYLES.$FONT_FAMILY.REGULAR
     },
     docDetail:{
         color: STYLES.$COLORS.lightGreyTextColor,
         fontSize: STYLES.$FONT_SIZES.MEDIUM,
+        fontFamily: STYLES.$FONT_FAMILY.REGULAR
     },
     dotImageSize: {
         width:Layout.normalize(6),

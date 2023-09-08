@@ -23,9 +23,18 @@ export default {
       MEDIUM: '500' as '500',
       BOLD: '700' as '700',
     },
+    $FONT_FAMILY: {
+      LIGHT: 'Roboto-Light',
+      THIN: 'Roboto-Thin',
+      REGULAR: 'Roboto-Regular',
+      MEDIUM: 'Roboto-Medium',
+      BOLD: 'Roboto-Bold',
+      BLACK: 'Roboto-Black'
+    },
     $BACKGROUND_COLORS: {
       LIGHT: '#ffffff',
       DARK: '#000000',
+      DARKTRANSPARENT: '#00000088'
     },
     $BORDER_COLORS:{
       LIGHT: '#00000066'
@@ -39,16 +48,12 @@ export default {
       XXL: 30
     },
     $PADDINGS: {
+      XS: 5,
       SMALL: 10,
       MEDIUM: 15,
       LARGE: 20,
       XL: 25,
       XXL: 30
-    },
-    $AVATAR: {
-      WIDTH: 52,
-      HEIGHT: 52,
-      BORDER_RADIUS: 25,
     },
   };
   

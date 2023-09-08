@@ -4,14 +4,19 @@ import {PostUI} from '../../../Models/PostModel';
 import styles from './styles';
 import {VIDEO_ATTACHMENT_TYPE} from '../../../constants/Strings';
 
-const VideoPost = ({postAttachments}: PostUI) => {
+const VideoPost = ({postDetail}: PostUI) => {
+  const {attachments} = {...postDetail}
+
   // filtering out the attachment which contains video
-  const VideoData = postAttachments?.filter(
+  const videoData = attachments?.filter(
     item => item?.attachmentType === VIDEO_ATTACHMENT_TYPE,
   );
   return (
     <View style={styles.postMedia}>
-      <View style={styles.mediaDimensions}></View>
+      <View style={styles.mediaDimensions}>
+        {/* // todo: remove the text and implement video player */}
+        <Text style={{color:'white'}}>Video view</Text>
+      </View>
     </View>
   );
 };

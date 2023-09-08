@@ -16,16 +16,19 @@ const styles = StyleSheet.create({
     postAuthorName: {
         color: STYLES.$COLORS.darkTextColor,
         fontSize: STYLES.$FONT_SIZES.XL,
-        fontWeight: STYLES.$FONT_WEIGHTS.MEDIUM 
+        fontWeight: STYLES.$FONT_WEIGHTS.MEDIUM,
+        fontFamily: STYLES.$FONT_FAMILY.REGULAR
     },
     postedDetail:{
         color: STYLES.$COLORS.lightGreyTextColor,
         fontSize: STYLES.$FONT_SIZES.MEDIUM,
+        fontFamily: STYLES.$FONT_FAMILY.REGULAR
     },
     labelText:{
         color: STYLES.$COLORS.whiteTextColor,
         fontSize: STYLES.$FONT_SIZES.MEDIUM,
-        fontWeight: STYLES.$FONT_WEIGHTS.MEDIUM 
+        fontWeight: STYLES.$FONT_WEIGHTS.MEDIUM,
+        fontFamily: STYLES.$FONT_FAMILY.REGULAR
     },
     labelView: {
         backgroundColor: '#5046E5',

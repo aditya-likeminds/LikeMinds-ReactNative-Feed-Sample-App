@@ -1,10 +1,9 @@
-import { View, Text, Image } from 'react-native'
+import { View, Text, Image, TouchableOpacity, Animated } from 'react-native'
 import React from 'react'
 import styles from './styles'
 import LMIcon from '../../LMIcon'
 import STYLES from '../../../constants/Styles';
 import { PostUI } from '../../../Models/PostModel';
-import Layout from '../../../constants/Layout';
 
 const PostFooter = ({
     likeIcon,
@@ -15,22 +14,20 @@ const PostFooter = ({
     onBookmarkButtonClick,
     onShareButtonClick,
     onCommentButtonClick,
-    likedState,
-    savedState,
     showBookMarkIcon,
     showShareIcon,
     likePlaceholder,
-    likeCount,
     commentPlaceholder,
     noCommentPlaceholder,
-    commentCount,
-    footerTextStyle
+    footerTextStyle,
+    postDetail
   }: PostUI
 ) => {
+  const {isLiked, likesCount, isSaved, commentsCount} = {...postDetail}
 
   // this function gives a default like icon to be displayed 
   const defaultLikeIcon = () => {
-    if (likedState) {
+    if (isLiked) {
       return <Image source={require('../../../assets/images/heart_red_icon3x.png')} resizeMode={'contain'} style={styles.likeIconSize} /> 
     } else {
       return <Image source={require('../../../assets/images/heart_icon3x.png')} resizeMode={'contain'} style={styles.likeIconSize}/>
@@ -46,7 +43,7 @@ const PostFooter = ({
 
   // this function gives a default bookmark icon to be displayed
   const defaultBookmarkIcon = () => {
-    if (savedState) {
+    if (isSaved) {
       return <Image source={require('../../../assets/images/saved_bookmark_icon3x.png')} resizeMode={'contain'}  style={styles.iconSize} />
     } else {
       return <Image source={require('../../../assets/images/bookmark_icon3x.png')} resizeMode={'contain'}  style={styles.iconSize}/>
@@ -69,13 +66,13 @@ const PostFooter = ({
         {/* like section */}
         <View style={styles.alignRow}>
           <LMIcon displayIcon={likeIcon ? likeIcon : defaultLikeIcon} onIconPress={onLikeButtonClick} />
-          <Text style={[styles.postFooterText, footerTextStyle]}>{likeCount ? likePlaceholder ? `${likeCount} ${likePlaceholder}` : `${likeCount} Like` : likePlaceholder ?`${likePlaceholder}` : 'Like'}</Text>
+          <Text style={[styles.postFooterText, footerTextStyle]}>{likesCount ? likePlaceholder ? `${likesCount} ${likePlaceholder}` : likesCount > 1 ? `${likesCount} Likes`: `${likesCount} Like` : likePlaceholder ?`${likePlaceholder}` : 'Like'}</Text>
         </View>
 
         {/* comment section */}
         <View style={[styles.alignRow, { marginLeft: STYLES.$MARGINS.LARGE }]}>
             <LMIcon displayIcon={commentIcon ? commentIcon : defaultCommentIcon} onIconPress={onCommentButtonClick} />
-            <Text style={[styles.postFooterText, footerTextStyle]}>{commentCount && commentCount > 0 ? commentPlaceholder ? `${commentCount} ${commentPlaceholder}` : `${commentCount} Comments` : noCommentPlaceholder ? `${noCommentPlaceholder}` : `Add Comment`}</Text>
+            <Text style={[styles.postFooterText, footerTextStyle]}>{commentsCount && commentsCount > 0 ? commentPlaceholder ? `${commentsCount} ${commentPlaceholder}` : commentsCount > 1 ? `${commentsCount} Comments` : `${commentsCount} Comment` : noCommentPlaceholder ? `${noCommentPlaceholder}` : `Add Comment`}</Text>
         </View>
       </View>
 
