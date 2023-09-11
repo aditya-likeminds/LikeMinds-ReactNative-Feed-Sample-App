@@ -257,6 +257,7 @@ export const pinPostStateHandler =
     }
 };
 
+// video auto play/pause handler action
 export const autoPlayPostVideo =
   (payload?: any) => async (dispatch: Dispatch) => {
     try {
