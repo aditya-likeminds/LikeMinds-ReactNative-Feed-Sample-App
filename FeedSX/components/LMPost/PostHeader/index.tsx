@@ -1,10 +1,10 @@
 import {View, Text, Image} from 'react-native';
 import React, {useState} from 'react';
 import styles from './styles';
-import AvatarIcon from '../../AvatarIcon';
+import AvatarIcon from '../../avatarIcon';
 import STYLES from '../../../constants/Styles';
 import LMIcon from '../../LMIcon';
-import {PostUI} from '../../../Models/PostModel';
+import {PostUI} from '../../../models/postModel';
 import {PostActionListModal} from '../../../customModals';
 import { timeStamp } from '../../../utils/timeStamp';
 

@@ -1,8 +1,8 @@
 import {Image, Text, View} from 'react-native';
 import React from 'react';
-import {AvatarUI} from '../../Models/AvatarModel';
+import {AvatarUI} from '../../models/avatarModel';
 import styles from './styles';
-import { PostUI } from '../../Models/PostModel';
+import { PostUI } from '../../models/postModel';
 import { nameInitials } from '../../utils';
 
 type Props = AvatarUI & PostUI

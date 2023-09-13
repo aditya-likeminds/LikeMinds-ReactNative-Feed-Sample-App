@@ -1,4 +1,4 @@
-import UniversalFeed from "./UniversalFeed";
+import UniversalFeed from "./universalFeed";
 
 export {
     UniversalFeed

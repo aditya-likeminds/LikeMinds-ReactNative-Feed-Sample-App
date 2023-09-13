@@ -1,4 +1,4 @@
-import PostActionListModal from "./PostActionListModal";
+import PostActionListModal from "./postActionListModal";
 
 export {
     PostActionListModal

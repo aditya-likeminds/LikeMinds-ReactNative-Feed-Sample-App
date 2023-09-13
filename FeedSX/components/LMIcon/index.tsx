@@ -1,6 +1,6 @@
 import { TouchableOpacity} from 'react-native';
 import React from 'react';
-import {IconUI} from '../../Models/IconModel';
+import {IconUI} from '../../models/iconModel';
 
 const LMIcon = ({onIconPress, displayIcon}: IconUI) => {
   return (

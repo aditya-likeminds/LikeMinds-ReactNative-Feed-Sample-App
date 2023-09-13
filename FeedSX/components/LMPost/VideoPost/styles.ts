@@ -9,7 +9,13 @@ const styles = StyleSheet.create({
     mediaDimensions:{
         width: Layout.window.width,
         height: 325,
-        backgroundColor:'red'
+        backgroundColor: STYLES.$BACKGROUND_COLORS.DARK
+    },
+    loaderView: {
+        position: 'absolute',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1000
     }
 });
 

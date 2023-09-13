@@ -2,7 +2,7 @@ import {View, Text, Image, TouchableOpacity, Linking} from 'react-native';
 import React from 'react';
 import styles from './styles';
 import STYLES from '../../../constants/Styles';
-import {PostUI} from '../../../Models/PostModel';
+import {PostUI} from '../../../models/postModel';
 import { DOCUMENT_ATTACHMENT_TYPE } from '../../../constants/Strings';
 
 const DocumentPost = ({postDetail}: PostUI) => {

@@ -38,4 +38,6 @@ export const PIN_POST_FAILED = 'PIN_POST_FAILED';
 export const PIN_POST_SUCCESS = 'PIN_POST_SUCCESS';
 export const PIN_POST_STATE = 'PIN_POST_STATE';
 
+export const AUTO_PLAY_POST_VIDEO = 'AUTO_PLAY_POST_VIDEO'
+
 

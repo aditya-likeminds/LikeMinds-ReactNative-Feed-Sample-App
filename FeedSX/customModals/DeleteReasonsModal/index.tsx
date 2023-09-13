@@ -1,6 +1,6 @@
 import {View, Text, Modal, Pressable} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {PostUI} from '../../Models/PostModel';
+import {PostUI} from '../../models/postModel';
 import styles from './styles';
 import {useDispatch} from 'react-redux';
 import {getReportTags} from '../../store/actions/feed';
@@ -8,7 +8,7 @@ import {GetReportTagsRequest} from 'likeminds-sdk';
 import {useAppSelector} from '../../store/store';
 import STYLES from '../../constants/Styles';
 import {LMLoader} from '../../components';
-import { DELETE_TAGS_TYPE, DELETION_REASON } from '../../constants/Strings';
+import {DELETE_TAGS_TYPE, DELETION_REASON} from '../../constants/Strings';
 
 // delete reason's modal props
 interface DeleteReasonsModalProps {
@@ -42,6 +42,7 @@ const DeleteReasonsModal: React.FC<Props> = props => {
     return reportTagsResponse;
   };
 
+  // this calls the fetchReportTags api when the modal gets visible
   useEffect(() => {
     if (visible) {
       fetchReasonTags();

@@ -3,7 +3,7 @@ import React from 'react'
 import styles from './styles'
 import LMIcon from '../../LMIcon'
 import STYLES from '../../../constants/Styles';
-import { PostUI } from '../../../Models/PostModel';
+import { PostUI } from '../../../models/postModel';
 
 const PostFooter = ({
     likeIcon,
