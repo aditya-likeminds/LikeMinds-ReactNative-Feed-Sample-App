@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {UniversalFeed} from '../screens';
+import {LikesList, UniversalFeed} from '../screens';
 import {navigationRef} from './RootNavigation';
 import {useAppSelector} from '../store/store';
 import LMToast from '../components/LMToast';
@@ -15,6 +15,7 @@ const SwitchComponent = () => {
       <NavigationContainer ref={navigationRef}>
         <Stack.Navigator>
           <Stack.Screen name={'UniversalFeed'} component={UniversalFeed} />
+          <Stack.Screen name={'LikesList'} component={LikesList} />
         </Stack.Navigator>
       </NavigationContainer>
 

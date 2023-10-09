@@ -4,10 +4,12 @@ import thunk, {ThunkMiddleware} from 'redux-thunk';
 import apiMiddleware from './apiMiddleware';
 import {feedReducer} from './reducers/feedReducer';
 import {loader} from './reducers/loader';
+import { postLikesReducer } from './reducers/postLikesReducer';
 
 const rootReducer = combineReducers({
   feed: feedReducer,
   loader: loader,
+  postLikes: postLikesReducer
 });
 
 const store = configureStore({
