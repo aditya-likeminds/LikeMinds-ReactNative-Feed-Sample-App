@@ -1,4 +1,9 @@
-import { PIN_POST_ID, PIN_THIS_POST, UNPIN_POST_ID, UNPIN_THIS_POST } from '../../constants/Strings';
+import {
+  PIN_POST_ID,
+  PIN_THIS_POST,
+  UNPIN_POST_ID,
+  UNPIN_THIS_POST,
+} from '../../constants/Strings';
 import {
   UNIVERSAL_FEED_SUCCESS,
   INITIATE_API_SUCCESS,
@@ -24,7 +29,7 @@ const initialState = {
   member: {},
   feed: [] as any,
   reportTags: [],
-  autoPlayVideoPostId: ''
+  autoPlayVideoPostId: '',
 };
 
 export function feedReducer(state = initialState, action: any) {
@@ -39,6 +44,13 @@ export function feedReducer(state = initialState, action: any) {
     }
     case UNIVERSAL_FEED_SUCCESS: {
       const {posts = {}, users = {}} = action.body;
+      let postData = action?.body?.posts;
+      let userData = action?.body?.users;
+      // converts LMResponse to LMPostUI model
+      postData.map((item: any) => {
+        let userIdOfPost = item.userId;
+        item.user = userData[userIdOfPost];
+      });
       // this handles pagination and appends new post data with previous data
       let feedData = state.feed;
       feedData = [...feedData, ...posts];
@@ -103,12 +115,14 @@ export function feedReducer(state = initialState, action: any) {
       );
       if (updatedFeed[pinnedPostIndex]['isPinned']) {
         //  this updates the menuItem title to unpin
-        updatedFeed[pinnedPostIndex]['menuItems'][menuItemIndex].id = UNPIN_POST_ID;
+        updatedFeed[pinnedPostIndex]['menuItems'][menuItemIndex].id =
+          UNPIN_POST_ID;
         updatedFeed[pinnedPostIndex]['menuItems'][menuItemIndex].title =
           UNPIN_THIS_POST;
       } else {
         //  this updates the menuItem title to pin
-        updatedFeed[pinnedPostIndex]['menuItems'][menuItemIndex].id = PIN_POST_ID;
+        updatedFeed[pinnedPostIndex]['menuItems'][menuItemIndex].id =
+          PIN_POST_ID;
         updatedFeed[pinnedPostIndex]['menuItems'][menuItemIndex].title =
           PIN_THIS_POST;
       }
@@ -136,7 +150,7 @@ export function feedReducer(state = initialState, action: any) {
       return {...state, feed: updatedFeed};
     }
     case AUTO_PLAY_POST_VIDEO: {
-      return {...state, autoPlayVideoPostId : action.body};
+      return {...state, autoPlayVideoPostId: action.body};
     }
     default:
       return state;

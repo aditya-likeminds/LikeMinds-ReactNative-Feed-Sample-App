@@ -67,23 +67,23 @@ export interface PostMediaProps {
     updatedAt: number;
     userId: string;
     uuid: string;
-  };
-  postUserDetail: {
-    customTitle: string;
-    id: number;
-    imageUrl: string;
-    isDeleted: boolean;
-    isGuest: boolean;
-    name: string;
-    questionAnswers: null;
-    sdkClientInfo: {
-      community: number;
-      user: number;
+    user: {
+      customTitle: string;
+      id: number;
+      imageUrl: string;
+      isDeleted: boolean;
+      isGuest: boolean;
+      name: string;
+      questionAnswers: null;
+      sdkClientInfo: {
+        community: number;
+        user: number;
+        userUniqueId: string;
+        uuid: string;
+      };
       userUniqueId: string;
       uuid: string;
-    };
-    userUniqueId: string;
-    uuid: string;
+    }
   };
 }
 
