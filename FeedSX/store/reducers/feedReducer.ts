@@ -50,6 +50,7 @@ export function feedReducer(state = initialState, action: any) {
       postData.map((item: any) => {
         let userIdOfPost = item.userId;
         item.user = userData[userIdOfPost];
+        item.id = item.Id
       });
       // this handles pagination and appends new post data with previous data
       let feedData = state.feed;
