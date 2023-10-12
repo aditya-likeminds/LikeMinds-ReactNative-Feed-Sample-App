@@ -1,5 +1,5 @@
 import React, {useEffect, useLayoutEffect, useState} from 'react';
-import {Alert, Image, Text, View} from 'react-native';
+import {Alert, Image, Text, TouchableOpacity, View} from 'react-native';
 import {LMLoader} from '../../components';
 import {PostStateProps} from '../../models/postModel';
 import {lmFeedClient} from '../../..';
@@ -264,14 +264,14 @@ const UniversalFeed = () => {
         </View>
       )}
       {/* create post button section */}
-      <View style={styles.newPostButtonView}>
+      <TouchableOpacity style={styles.newPostButtonView} onPress={() => NavigationService.navigate('CreatePost')}>
         <Image
           source={require('../../assets/images/add_post_icon3x.png')}
           resizeMode={'contain'}
           style={{width: 30, height: 30}}
         />
         <Text style={styles.newPostText}>NEW POST</Text>
-      </View>
+      </TouchableOpacity>
       {/* delete post modal */}
       {showDeleteModal && (
         <DeleteModal
