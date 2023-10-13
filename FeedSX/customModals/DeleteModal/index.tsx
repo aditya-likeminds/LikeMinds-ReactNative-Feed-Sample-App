@@ -8,36 +8,40 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import React, {useState} from 'react';
-import {PostUI} from '../../models/postModel';
 import styles from './styles';
 import {useDispatch} from 'react-redux';
 import {deletePost, deletePostStateHandler} from '../../store/actions/feed';
 import {DeletePostRequest} from 'likeminds-sdk';
 import {useAppSelector} from '../../store/store';
 import DeleteReasonsModal from '../deleteReasonsModal';
-import STYLES from '../../constants/Styles';
 import {showToastMessage} from '../../store/actions/toast';
 import {
   CONFIRM_DELETE,
   DELETION_REASON,
   REASON_FOR_DELETION_PLACEHOLDER,
 } from '../../constants/Strings';
+import STYLES from '../../constants/Styles';
 
 // delete modal's props
 interface DeleteModalProps {
   visible: boolean;
   displayModal: (value: boolean) => void;
   deleteType: string;
+  postDetail: LMPostUI;
+  modalBackdropColor?: string
 }
-type Props = DeleteModalProps & PostUI;
 
-const DeleteModal: React.FC<Props> = props => {
-  const {visible, displayModal, deleteType} = props as DeleteModalProps;
-  const {postDetail, modalBackdropColor} = props as PostUI;
+const DeleteModal = ({
+  visible,
+  displayModal,
+  deleteType,
+  postDetail,
+  modalBackdropColor
+}: DeleteModalProps) => {
+  const {id, userId} = {...postDetail};
 
   const dispatch = useDispatch();
   const loggedInUser = useAppSelector(state => state.feed.member);
-  const {Id, userId} = {...postDetail};
   const [deletionReason, setDeletionReason] = useState('');
   const [otherReason, setOtherReason] = useState('');
   const [showReasons, setShowReasons] = useState(false);
@@ -46,7 +50,7 @@ const DeleteModal: React.FC<Props> = props => {
   const postDelete = async () => {
     let payload = {
       deleteReason: otherReason ? otherReason : deletionReason,
-      postId: Id,
+      postId: id,
     };
     displayModal(false);
     dispatch(deletePostStateHandler(payload.postId) as any);
@@ -97,7 +101,7 @@ const DeleteModal: React.FC<Props> = props => {
               handleDeleteModal={displayModal}
               selectedReason={selectedReasonForDelete}
               closeModal={() => setShowReasons(false)}
-              postDetail={postDetail}
+              // postDetail={postDetail}
             />
           ) : (
             <>

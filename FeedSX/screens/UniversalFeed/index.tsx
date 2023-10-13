@@ -1,7 +1,5 @@
 import React, {useEffect, useLayoutEffect, useState} from 'react';
-import {Alert, Image, Text, View} from 'react-native';
-import {LMLoader} from '../../components';
-import {PostStateProps} from '../../models/postModel';
+import {Alert, Image, Share, Text, View} from 'react-native';
 import {lmFeedClient} from '../../..';
 import {
   GetFeedRequest,
@@ -28,7 +26,6 @@ import {FlashList} from '@shopify/flash-list';
 import {styles} from './styles';
 import {LMPost} from '../../../LikeMinds-ReactNative-Feed-UI';
 import {NavigationService} from '../../navigation';
-import DeleteModal from '../../customModals/deleteModal';
 import {
   DELETE_POST_MENU_ITEM,
   PIN_POST_MENU_ITEM,
@@ -36,7 +33,8 @@ import {
   REPORT_POST_MENU_ITEM,
   UNPIN_POST_MENU_ITEM,
 } from '../../constants/Strings';
-import ReportModal from '../../customModals/reportModal';
+import { DeleteModal, ReportModal } from '../../customModals';
+import LMLoader from '../../../LikeMinds-ReactNative-Feed-UI/src/base/LMLoader';
 
 const UniversalFeed = () => {
   const dispatch = useDispatch();
@@ -186,6 +184,26 @@ const UniversalFeed = () => {
       (item: any) => item.Id === selectedMenuItemPostId,
     );
     return postDetail;
+  };
+   // this function invoke the share options for sharing the post link
+   const onShare = async () => {
+    try {
+      const result = await Share.share({
+        // todo: static data (replace with the deeplink) 
+        message: 'www.google.com',
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error: any) {
+      Alert.alert(error.message);
+    }
   };
 
   return (

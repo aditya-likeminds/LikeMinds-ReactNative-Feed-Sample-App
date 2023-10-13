@@ -4,6 +4,7 @@ import {
   UNPIN_POST_ID,
   UNPIN_THIS_POST,
 } from '../../constants/Strings';
+import { postViewData } from '../../viewDataModels';
 import {
   UNIVERSAL_FEED_SUCCESS,
   INITIATE_API_SUCCESS,
@@ -43,18 +44,12 @@ export function feedReducer(state = initialState, action: any) {
       return {...state, member: member, memberRights: member_rights, feed: []};
     }
     case UNIVERSAL_FEED_SUCCESS: {
-      const {posts = {}, users = {}} = action.body;
-      let postData = action?.body?.posts;
-      let userData = action?.body?.users;
-      // converts LMResponse to LMPostUI model
-      postData.map((item: any) => {
-        let userIdOfPost = item.userId;
-        item.user = userData[userIdOfPost];
-        item.id = item.Id
-      });
+      const {users = {}} = action.body;
+      // model converter function
+      let post = postViewData(action.body)
       // this handles pagination and appends new post data with previous data
       let feedData = state.feed;
-      feedData = [...feedData, ...posts];
+      feedData = [...feedData, ...post];
       // this appends the new users data with previous data
       let usersData = state.users;
       usersData = {...usersData, ...users};

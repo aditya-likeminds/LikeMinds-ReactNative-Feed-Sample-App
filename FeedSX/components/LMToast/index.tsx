@@ -1,7 +1,6 @@
 import {View, Text, Modal} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {styles} from './styles';
-import Layout from '../../constants/Layout';
 import {useAppSelector} from '../../store/store';
 import {useDispatch} from 'react-redux';
 import {showToastMessage} from '../../store/actions/toast';
