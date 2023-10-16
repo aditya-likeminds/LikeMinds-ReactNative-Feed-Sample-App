@@ -7,6 +7,8 @@ import {
   IPost,
   IUser,
 } from 'likeminds-sdk';
+import { GetPostLikesResponse } from 'likeminds-sdk/dist/post/model/GetPostLikesResponse';
+import Like from 'likeminds-sdk/dist/post/model/Like';
 
 /**
  * @param data: [GetFeedResponse]
@@ -144,4 +146,37 @@ export function convertToLMSDKClientInfoUI(data: IUser): LMSDKClientInfoUI {
     userUniqueId: sdkClientInfo.userUniqueId,
   };
   return sdkClientInfoConverter;
+}
+
+/**
+ * @param data: [GetPostLikesResponse]
+ * @returns list of [LMLikeUI]
+ */
+export function convertToLMLikesList(data: GetPostLikesResponse): LMLikeUI[] {
+  let likesListData = data.likes;
+  let userData = data.users;
+  return likesListData.map((item: Like) => {
+    return convertToLMLikeUI(item, userData);
+  });
+}
+
+/**
+ * @param post: [Like]
+ * @param user: [Map] of String to User
+ * @returns LMLikeUI
+ */
+export function convertToLMLikeUI(
+  likes: Like,
+  users: {[key: string]: LMUserUI},
+): LMLikeUI
+ {
+  const likesData: LMLikeUI = {
+    id: likes.id,
+    createdAt: likes.createdAt,
+    updatedAt: likes.updatedAt,
+    userId: likes.userId,
+    uuid: likes.uuid,
+    user: convertToLMUserUI(users[likes.userId]),
+  };
+  return likesData;
 }
