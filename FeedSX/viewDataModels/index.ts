@@ -32,7 +32,7 @@ export function convertToLMPostUI(
   const postData: LMPostUI = {
     id: post.Id,
     attachments: post.attachments
-      ? convertToLMAttachments(post.attachments)
+      ? convertToLMAttachmentsUI(post.attachments)
       : [],
     commentsCount: post.commentsCount,
     communityId: post.communityId,
@@ -42,12 +42,12 @@ export function convertToLMPostUI(
     isPinned: post.isPinned,
     isSaved: post.isSaved,
     likesCount: post.likesCount,
-    menuItems: convertToLMMenuItems(post.menuItems),
+    menuItems: convertToLMMenuItemsUI(post.menuItems),
     text: post.text,
     updatedAt: post.updatedAt,
     userId: post.userId,
     uuid: post.uuid,
-    user: convertToLMUser(user[post.userId]),
+    user: convertToLMUserUI(user[post.userId]),
   };
   return postData;
 }
@@ -56,10 +56,10 @@ export function convertToLMPostUI(
  * @param data: [Attachment]
  * @returns list of [LMAttachmentUI]
  */
-export function convertToLMAttachments(data: Attachment[]): LMAttachmentUI[] {
+export function convertToLMAttachmentsUI(data: Attachment[]): LMAttachmentUI[] {
   return data.map((item: Attachment) => {
     return {
-      attachmentMeta: convertToLMAttachmentMeta(item.attachmentMeta),
+      attachmentMeta: convertToLMAttachmentMetaUI(item.attachmentMeta),
       attachmentType: item.attachmentType,
     };
   });
@@ -69,14 +69,14 @@ export function convertToLMAttachments(data: Attachment[]): LMAttachmentUI[] {
  * @param data: AttachmentMeta
  * @returns LMAttachmentMetaUI
  */
-export function convertToLMAttachmentMeta(
+export function convertToLMAttachmentMetaUI(
   data: AttachmentMeta,
 ): LMAttachmentMetaUI {
   const attachmentMetaData: LMAttachmentMetaUI = {
     duration: data.duration,
     format: data.format,
     name: data.name,
-    ogTags: convertToLMOgTags(data.ogTags),
+    ogTags: convertToLMOgTagsUI(data.ogTags),
     pageCount: data.pageCount,
     size: data.size,
     url: data.url,
@@ -88,7 +88,7 @@ export function convertToLMAttachmentMeta(
  * @param data: IOgTag
  * @returns LMOGTagsUI
  */
-export function convertToLMOgTags(data: IOgTag): LMOGTagsUI {
+export function convertToLMOgTagsUI(data: IOgTag): LMOGTagsUI {
   const ogTagsData: LMOGTagsUI = {
     title: data.title,
     description: data.description,
@@ -102,7 +102,7 @@ export function convertToLMOgTags(data: IOgTag): LMOGTagsUI {
  * @param data: [IMenuItem]
  * @returns [LMMenuItemsUI]
  */
-export function convertToLMMenuItems(data: IMenuItem[]): LMMenuItemsUI[] {
+export function convertToLMMenuItemsUI(data: IMenuItem[]): LMMenuItemsUI[] {
   return data.map(item => {
     return {
       title: item.title,
@@ -115,7 +115,7 @@ export function convertToLMMenuItems(data: IMenuItem[]): LMMenuItemsUI[] {
  * @param data: IUser
  * @returns LMUserUI
  */
-export function convertToLMUser(data: IUser): LMUserUI {
+export function convertToLMUserUI(data: IUser): LMUserUI {
   const userData: LMUserUI = {
     customTitle: data.customTitle,
     id: data.id,
@@ -123,7 +123,7 @@ export function convertToLMUser(data: IUser): LMUserUI {
     isGuest: data.isGuest,
     name: data.name,
     organisationName: data.organisationName,
-    sdkClientInfo: convertToLMSdkClientInfo(data),
+    sdkClientInfo: convertToLMSDKClientInfoUI(data),
     updatedAt: data.updatedAt,
     userUniqueId: data.userUniqueId,
     uuid: data.uuid,
@@ -135,7 +135,7 @@ export function convertToLMUser(data: IUser): LMUserUI {
  * @param data: IUser
  * @returns LMSDKClientInfoUI
  */
-export function convertToLMSdkClientInfo(data: IUser): LMSDKClientInfoUI {
+export function convertToLMSDKClientInfoUI(data: IUser): LMSDKClientInfoUI {
   const sdkClientInfo = data.sdkClientInfo;
   const sdkClientInfoConverter: LMSDKClientInfoUI = {
     community: sdkClientInfo.community,
