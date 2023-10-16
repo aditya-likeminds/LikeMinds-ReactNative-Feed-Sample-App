@@ -39,8 +39,8 @@ const LikesList = (props: any) => {
       {postLike && (
         <FlashList
           data={postLike}
-          renderItem={({item}: any) => {
-            return <LMMemberListItem user={item.user} />;
+          renderItem={({item}: {item: LMLikeUI}) => {
+            return <LMMemberListItem likes={item} />;
           }}
           estimatedItemSize={100}
         />
