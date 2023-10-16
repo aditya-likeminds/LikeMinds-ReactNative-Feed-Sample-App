@@ -1,5 +1,8 @@
-import PostActionListModal from "./postActionListModal";
-
+import DeleteModal from "./deleteModal"
+import DeleteReasonsModal from "./deleteReasonsModal"
+import ReportModal from "./reportModal"
 export {
-    PostActionListModal
+    DeleteModal,
+    DeleteReasonsModal,
+    ReportModal
 }

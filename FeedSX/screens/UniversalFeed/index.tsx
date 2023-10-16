@@ -1,7 +1,5 @@
 import React, {useEffect, useLayoutEffect, useState} from 'react';
-import {Alert, Image, Text, View} from 'react-native';
-import {LMLoader} from '../../components';
-import {PostStateProps} from '../../models/postModel';
+import {Image, Text, View} from 'react-native';
 import {lmFeedClient} from '../../..';
 import {
   GetFeedRequest,
@@ -24,11 +22,12 @@ import {
 } from '../../store/actions/feed';
 import {navigationRef} from '../../navigation/RootNavigation';
 import {useAppSelector} from '../../store/store';
-import {FlashList} from '@shopify/flash-list';
+import {
+  FlashList
+} from '@shopify/flash-list';
 import {styles} from './styles';
 import {LMPost} from '../../../LikeMinds-ReactNative-Feed-UI';
 import {NavigationService} from '../../navigation';
-import DeleteModal from '../../customModals/deleteModal';
 import {
   DELETE_POST_MENU_ITEM,
   PIN_POST_MENU_ITEM,
@@ -36,7 +35,8 @@ import {
   REPORT_POST_MENU_ITEM,
   UNPIN_POST_MENU_ITEM,
 } from '../../constants/Strings';
-import ReportModal from '../../customModals/reportModal';
+import {DeleteModal, ReportModal} from '../../customModals';
+import LMLoader from '../../../LikeMinds-ReactNative-Feed-UI/src/base/LMLoader';
 
 const UniversalFeed = () => {
   const dispatch = useDispatch();
@@ -79,7 +79,7 @@ const UniversalFeed = () => {
   async function fetchFeed() {
     let payload = {
       page: feedPageNumber,
-      pageSize: 30,
+      pageSize: 20,
     };
     // calling getFeed API
     let getFeedResponse = await dispatch(
@@ -183,7 +183,7 @@ const UniversalFeed = () => {
 
   const getPostDetail = () => {
     const postDetail = feedData.find(
-      (item: any) => item.Id === selectedMenuItemPostId,
+      (item: LMPostUI) => item.id === selectedMenuItemPostId,
     );
     return postDetail;
   };
@@ -194,14 +194,14 @@ const UniversalFeed = () => {
       {feedData?.length > 0 ? (
         <FlashList
           data={feedData}
-          renderItem={({item}: any) => (
+          renderItem={({item}: {item: LMPostUI}) => (
             <LMPost
               post={item}
               // header props
               headerProps={{
                 post: item,
                 postMenu: {
-                  postId: item.Id,
+                  postId: item.id,
                   menuItems: item.menuItems,
                   modalPosition: modalPosition,
                   modalVisible: showActionListModal,
@@ -223,21 +223,21 @@ const UniversalFeed = () => {
                 showShareIcon: true,
                 likeIconButton: {
                   onTap: () => {
-                    postLikeHandler(item.Id);
+                    postLikeHandler(item.id);
                   },
                 },
                 saveButton: {
                   onTap: () => {
-                    savePostHandler(item.Id);
+                    savePostHandler(item.id);
                   },
                 },
                 likeTextButton: {
-                  onTap: () => NavigationService.navigate('LikesList', item.Id),
+                  onTap: () => NavigationService.navigate('LikesList', item.id),
                 },
               }}
             />
           )}
-          estimatedItemSize={200}
+          estimatedItemSize={5}
           onEndReached={() => {
             setFeedPageNumber(feedPageNumber + 1);
           }}
@@ -247,7 +247,7 @@ const UniversalFeed = () => {
           onViewableItemsChanged={({changed, viewableItems}) => {
             if (changed) {
               if (viewableItems) {
-                dispatch(autoPlayPostVideo(viewableItems[0]?.item.Id) as any);
+                dispatch(autoPlayPostVideo(viewableItems[0]?.item.id) as any);
               }
             }
           }}

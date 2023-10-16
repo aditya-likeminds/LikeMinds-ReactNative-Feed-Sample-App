@@ -4,6 +4,7 @@ import {
   UNPIN_POST_ID,
   UNPIN_THIS_POST,
 } from '../../constants/Strings';
+import { convertUniversalFeedPosts } from '../../viewDataModels';
 import {
   UNIVERSAL_FEED_SUCCESS,
   INITIATE_API_SUCCESS,
@@ -43,17 +44,12 @@ export function feedReducer(state = initialState, action: any) {
       return {...state, member: member, memberRights: member_rights, feed: []};
     }
     case UNIVERSAL_FEED_SUCCESS: {
-      const {posts = {}, users = {}} = action.body;
-      let postData = action?.body?.posts;
-      let userData = action?.body?.users;
-      // converts LMResponse to LMPostUI model
-      postData.map((item: any) => {
-        let userIdOfPost = item.userId;
-        item.user = userData[userIdOfPost];
-      });
+      const {users = {}} = action.body;
+      // model converter function
+      let post = convertUniversalFeedPosts(action.body)
       // this handles pagination and appends new post data with previous data
       let feedData = state.feed;
-      feedData = [...feedData, ...posts];
+      feedData = [...feedData, ...post];
       // this appends the new users data with previous data
       let usersData = state.users;
       usersData = {...usersData, ...users};
@@ -66,7 +62,7 @@ export function feedReducer(state = initialState, action: any) {
       let updatedFeed = state.feed;
       // this gets the index of post that is liked
       const likedPostIndex = updatedFeed.findIndex(
-        (item: any) => item?.Id === action.body,
+        (item: any) => item?.id === action.body,
       );
       // this updates the isLiked value
       updatedFeed[likedPostIndex]['isLiked'] =
@@ -89,7 +85,7 @@ export function feedReducer(state = initialState, action: any) {
       let updatedFeed = state.feed;
       // this gets the index of post that is saved
       const savedPostIndex = updatedFeed.findIndex(
-        (item: any) => item?.Id === action.body,
+        (item: any) => item?.id === action.body,
       );
       // this updates the isSaved value
       updatedFeed[savedPostIndex]['isSaved'] =
@@ -104,7 +100,7 @@ export function feedReducer(state = initialState, action: any) {
       let updatedFeed = state.feed;
       // this gets the index of post that is pinned
       const pinnedPostIndex = updatedFeed.findIndex(
-        (item: any) => item?.Id === action.body,
+        (item: any) => item?.id === action.body,
       );
       // this updates the isPinned value
       updatedFeed[pinnedPostIndex]['isPinned'] =
@@ -143,7 +139,7 @@ export function feedReducer(state = initialState, action: any) {
       let updatedFeed = state.feed;
       // this gets the index of the post that is deleted
       const deletedPostIndex = updatedFeed.findIndex(
-        (item: any) => item?.Id === action.body,
+        (item: any) => item?.id === action.body,
       );
       // removes that post from the data
       updatedFeed.splice(deletedPostIndex, 1);
