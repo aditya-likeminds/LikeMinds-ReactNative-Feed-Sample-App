@@ -149,8 +149,8 @@ export function convertToLMSDKClientInfoUI(data: IUser): LMSDKClientInfoUI {
 }
 
 /**
- * @param data: [GetFeedResponse]
- * @returns list of [LMPostUI]
+ * @param data: [GetPostLikesResponse]
+ * @returns list of [LMLikeUI]
  */
 export function convertToLMLikesList(data: GetPostLikesResponse): LMLikeUI[] {
   let likesListData = data.likes;
@@ -161,9 +161,9 @@ export function convertToLMLikesList(data: GetPostLikesResponse): LMLikeUI[] {
 }
 
 /**
- * @param post: [IPost]
+ * @param post: [Like]
  * @param user: [Map] of String to User
- * @returns LMPostUI
+ * @returns LMLikeUI
  */
 export function convertToLMLikeUI(
   likes: Like,
