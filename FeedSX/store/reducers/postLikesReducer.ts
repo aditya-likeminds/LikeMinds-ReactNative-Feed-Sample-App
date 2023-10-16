@@ -1,3 +1,4 @@
+import { convertToLMUserUI } from '../../viewDataModels';
 import {POST_LIKES_SUCCESS} from '../types/types';
 
 const initialState = {
@@ -14,10 +15,9 @@ export function postLikesReducer(state = initialState, action: any) {
       let userData = action?.body?.users;
       // converts LMResponse to LMPostUI model
       postLikesData.map((item: any) => {
-        let userIdOfPost = item.userId;
-        item.user = userData[userIdOfPost];
+        item.user = convertToLMUserUI(userData[item.userId])
       });
-      return {...state, postLike: likes, totalLikes: totalCount, user: users};
+      return {...state, postLike: postLikesData, totalLikes: totalCount, user: users};
     }
     default:
       return state;
