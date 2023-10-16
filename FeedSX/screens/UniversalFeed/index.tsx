@@ -1,5 +1,5 @@
 import React, {useEffect, useLayoutEffect, useState} from 'react';
-import {Alert, Image, Share, Text, View} from 'react-native';
+import {Image, Text, View} from 'react-native';
 import {lmFeedClient} from '../../..';
 import {
   GetFeedRequest,
@@ -22,7 +22,9 @@ import {
 } from '../../store/actions/feed';
 import {navigationRef} from '../../navigation/RootNavigation';
 import {useAppSelector} from '../../store/store';
-import {FlashList} from '@shopify/flash-list';
+import {
+  FlashList
+} from '@shopify/flash-list';
 import {styles} from './styles';
 import {LMPost} from '../../../LikeMinds-ReactNative-Feed-UI';
 import {NavigationService} from '../../navigation';
@@ -33,7 +35,7 @@ import {
   REPORT_POST_MENU_ITEM,
   UNPIN_POST_MENU_ITEM,
 } from '../../constants/Strings';
-import { DeleteModal, ReportModal } from '../../customModals';
+import {DeleteModal, ReportModal} from '../../customModals';
 import LMLoader from '../../../LikeMinds-ReactNative-Feed-UI/src/base/LMLoader';
 
 const UniversalFeed = () => {
@@ -77,7 +79,7 @@ const UniversalFeed = () => {
   async function fetchFeed() {
     let payload = {
       page: feedPageNumber,
-      pageSize: 30,
+      pageSize: 20,
     };
     // calling getFeed API
     let getFeedResponse = await dispatch(
@@ -181,29 +183,9 @@ const UniversalFeed = () => {
 
   const getPostDetail = () => {
     const postDetail = feedData.find(
-      (item: any) => item.Id === selectedMenuItemPostId,
+      (item: LMPostUI) => item.id === selectedMenuItemPostId,
     );
     return postDetail;
-  };
-   // this function invoke the share options for sharing the post link
-   const onShare = async () => {
-    try {
-      const result = await Share.share({
-        // todo: static data (replace with the deeplink) 
-        message: 'www.google.com',
-      });
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // shared with activity type of result.activityType
-        } else {
-          // shared
-        }
-      } else if (result.action === Share.dismissedAction) {
-        // dismissed
-      }
-    } catch (error: any) {
-      Alert.alert(error.message);
-    }
   };
 
   return (
@@ -212,14 +194,14 @@ const UniversalFeed = () => {
       {feedData?.length > 0 ? (
         <FlashList
           data={feedData}
-          renderItem={({item}: any) => (
+          renderItem={({item}: {item: LMPostUI}) => (
             <LMPost
               post={item}
               // header props
               headerProps={{
                 post: item,
                 postMenu: {
-                  postId: item.Id,
+                  postId: item.id,
                   menuItems: item.menuItems,
                   modalPosition: modalPosition,
                   modalVisible: showActionListModal,
@@ -241,21 +223,21 @@ const UniversalFeed = () => {
                 showShareIcon: true,
                 likeIconButton: {
                   onTap: () => {
-                    postLikeHandler(item.Id);
+                    postLikeHandler(item.id);
                   },
                 },
                 saveButton: {
                   onTap: () => {
-                    savePostHandler(item.Id);
+                    savePostHandler(item.id);
                   },
                 },
                 likeTextButton: {
-                  onTap: () => NavigationService.navigate('LikesList', item.Id),
+                  onTap: () => NavigationService.navigate('LikesList', item.id),
                 },
               }}
             />
           )}
-          estimatedItemSize={200}
+          estimatedItemSize={5}
           onEndReached={() => {
             setFeedPageNumber(feedPageNumber + 1);
           }}
@@ -265,7 +247,7 @@ const UniversalFeed = () => {
           onViewableItemsChanged={({changed, viewableItems}) => {
             if (changed) {
               if (viewableItems) {
-                dispatch(autoPlayPostVideo(viewableItems[0]?.item.Id) as any);
+                dispatch(autoPlayPostVideo(viewableItems[0]?.item.id) as any);
               }
             }
           }}
