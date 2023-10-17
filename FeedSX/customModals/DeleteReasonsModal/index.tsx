@@ -1,14 +1,13 @@
 import {View, Text, Modal, Pressable} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {PostUI} from '../../models/postModel';
 import styles from './styles';
 import {useDispatch} from 'react-redux';
 import {getReportTags} from '../../store/actions/feed';
 import {GetReportTagsRequest} from 'likeminds-sdk';
 import {useAppSelector} from '../../store/store';
 import STYLES from '../../constants/Styles';
-import {LMLoader} from '../../components';
 import {DELETE_TAGS_TYPE, DELETION_REASON} from '../../constants/Strings';
+import LMLoader from '../../../LikeMinds-ReactNative-Feed-UI/src/base/LMLoader';
 
 // delete reason's modal props
 interface DeleteReasonsModalProps {
@@ -16,14 +15,10 @@ interface DeleteReasonsModalProps {
   closeModal: () => void;
   selectedReason: (value: string) => void;
   handleDeleteModal: (value: boolean) => void;
+  modalBackdropColor?: string
 }
 
-type Props = DeleteReasonsModalProps & PostUI;
-
-const DeleteReasonsModal: React.FC<Props> = props => {
-  const {visible, closeModal, selectedReason, handleDeleteModal} =
-    props as DeleteReasonsModalProps;
-  const {modalBackdropColor} = props as PostUI;
+const DeleteReasonsModal = ({visible, closeModal, selectedReason, handleDeleteModal, modalBackdropColor}: DeleteReasonsModalProps) => {
 
   const dispatch = useDispatch();
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);

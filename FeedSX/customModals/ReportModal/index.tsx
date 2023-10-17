@@ -8,13 +8,11 @@ import {
   Image,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {PostUI} from '../../models/postModel';
 import styles from './styles';
 import {useDispatch} from 'react-redux';
 import {getReportTags, postReport} from '../../store/actions/feed';
 import {GetReportTagsRequest, PostReportRequest} from 'likeminds-sdk';
 import {useAppSelector} from '../../store/store';
-import {LMLoader} from '../../components';
 import {
   COMMENT_REPORT_ENTITY_TYPE,
   COMMENT_TYPE,
@@ -29,6 +27,7 @@ import {
   SOMETHING_WENT_WRONG,
 } from '../../constants/Strings';
 import {showToastMessage} from '../../store/actions/toast';
+import LMLoader from '../../../LikeMinds-ReactNative-Feed-UI/src/base/LMLoader';
 
 // interface for post report api request
 interface ReportRequest {
@@ -44,16 +43,13 @@ interface ReportModalProps {
   visible: boolean;
   closeModal: () => void;
   reportType: string;
+  postDetail: LMPostUI
 }
 
-type Props = ReportModalProps & PostUI;
-
-const ReportModal: React.FC<Props> = props => {
-  const {visible, closeModal, reportType} = props as ReportModalProps;
-  const {postDetail} = props as PostUI;
+const ReportModal = ({visible, closeModal, reportType, postDetail} : ReportModalProps) => {
+  const {id, uuid} = {...postDetail};
 
   const dispatch = useDispatch();
-  const {Id, uuid} = {...postDetail};
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [otherReason, setOtherReason] = useState('');
   const [selectedId, setSelectedId] = useState(-1);
@@ -224,7 +220,7 @@ const ReportModal: React.FC<Props> = props => {
               selectedId != -1 || otherReason
                 ? () => {
                     reportPost({
-                      entityId: Id,
+                      entityId: id,
                       entityType:
                         reportType === POST_TYPE
                           ? POST_REPORT_ENTITY_TYPE
