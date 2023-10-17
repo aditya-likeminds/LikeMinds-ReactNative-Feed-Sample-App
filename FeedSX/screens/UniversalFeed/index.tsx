@@ -1,6 +1,5 @@
 import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {Alert, Image, Text, TouchableOpacity, View} from 'react-native';
-import {LMLoader} from '../../components';
 import {PostStateProps} from '../../models/postModel';
 import {lmFeedClient} from '../../..';
 import {
@@ -36,6 +35,8 @@ import {
   REPORT_POST_MENU_ITEM,
   UNPIN_POST_MENU_ITEM,
 } from '../../constants/Strings';
+import LMLoader from '../../../LikeMinds-ReactNative-Feed-UI/src/base/LMLoader';
+import { postLikesClear } from '../../store/actions/postLikes';
 import ReportModal from '../../customModals/reportModal';
 
 const UniversalFeed = () => {
@@ -232,9 +233,10 @@ const UniversalFeed = () => {
                   },
                 },
                 likeTextButton: {
-                  onTap: () => NavigationService.navigate('LikesList', item.Id),
+                  onTap: () => {dispatch(postLikesClear() as any); NavigationService.navigate('LikesList', item.id)},
                 },
               }}
+              mediaProps={{attachments: item.attachments? item.attachments : [], videoProps:{videoUrl:'', showControls: true}, carouselProps:{attachments:item.attachments? item.attachments : [], videoItem:{videoUrl:'', showControls:true}}}}
             />
           )}
           estimatedItemSize={200}

@@ -4,6 +4,7 @@ import {
   POST_LIKES_DATA,
   POST_LIKES_SUCCESS,
   POST_LIKES_FAILED,
+  POST_LIKES_CLEAR,
 } from '../types/types';
 import {CALL_API} from '../apiMiddleware';
 import {lmFeedClient} from '../../..';
@@ -19,6 +20,16 @@ export const postLikes = (payload?: any) => async (dispatch: Dispatch) => {
         types: [POST_LIKES_DATA, POST_LIKES_SUCCESS, POST_LIKES_FAILED],
         showLoader: true,
       },
+    });
+  } catch (error) {
+    Alert.alert(`${error}`);
+  }
+};
+
+export const postLikesClear = () => async (dispatch: Dispatch) => {
+  try {
+    return await dispatch({
+      type: POST_LIKES_CLEAR,
     });
   } catch (error) {
     Alert.alert(`${error}`);

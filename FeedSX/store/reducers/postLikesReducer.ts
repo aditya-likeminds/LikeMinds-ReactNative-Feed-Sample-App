@@ -1,4 +1,6 @@
-import {POST_LIKES_SUCCESS} from '../types/types';
+import { LMMemberListItemProps } from '../../../LikeMinds-ReactNative-Feed-UI/src/components/LMMemberListItem/types';
+import { convertToLMLikesList, convertToLMUserUI } from '../../viewDataModels';
+import {POST_LIKES_CLEAR, POST_LIKES_SUCCESS} from '../types/types';
 
 const initialState = {
   postLike: [],
@@ -18,6 +20,9 @@ export function postLikesReducer(state = initialState, action: any) {
         item.user = userData[userIdOfPost];
       });
       return {...state, postLike: likes, totalLikes: totalCount, user: users};
+    }
+    case POST_LIKES_CLEAR: {
+      return {...state, postLike: []};
     }
     default:
       return state;
