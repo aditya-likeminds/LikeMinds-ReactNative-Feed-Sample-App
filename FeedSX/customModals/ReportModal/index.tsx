@@ -25,7 +25,7 @@ import {
   REPORT_PROBLEM,
   REPORT_TAGS_TYPE,
   SOMETHING_WENT_WRONG,
-} from '../../constants/Strings';
+} from '../../constants/strings';
 import {showToastMessage} from '../../store/actions/toast';
 import LMLoader from '../../../LikeMinds-ReactNative-Feed-UI/src/base/LMLoader';
 

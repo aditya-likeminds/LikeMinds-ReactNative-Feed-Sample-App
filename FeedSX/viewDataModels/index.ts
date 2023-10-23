@@ -7,8 +7,18 @@ import {
   IPost,
   IUser,
 } from 'likeminds-sdk';
-import { GetPostLikesResponse } from 'likeminds-sdk/dist/post/model/GetPostLikesResponse';
+import {GetPostLikesResponse} from 'likeminds-sdk/dist/post/model/GetPostLikesResponse';
 import Like from 'likeminds-sdk/dist/post/model/Like';
+import {DocumentMetaData, ImageVideoMetaData} from '../models/addPostMetaData';
+import {
+  DOCUMENT_ATTACHMENT_TYPE,
+  IMAGE_ATTACHMENT_TYPE,
+  LINK_ATTACHMENT_TYPE,
+  SELECTED_DOCUMENT_META_FORMAT,
+  SELECTED_IMAGE_META_FORMAT,
+  SELECTED_VIDEO_META_FORMAT,
+  VIDEO_ATTACHMENT_TYPE,
+} from '../constants/strings';
 
 /**
  * @param data: [GetFeedResponse]
@@ -161,15 +171,14 @@ export function convertToLMLikesList(data: GetPostLikesResponse): LMLikeUI[] {
 }
 
 /**
- * @param post: [Like]
- * @param user: [Map] of String to User
+ * @param likes: [Like]
+ * @param users: [Map] of String to User
  * @returns LMLikeUI
  */
 export function convertToLMLikeUI(
   likes: Like,
   users: {[key: string]: LMUserUI},
-): LMLikeUI
- {
+): LMLikeUI {
   const likesData: LMLikeUI = {
     id: likes.id,
     createdAt: likes.createdAt,
@@ -179,4 +188,98 @@ export function convertToLMLikeUI(
     user: convertToLMUserUI(users[likes.userId]),
   };
   return likesData;
+}
+
+/**
+ * @param data: [ImageVideoMetaData]
+ * @returns list of [LMAttachmentUI]
+ */
+export function convertImageVideoMetaData(
+  data: ImageVideoMetaData[],
+): LMAttachmentUI[] {
+  const convertedImageVideoMetaData = data?.map(item => {
+    return {
+      attachmentMeta: {
+        entityId: '',
+        format: item?.type,
+        name: item?.fileName,
+        ogTags: {
+          description: '',
+          title: '',
+          url: '',
+          image: '',
+        },
+        size: item?.fileSize,
+        duration: item?.duration,
+        pageCount: 0,
+        url: item?.uri,
+      },
+      attachmentType:
+        item?.type === SELECTED_IMAGE_META_FORMAT
+          ? IMAGE_ATTACHMENT_TYPE
+          : item?.type === SELECTED_VIDEO_META_FORMAT
+          ? VIDEO_ATTACHMENT_TYPE
+          : 0, // You need to specify the attachment type.
+    };
+  });
+  return convertedImageVideoMetaData;
+}
+
+/**
+ * @param data: [DocumentMetaData]
+ * @returns list of [LMAttachmentUI]
+ */
+export function convertDocumentMetaData(
+  data: DocumentMetaData[],
+): LMAttachmentUI[] {
+  const convertedDocumentMetaData = data.map(item => {
+    return {
+      attachmentMeta: {
+        entityId: '',
+        format: item?.type,
+        name: item?.name,
+        ogTags: {
+          description: '',
+          title: '',
+          url: '',
+          image: '',
+        },
+        size: item?.size,
+        duration: 0,
+        pageCount: 0,
+        url: item?.uri,
+      },
+      attachmentType:
+        item?.type === SELECTED_DOCUMENT_META_FORMAT ? DOCUMENT_ATTACHMENT_TYPE : 0, // You need to specify the attachment type.
+    };
+  });
+  return convertedDocumentMetaData;
+}
+
+/**
+ * @param data: [LMOGTagsUI]
+ * @returns list of [LMAttachmentUI]
+ */
+export function convertLinkMetaData(data: LMOGTagsUI[]): LMAttachmentUI[] {
+  const convertedLinkMetaData = data.map(item => {
+    return {
+      attachmentMeta: {
+        entityId: '',
+        format: '',
+        name: '',
+        ogTags: {
+          description: item?.description,
+          title: item?.title,
+          url: item?.url,
+          image: item?.image,
+        },
+        size: 0,
+        duration: 0,
+        pageCount: 0,
+        url: '',
+      },
+      attachmentType: LINK_ATTACHMENT_TYPE, // You need to specify the attachment type.
+    };
+  });
+  return convertedLinkMetaData;
 }

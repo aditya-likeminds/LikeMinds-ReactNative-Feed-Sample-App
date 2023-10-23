@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
-import Layout from '../../constants/Layout';
-import STYLES from '../../constants/Styles';
+import Layout from '../../constants/layout';
+import STYLES from '../../constants/styles';
 
 export const styles = StyleSheet.create({
   newPostButtonView: {
@@ -22,4 +22,19 @@ export const styles = StyleSheet.create({
     fontFamily: STYLES.$FONT_FAMILY.BOLD,
     marginLeft: STYLES.$MARGINS.SMALL,
   },
+  postUploadingView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    marginBottom: 10,
+  },
+  uploadingImageVideoBox: {
+    backgroundColor: '#fff',
+    width: 49,
+    height: 42,
+    marginRight: 10,
+  }
 });

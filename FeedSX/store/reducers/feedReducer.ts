@@ -3,7 +3,7 @@ import {
   PIN_THIS_POST,
   UNPIN_POST_ID,
   UNPIN_THIS_POST,
-} from '../../constants/Strings';
+} from '../../constants/strings';
 import { convertUniversalFeedPosts } from '../../viewDataModels';
 import {
   UNIVERSAL_FEED_SUCCESS,

@@ -5,6 +5,7 @@ import {CreatePost, LikesList, UniversalFeed} from '../screens';
 import {navigationRef} from './RootNavigation';
 import {useAppSelector} from '../store/store';
 import {LMToast} from '../components';
+import { CREATE_POST, LIKES_LIST, UNIVERSAL_FEED } from '../constants/screenNames';
 
 const Stack = createStackNavigator();
 const SwitchComponent = () => {
@@ -14,9 +15,9 @@ const SwitchComponent = () => {
     <>
       <NavigationContainer ref={navigationRef}>
         <Stack.Navigator screenOptions={{headerShown:false}}>
-          <Stack.Screen name={'UniversalFeed'} component={UniversalFeed} />
-          <Stack.Screen name={'LikesList'} component={LikesList} />
-          <Stack.Screen name={'CreatePost'} component={CreatePost} />
+          <Stack.Screen name={UNIVERSAL_FEED} component={UniversalFeed} />
+          <Stack.Screen name={LIKES_LIST} component={LikesList} />
+          <Stack.Screen name={CREATE_POST} component={CreatePost} />
         </Stack.Navigator>
       </NavigationContainer>
 

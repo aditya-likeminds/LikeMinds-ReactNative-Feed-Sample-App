@@ -41,3 +41,32 @@ export const CONFIRM_DELETE = (type:string) => (`Are you sure you want to delete
 export const REPORT_INSTRUSTION = (type: string) => (`You would be able to report this ${type} after selecting a problem`)
 export const REPORT_PROBLEM = 'Please specify the problem to continue'
 export const DELETION_REASON = 'Reason for deletion'
+
+// app name
+export const APP_TITLE = 'LikeMinds Sample App'
+
+// uploading post processing text
+export const POST_UPLOADING = 'Posting'
+
+// meta format of selected media
+export const SELECTED_IMAGE_META_FORMAT = 'image/jpg'
+export const SELECTED_VIDEO_META_FORMAT = 'video/mp4'
+export const SELECTED_DOCUMENT_META_FORMAT = 'application/pdf'
+
+// selection types of media
+export const SELECT_IMAGE = 'photo'
+export const SELECT_BOTH = 'mixed'
+export const SELECT_VIDEO = 'video'
+
+// create post screen's text
+export const ADD_FILES = 'Attach Files'
+export const ADD_IMAGES = 'Add Photo'
+export const ADD_VIDEOS = 'Add Video'
+export const CREATE_POST_PLACEHOLDER_TEXT = "Write something here..."
+export const ADD_MORE_MEDIA = "Add More"
+
+// android storage permession's text
+export const STORAGE_PERMISSION = 'Storage Permission'
+export const STORAGE_PERMISSION_MESSAGE = 'App needs permission to access your storage'
+export const STORAGE_PERMISSION_ALERT_HEADING = 'Storage Permission Required'
+export const STORAGE_PERMISSION_ALERT_DESCRIPTION = 'App needs access to your storage to read files. Please go to app settings and grant permission.'

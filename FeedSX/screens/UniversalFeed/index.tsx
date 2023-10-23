@@ -35,20 +35,23 @@ import {
 } from '../../../LikeMinds-ReactNative-Feed-UI';
 import {NavigationService} from '../../navigation';
 import {
+  APP_TITLE,
   DELETE_POST_MENU_ITEM,
   DOCUMENT_ATTACHMENT_TYPE,
   IMAGE_ATTACHMENT_TYPE,
   PIN_POST_MENU_ITEM,
   POST_TYPE,
+  POST_UPLOADING,
   REPORT_POST_MENU_ITEM,
   UNPIN_POST_MENU_ITEM,
   VIDEO_ATTACHMENT_TYPE,
-} from '../../constants/Strings';
+} from '../../constants/strings';
 import {DeleteModal, ReportModal} from '../../customModals';
 import LMLoader from '../../../LikeMinds-ReactNative-Feed-UI/src/base/LMLoader';
 import {postLikesClear} from '../../store/actions/postLikes';
-import AWS from 'aws-sdk';
 import {setUploadAttachments, addPost} from '../../store/actions/createPost';
+import { CREATE_POST, LIKES_LIST } from '../../constants/screenNames';
+import { uploadFilesToAWS } from '../../utils';
 
 const UniversalFeed = () => {
   const dispatch = useDispatch();
@@ -114,6 +117,7 @@ const UniversalFeed = () => {
 
   // this useEffect handles the execution of addPost api
   useEffect(() => {
+    // this checks if any media is selected to be posted and then executes the addPost api
     if (
       mediaAttachmemnts.length > 0 ||
       linkAttachments.length > 0 ||
@@ -124,43 +128,11 @@ const UniversalFeed = () => {
     }
   }, [mediaAttachmemnts, linkAttachments, postContent]);
 
-  // aws configuration
-  function getAWS() {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    (AWS.config.region = process.env.AWS_REGION),
-      (AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: `${process.env.AWS_IDENTITY_POOL_ID}`,
-      }));
-    const s3 = new AWS.S3({
-      apiVersion: process.env.S3_API_VERSION,
-      params: {Bucket: process.env.S3_BUCKET},
-    });
-    return s3;
-  }
-
-  // this function uploads the media on AWS S3 bucket
-  const uploadMedia = async (media: any, userUniqueId: string) => {
-    const response = await fetch(media.url);
-    const blob = await response.blob();
-    let mediaObject = getAWS()
-      .upload({
-        Key: `files/post/${userUniqueId}/${media.name}`,
-        Bucket: `${process.env.S3_BUCKET}`,
-        Body: blob,
-        ACL: `public-read-write`,
-        ContentType: media.format,
-      })
-      .on('httpUploadProgress', function (progress) {
-        Math.round((progress.loaded / progress.total) * 100);
-      });
-    return mediaObject.promise();
-  };
-
   // this function adds a new post
   const postAdd = async () => {
     const uploadPromises = mediaAttachmemnts.map(
       async (item: LMAttachmentUI) => {
-        return uploadMedia(item.attachmentMeta, memberData.userUniqueId).then(
+        return uploadFilesToAWS(item.attachmentMeta, memberData.userUniqueId).then(
           res => {
             item.attachmentMeta.url = res.Location;
             return item; // Return the updated item
@@ -295,31 +267,18 @@ const UniversalFeed = () => {
   return (
     <SafeAreaView style={{height: '100%'}}>
       {/* header */}
-      <LMHeader heading="LikeMinds Sample App" />
+      <LMHeader heading={APP_TITLE} />
       {/* post uploading section */}
       {postUploading && (
         <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            paddingHorizontal: 15,
-            paddingVertical: 10,
-            alignItems: 'center',
-            backgroundColor: '#fff',
-            marginBottom: 10,
-          }}>
+          style={styles.postUploadingView}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             {/* post uploading media preview */}
             {uploadingMediaAttachmentType === IMAGE_ATTACHMENT_TYPE && (
               <LMImage
                 imageUrl={uploadingMediaAttachment}
                 imageStyle={{backgroundColor: '#fff'}}
-                boxStyle={{
-                  backgroundColor: '#fff',
-                  width: 49,
-                  height: 42,
-                  marginRight: 10,
-                }}
+                boxStyle={styles.uploadingImageVideoBox}
                 width={49}
                 height={42}
               />
@@ -328,12 +287,7 @@ const UniversalFeed = () => {
               <LMVideo
                 videoUrl={uploadingMediaAttachment}
                 videoStyle={{backgroundColor: '#fff'}}
-                boxStyle={{
-                  backgroundColor: '#fff',
-                  width: 49,
-                  height: 42,
-                  marginRight: 10,
-                }}
+                boxStyle={styles.uploadingImageVideoBox}
                 width={49}
                 height={42}
                 showControls={false}
@@ -349,7 +303,7 @@ const UniversalFeed = () => {
                 width={45}
               />
             )}
-            <Text>Posting</Text>
+            <Text>{POST_UPLOADING}</Text>
           </View>
           {/* progress loader */}
           <LMLoader size={10} />
@@ -366,8 +320,8 @@ const UniversalFeed = () => {
               headerProps={{
                 post: item,
                 postMenu: {
-                  postId: item.id,
-                  menuItems: item.menuItems,
+                  postId: item?.id,
+                  menuItems: item?.menuItems,
                   modalPosition: modalPosition,
                   modalVisible: showActionListModal,
                   onCloseModal: closePostActionListModal,
@@ -380,34 +334,34 @@ const UniversalFeed = () => {
               }}
               // footer props
               footerProps={{
-                isLiked: item.isLiked,
-                isSaved: item.isSaved,
-                likesCount: item.likesCount,
-                commentsCount: item.commentsCount,
+                isLiked: item?.isLiked,
+                isSaved: item?.isSaved,
+                likesCount: item?.likesCount,
+                commentsCount: item?.commentsCount,
                 showBookMarkIcon: true,
                 showShareIcon: true,
                 likeIconButton: {
                   onTap: () => {
-                    postLikeHandler(item.id);
+                    postLikeHandler(item?.id);
                   },
                 },
                 saveButton: {
                   onTap: () => {
-                    savePostHandler(item.id);
+                    savePostHandler(item?.id);
                   },
                 },
                 likeTextButton: {
                   onTap: () => {
                     dispatch(postLikesClear() as any);
-                    NavigationService.navigate('LikesList', item.id);
+                    NavigationService.navigate(LIKES_LIST, item?.id);
                   },
                 },
               }}
               mediaProps={{
-                attachments: item.attachments ? item.attachments : [],
+                attachments: item?.attachments ? item.attachments : [],
                 videoProps: {videoUrl: '', showControls: true},
                 carouselProps: {
-                  attachments: item.attachments ? item.attachments : [],
+                  attachments: item?.attachments ? item.attachments : [],
                   videoItem: {videoUrl: '', showControls: true},
                 },
               }}
@@ -444,7 +398,7 @@ const UniversalFeed = () => {
       <TouchableOpacity
         disabled={postUploading}
         style={styles.newPostButtonView}
-        onPress={() => NavigationService.navigate('CreatePost')}>
+        onPress={() => NavigationService.navigate(CREATE_POST)}>
         <Image
           source={require('../../assets/images/add_post_icon3x.png')}
           resizeMode={'contain'}

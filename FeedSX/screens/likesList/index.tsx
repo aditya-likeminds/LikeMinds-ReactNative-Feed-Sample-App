@@ -7,6 +7,7 @@ import {useDispatch} from 'react-redux';
 import {useAppSelector} from '../../store/store';
 import {LMHeader, LMMemberListItem} from '../../../LikeMinds-ReactNative-Feed-UI';
 import {NavigationService} from '../../navigation';
+import { UNIVERSAL_FEED } from '../../constants/screenNames';
 
 const LikesList = (props: any) => {
   const dispatch = useDispatch();
@@ -40,7 +41,7 @@ const LikesList = (props: any) => {
         showBackArrow
         heading="Likes"
         subHeading={totalLikes > 1 ? `${totalLikes} likes`: `${totalLikes} like`}
-        onBackPress={() => NavigationService.navigate('UniversalFeed')}
+        onBackPress={() => NavigationService.navigate(UNIVERSAL_FEED)}
       />
       {/* post likes list */}
       {postLike && (

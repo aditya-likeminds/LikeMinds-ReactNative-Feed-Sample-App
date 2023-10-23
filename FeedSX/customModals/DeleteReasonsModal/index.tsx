@@ -5,8 +5,8 @@ import {useDispatch} from 'react-redux';
 import {getReportTags} from '../../store/actions/feed';
 import {GetReportTagsRequest} from 'likeminds-sdk';
 import {useAppSelector} from '../../store/store';
-import STYLES from '../../constants/Styles';
-import {DELETE_TAGS_TYPE, DELETION_REASON} from '../../constants/Strings';
+import STYLES from '../../constants/styles';
+import {DELETE_TAGS_TYPE, DELETION_REASON} from '../../constants/strings';
 import LMLoader from '../../../LikeMinds-ReactNative-Feed-UI/src/base/LMLoader';
 
 // delete reason's modal props

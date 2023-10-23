@@ -19,8 +19,8 @@ import {
   CONFIRM_DELETE,
   DELETION_REASON,
   REASON_FOR_DELETION_PLACEHOLDER,
-} from '../../constants/Strings';
-import STYLES from '../../constants/Styles';
+} from '../../constants/strings';
+import STYLES from '../../constants/styles';
 
 // delete modal's props
 interface DeleteModalProps {
