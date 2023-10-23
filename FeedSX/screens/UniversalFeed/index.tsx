@@ -52,6 +52,7 @@ import {postLikesClear} from '../../store/actions/postLikes';
 import {setUploadAttachments, addPost} from '../../store/actions/createPost';
 import { CREATE_POST, LIKES_LIST } from '../../constants/screenNames';
 import { uploadFilesToAWS } from '../../utils';
+import STYLES from '../../constants/styles';
 
 const UniversalFeed = () => {
   const dispatch = useDispatch();
@@ -279,8 +280,8 @@ const UniversalFeed = () => {
                 imageUrl={uploadingMediaAttachment}
                 imageStyle={{backgroundColor: '#fff'}}
                 boxStyle={styles.uploadingImageVideoBox}
-                width={49}
-                height={42}
+                width={styles.uploadingImageVideoBox.width}
+                height={styles.uploadingImageVideoBox.height}
               />
             )}
             {uploadingMediaAttachmentType === VIDEO_ATTACHMENT_TYPE && (
@@ -288,8 +289,8 @@ const UniversalFeed = () => {
                 videoUrl={uploadingMediaAttachment}
                 videoStyle={{backgroundColor: '#fff'}}
                 boxStyle={styles.uploadingImageVideoBox}
-                width={49}
-                height={42}
+                width={styles.uploadingImageVideoBox.width}
+                height={styles.uploadingImageVideoBox.height}
                 showControls={false}
                 boxFit="contain"
               />
@@ -299,14 +300,14 @@ const UniversalFeed = () => {
                 assetPath={require('../../assets/images/pdf_icon3x.png')}
                 type="png"
                 iconStyle={{marginRight: 2, resizeMode: 'contain'}}
-                height={40}
-                width={45}
+                height={styles.uploadingPdfIconSize.height}
+                width={styles.uploadingPdfIconSize.width}
               />
             )}
             <Text>{POST_UPLOADING}</Text>
           </View>
           {/* progress loader */}
-          <LMLoader size={10} />
+          <LMLoader size={STYLES.$LMLoaderSize} />
         </View>
       )}
       {/* posts list section */}

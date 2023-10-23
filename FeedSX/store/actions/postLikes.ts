@@ -26,6 +26,7 @@ export const postLikes = (payload?: any) => async (dispatch: Dispatch) => {
   }
 };
 
+// clear post likes data action
 export const postLikesClear = () => async (dispatch: Dispatch) => {
   try {
     return await dispatch({

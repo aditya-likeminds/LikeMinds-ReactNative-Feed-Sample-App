@@ -31,6 +31,7 @@ import {
   ADD_FILES,
   ADD_IMAGES,
   ADD_MORE_MEDIA,
+  ADD_POST_TEXT,
   ADD_VIDEOS,
   CREATE_POST_PLACEHOLDER_TEXT,
   SELECTED_IMAGE_META_FORMAT,
@@ -221,7 +222,7 @@ const CreatePost = () => {
               );
               NavigationService.goBack();
             }}>
-            <Text>POST</Text>
+            <Text>{ADD_POST_TEXT}</Text>
           </TouchableOpacity>
         }
       />
@@ -323,12 +324,7 @@ const CreatePost = () => {
             }}
             text={{
               text: ADD_MORE_MEDIA,
-              textStyle: {
-                fontSize: 14,
-                fontWeight: '500',
-                color: '#5046E5',
-                marginLeft: 5,
-              },
+              textStyle: styles.addMoreButtonText,
             }}
             buttonStyle={styles.addMoreButtonView}
           />
@@ -344,11 +340,11 @@ const CreatePost = () => {
               handleGallery(SELECT_IMAGE);
             }}>
             <LMIcon
-              type="png"
+              type='png'
               assetPath={require('../../assets/images/gallery_icon3x.png')}></LMIcon>
             <LMText
               text={ADD_IMAGES}
-              textStyle={{marginLeft: 8, color: '#222020'}}
+              textStyle={styles.selectionOptionstext}
             />
           </TouchableOpacity>
           {/* add video button */}
@@ -362,7 +358,7 @@ const CreatePost = () => {
               assetPath={require('../../assets/images/video_icon3x.png')}></LMIcon>
             <LMText
               text={ADD_VIDEOS}
-              textStyle={{marginLeft: 8, color: '#222020'}}
+              textStyle={styles.selectionOptionstext}
             />
           </TouchableOpacity>
           {/* add files button */}
@@ -376,7 +372,7 @@ const CreatePost = () => {
               assetPath={require('../../assets/images/paperClip_icon3x.png')}></LMIcon>
             <LMText
               text={ADD_FILES}
-              textStyle={{marginLeft: 8, color: '#222020'}}
+              textStyle={styles.selectionOptionstext}
             />
           </TouchableOpacity>
         </View>

@@ -36,5 +36,9 @@ export const styles = StyleSheet.create({
     width: 49,
     height: 42,
     marginRight: 10,
+  },
+  uploadingPdfIconSize: {
+    width: 45,
+    height: 40
   }
 });

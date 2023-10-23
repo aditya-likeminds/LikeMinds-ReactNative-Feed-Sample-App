@@ -49,4 +49,14 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 7,
   },
+  addMoreButtonText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#5046E5',
+    marginLeft: 5,
+  },
+  selectionOptionstext: {
+    marginLeft: 8,
+    color: '#222020',
+  },
 });

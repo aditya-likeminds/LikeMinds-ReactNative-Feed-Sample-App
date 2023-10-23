@@ -55,5 +55,6 @@ export default {
       XL: 25,
       XXL: 30
     },
+    $LMLoaderSize: 10
   };
   
