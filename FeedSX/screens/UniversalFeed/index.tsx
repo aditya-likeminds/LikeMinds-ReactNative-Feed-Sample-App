@@ -1,7 +1,8 @@
 import React, {useEffect, useLayoutEffect, useState} from 'react';
-import {Alert, Image, Text, TouchableOpacity, View} from 'react-native';
+import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import {lmFeedClient} from '../../..';
 import {
+  AddPostRequest,
   GetFeedRequest,
   LikePostRequest,
   PinPostRequest,
@@ -10,6 +11,7 @@ import {
 import {useDispatch} from 'react-redux';
 import {
   autoPlayPostVideo,
+  clearFeed,
   getFeed,
   getMemberState,
   initiateUser,
@@ -22,26 +24,38 @@ import {
 } from '../../store/actions/feed';
 import {navigationRef} from '../../navigation/RootNavigation';
 import {useAppSelector} from '../../store/store';
-import {
-  FlashList
-} from '@shopify/flash-list';
+import {FlashList} from '@shopify/flash-list';
 import {styles} from './styles';
-import {LMPost} from '../../../LikeMinds-ReactNative-Feed-UI';
+import {
+  LMHeader,
+  LMIcon,
+  LMImage,
+  LMPost,
+  LMVideo,
+} from '../../../LikeMinds-ReactNative-Feed-UI';
 import {NavigationService} from '../../navigation';
 import {
   DELETE_POST_MENU_ITEM,
+  DOCUMENT_ATTACHMENT_TYPE,
+  IMAGE_ATTACHMENT_TYPE,
   PIN_POST_MENU_ITEM,
   POST_TYPE,
   REPORT_POST_MENU_ITEM,
   UNPIN_POST_MENU_ITEM,
+  VIDEO_ATTACHMENT_TYPE,
 } from '../../constants/Strings';
 import {DeleteModal, ReportModal} from '../../customModals';
 import LMLoader from '../../../LikeMinds-ReactNative-Feed-UI/src/base/LMLoader';
-import { postLikesClear } from '../../store/actions/postLikes';
+import {postLikesClear} from '../../store/actions/postLikes';
+import AWS from 'aws-sdk';
+import {setUploadAttachments, addPost} from '../../store/actions/createPost';
 
 const UniversalFeed = () => {
   const dispatch = useDispatch();
   const feedData = useAppSelector(state => state.feed.feed);
+  const {mediaAttachmemnts, linkAttachments, postContent} = useAppSelector(
+    state => state.createPost,
+  );
   const showLoader = useAppSelector(state => state.loader.count);
   const [feedPageNumber, setFeedPageNumber] = useState(1);
   const [communityId, setCommunityId] = useState('');
@@ -51,6 +65,10 @@ const UniversalFeed = () => {
   const [selectedMenuItemPostId, setSelectedMenuItemPostId] = useState('');
   const [showDeleteModal, setDeleteModal] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
+  const memberData = useAppSelector(state => state.feed.member);
+  const [postUploading, setPostUploading] = useState(false);
+  let uploadingMediaAttachmentType = mediaAttachmemnts[0]?.attachmentType;
+  let uploadingMediaAttachment = mediaAttachmemnts[0]?.attachmentMeta.url;
 
   // this function calls initiate user API and sets the access token and community id
   async function getInitialData() {
@@ -93,6 +111,90 @@ const UniversalFeed = () => {
     );
     return getFeedResponse;
   }
+
+  // this useEffect handles the execution of addPost api
+  useEffect(() => {
+    if (
+      mediaAttachmemnts.length > 0 ||
+      linkAttachments.length > 0 ||
+      postContent != ''
+    ) {
+      setPostUploading(true);
+      postAdd();
+    }
+  }, [mediaAttachmemnts, linkAttachments, postContent]);
+
+  // aws configuration
+  function getAWS() {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    (AWS.config.region = process.env.AWS_REGION),
+      (AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: `${process.env.AWS_IDENTITY_POOL_ID}`,
+      }));
+    const s3 = new AWS.S3({
+      apiVersion: process.env.S3_API_VERSION,
+      params: {Bucket: process.env.S3_BUCKET},
+    });
+    return s3;
+  }
+
+  // this function uploads the media on AWS S3 bucket
+  const uploadMedia = async (media: any, userUniqueId: string) => {
+    const response = await fetch(media.url);
+    const blob = await response.blob();
+    let mediaObject = getAWS()
+      .upload({
+        Key: `files/post/${userUniqueId}/${media.name}`,
+        Bucket: `${process.env.S3_BUCKET}`,
+        Body: blob,
+        ACL: `public-read-write`,
+        ContentType: media.format,
+      })
+      .on('httpUploadProgress', function (progress) {
+        Math.round((progress.loaded / progress.total) * 100);
+      });
+    return mediaObject.promise();
+  };
+
+  // this function adds a new post
+  const postAdd = async () => {
+    const uploadPromises = mediaAttachmemnts.map(
+      async (item: LMAttachmentUI) => {
+        return uploadMedia(item.attachmentMeta, memberData.userUniqueId).then(
+          res => {
+            item.attachmentMeta.url = res.Location;
+            return item; // Return the updated item
+          },
+        );
+      },
+    );
+    // Wait for all upload operations to complete
+    const updatedAttachments = await Promise.all(uploadPromises);
+    let addPostResponse = await dispatch(
+      addPost(
+        AddPostRequest.builder()
+          .setAttachments([...updatedAttachments, ...linkAttachments])
+          .setText(postContent)
+          .build(),
+      ) as any,
+    );
+    if (addPostResponse) {
+      dispatch(
+        setUploadAttachments({
+          allAttachment: [],
+          linkData: [],
+          conText: '',
+        }) as any,
+      );
+      setPostUploading(false);
+      await dispatch(clearFeed() as any);
+      setFeedPageNumber(1);
+      setTimeout(() => {
+        fetchFeed();
+      }, 1000);
+    }
+    return addPostResponse;
+  };
 
   // this functions hanldes the post like functionality
   async function postLikeHandler(id: string) {
@@ -182,6 +284,7 @@ const UniversalFeed = () => {
     }
   };
 
+  // this function gets the detail pf post whose menu item is clicked
   const getPostDetail = () => {
     const postDetail = feedData.find(
       (item: LMPostUI) => item.id === selectedMenuItemPostId,
@@ -190,7 +293,68 @@ const UniversalFeed = () => {
   };
 
   return (
-    <View style={{height: '100%'}}>
+    <SafeAreaView style={{height: '100%'}}>
+      {/* header */}
+      <LMHeader heading="LikeMinds Sample App" />
+      {/* post uploading section */}
+      {postUploading && (
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            paddingHorizontal: 15,
+            paddingVertical: 10,
+            alignItems: 'center',
+            backgroundColor: '#fff',
+            marginBottom: 10,
+          }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            {/* post uploading media preview */}
+            {uploadingMediaAttachmentType === IMAGE_ATTACHMENT_TYPE && (
+              <LMImage
+                imageUrl={uploadingMediaAttachment}
+                imageStyle={{backgroundColor: '#fff'}}
+                boxStyle={{
+                  backgroundColor: '#fff',
+                  width: 49,
+                  height: 42,
+                  marginRight: 10,
+                }}
+                width={49}
+                height={42}
+              />
+            )}
+            {uploadingMediaAttachmentType === VIDEO_ATTACHMENT_TYPE && (
+              <LMVideo
+                videoUrl={uploadingMediaAttachment}
+                videoStyle={{backgroundColor: '#fff'}}
+                boxStyle={{
+                  backgroundColor: '#fff',
+                  width: 49,
+                  height: 42,
+                  marginRight: 10,
+                }}
+                width={49}
+                height={42}
+                showControls={false}
+                boxFit="contain"
+              />
+            )}
+            {uploadingMediaAttachmentType === DOCUMENT_ATTACHMENT_TYPE && (
+              <LMIcon
+                assetPath={require('../../assets/images/pdf_icon3x.png')}
+                type="png"
+                iconStyle={{marginRight: 2, resizeMode: 'contain'}}
+                height={40}
+                width={45}
+              />
+            )}
+            <Text>Posting</Text>
+          </View>
+          {/* progress loader */}
+          <LMLoader size={10} />
+        </View>
+      )}
       {/* posts list section */}
       {feedData?.length > 0 ? (
         <FlashList
@@ -233,13 +397,24 @@ const UniversalFeed = () => {
                   },
                 },
                 likeTextButton: {
-                  onTap: () => {dispatch(postLikesClear() as any); NavigationService.navigate('LikesList', item.id)},
+                  onTap: () => {
+                    dispatch(postLikesClear() as any);
+                    NavigationService.navigate('LikesList', item.id);
+                  },
                 },
               }}
-              mediaProps={{attachments: item.attachments? item.attachments : [], videoProps:{videoUrl:'', showControls: true}, carouselProps:{attachments:item.attachments? item.attachments : [], videoItem:{videoUrl:'', showControls:true}}}}
+              mediaProps={{
+                attachments: item.attachments ? item.attachments : [],
+                videoProps: {videoUrl: '', showControls: true},
+                carouselProps: {
+                  attachments: item.attachments ? item.attachments : [],
+                  videoItem: {videoUrl: '', showControls: true},
+                },
+              }}
             />
           )}
-          estimatedItemSize={5}
+          estimatedItemSize={500}
+          onEndReachedThreshold={0.3}
           onEndReached={() => {
             setFeedPageNumber(feedPageNumber + 1);
           }}
@@ -266,7 +441,10 @@ const UniversalFeed = () => {
         </View>
       )}
       {/* create post button section */}
-      <TouchableOpacity style={styles.newPostButtonView} onPress={() => NavigationService.navigate('CreatePost')}>
+      <TouchableOpacity
+        disabled={postUploading}
+        style={styles.newPostButtonView}
+        onPress={() => NavigationService.navigate('CreatePost')}>
         <Image
           source={require('../../assets/images/add_post_icon3x.png')}
           resizeMode={'contain'}
@@ -292,7 +470,7 @@ const UniversalFeed = () => {
           postDetail={getPostDetail()}
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 

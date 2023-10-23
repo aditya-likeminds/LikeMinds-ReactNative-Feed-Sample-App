@@ -65,3 +65,4 @@ yarn-error.log
 google-services.json
 GoogleService-info.plist
 package-lock.json
+.env

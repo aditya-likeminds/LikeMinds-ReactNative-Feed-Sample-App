@@ -34,6 +34,7 @@ import {
   PIN_POST_STATE,
   DELETE_POST_STATE,
   AUTO_PLAY_POST_VIDEO,
+  CLEAR_FEED,
 } from '../types/types';
 import {lmFeedClient} from '../../..';
 import {InitiateUserRequest} from 'likeminds-sdk';
@@ -93,6 +94,18 @@ export const getFeed = (payload?: any) => async (dispatch: Dispatch) => {
         ],
         showLoader: true,
       },
+    });
+  } catch (error) {
+    Alert.alert(`${error}`);
+  }
+};
+
+// clear feed data action
+export const clearFeed = () => async (dispatch: Dispatch) => {
+  try {
+    return await dispatch({
+      type: CLEAR_FEED,
+      body: []
     });
   } catch (error) {
     Alert.alert(`${error}`);

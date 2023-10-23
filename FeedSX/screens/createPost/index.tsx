@@ -5,7 +5,6 @@ import {
   SafeAreaView,
   Text,
   ScrollView,
-  Alert,
 } from 'react-native';
 import React, {useState} from 'react';
 import {launchImageLibrary} from 'react-native-image-picker';
@@ -16,6 +15,7 @@ import {
   LMButton,
   LMCarousel,
   LMDocument,
+  LMHeader,
   LMIcon,
   LMImage,
   LMInputText,
@@ -32,10 +32,15 @@ import {
   VIDEO_ATTACHMENT_TYPE,
 } from '../../constants/Strings';
 import {DecodeURLRequest} from 'likeminds-sdk';
-import {getDecodedUrl } from '../../store/actions/createPost';
-import { useDispatch } from 'react-redux';
+import {
+  getDecodedUrl,
+  setUploadAttachments,
+} from '../../store/actions/createPost';
+import {useDispatch} from 'react-redux';
+import {NavigationService} from '../../navigation';
 
-interface imageFormat {
+// selected image/video format interface
+interface imageDefaultFormat {
   fileName: string;
   fileSize: number;
   height: number;
@@ -46,7 +51,8 @@ interface imageFormat {
   duration?: number;
   originalPath?: string;
 }
-interface docFormat {
+// selected document format interface
+interface docDefaultFormat {
   name: string;
   size: number;
   fileCopyUri: null;
@@ -57,18 +63,22 @@ interface docFormat {
 const CreatePost = () => {
   const memberData = useAppSelector(state => state.feed.member);
   const dispatch = useDispatch();
-  const linkPreviewData =useAppSelector(state => state.createPost.ogTags)
-
-  const [formattedDocAttachments, setFormattedDocAttachments] = useState<Array<LMAttachmentUI>>([]);
-  const [formattedMediaAttachments, setFormattedMediaAttachments] = useState<Array<LMAttachmentUI>>([]);
-  const [formattedLinkAttachments, setFormattedLinkAttachments] = useState<Array<LMAttachmentUI>>([]);
+  const [formattedDocAttachments, setFormattedDocAttachments] = useState<
+    Array<LMAttachmentUI>
+  >([]);
+  const [formattedMediaAttachments, setFormattedMediaAttachments] = useState<
+    Array<LMAttachmentUI>
+  >([]);
+  const [formattedLinkAttachments, setFormattedLinkAttachments] = useState<
+    Array<LMAttachmentUI>
+  >([]);
   const [showOptions, setShowOptions] = useState(true);
   const [showPreview, setShowPreview] = useState(false);
   const [postContentText, setPostContentText] = useState('');
   const MAX_FILE_SIZE = 104857600; // 100MB in bytes
-  const MAX_LENGTH = 300;
 
-  function convertData(data: imageFormat[]): LMAttachmentUI[] {
+  // convert the default selected image/video format to LMAttachmentUI
+  function convertData(data: imageDefaultFormat[]): LMAttachmentUI[] {
     const convertedData = data.map(item => {
       return {
         attachmentMeta: {
@@ -101,7 +111,8 @@ const CreatePost = () => {
     return convertedData;
   }
 
-  function convertDocData(data: docFormat[]): LMAttachmentUI[] {
+  // convert the default selected document format to LMAttachmentUI
+  function convertDocData(data: docDefaultFormat[]): LMAttachmentUI[] {
     const convertedData = data.map(item => {
       return {
         attachmentMeta: {
@@ -127,6 +138,7 @@ const CreatePost = () => {
     return convertedData;
   }
 
+  // convert the LMOGTagsUI to LMAttachmentUI
   function convertLinkData(data: LMOGTagsUI[]): LMAttachmentUI[] {
     const convertedData = data.map(item => {
       return {
@@ -148,7 +160,10 @@ const CreatePost = () => {
         attachmentType: LINK_ATTACHMENT_TYPE, // You need to specify the attachment type.
       };
     });
-    setFormattedLinkAttachments([...formattedLinkAttachments, ...convertedData]);
+    setFormattedLinkAttachments([
+      ...formattedLinkAttachments,
+      ...convertedData,
+    ]);
     return convertedData;
   }
 
@@ -227,6 +242,7 @@ const CreatePost = () => {
     }
   };
 
+  // function removes the selected documents
   const removeDocAttachment = (index: number) => {
     let newDocAttachments = [...formattedDocAttachments];
     if (formattedDocAttachments.length === 1) {
@@ -237,160 +253,231 @@ const CreatePost = () => {
       setFormattedDocAttachments(newDocAttachments);
     }
   };
-  
+
+  // function removes multiple images/videos selected
   const removeMediaAttachment = (index: number) => {
     let newMediaAttachments = [...formattedMediaAttachments];
-      newMediaAttachments.splice(index, 1);
-      setFormattedMediaAttachments(newMediaAttachments);
+    newMediaAttachments.splice(index, 1);
+    setFormattedMediaAttachments(newMediaAttachments);
   };
 
+  // function removes single image and video selected
   const removeSingleAttachment = () => {
-    setFormattedMediaAttachments([])
-    setShowOptions(true)
+    setFormattedMediaAttachments([]);
+    setShowOptions(true);
   };
 
-
+  // function finds the valid links
   const detectLinks = (text: string) => {
     const regex = /\b(?:https?:\/\/)?(?:[\w.]+\.\w+)(?:(?<=\\n)|\b)/;
     const links = text.match(regex);
 
-  if (!showPreview && links?.length === 1) {
-        const decodeUrlResponse = dispatch(getDecodedUrl(
+    if (!showPreview && links?.length === 1) {
+      const decodeUrlResponse = dispatch(
+        getDecodedUrl(
           DecodeURLRequest.builder().setURL(`${links}`).build(),
-        ) as any)
-        if(decodeUrlResponse) {
-          convertLinkData([linkPreviewData]);
-        }
-          setShowPreview(true);
-      }else if (links?.length !== 1){
-        setFormattedLinkAttachments([]);
-        setShowPreview(false);
-      }
+        ) as any,
+      );
+      decodeUrlResponse.then((res: any) => {
+        convertLinkData([res.og_tags]);
+      });
+      setShowPreview(true);
+    } else if (links?.length !== 1) {
+      setFormattedLinkAttachments([]);
+      setShowPreview(false);
+    }
     return links ? links : [];
   };
 
+  let allAttachment = [
+    ...formattedMediaAttachments,
+    ...formattedDocAttachments,
+  ];
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+      {/* screen header section*/}
+      <LMHeader
+        showBackArrow
+        onBackPress={() => NavigationService.navigate('UniversalFeed')}
+        heading="Create a Post"
+        rightComponent={
+          <TouchableOpacity
+            disabled={
+              allAttachment?.length > 0 ||
+              formattedLinkAttachments?.length > 0 ||
+              postContentText != ''
+                ? false
+                : true
+            }
+            style={{
+              opacity:
+                allAttachment?.length > 0 ||
+                formattedLinkAttachments?.length > 0 ||
+                postContentText != ''
+                  ? 1
+                  : 0.5,
+            }}
+            onPress={() => {
+              dispatch(
+                setUploadAttachments({
+                  mediaAttachmentData: allAttachment,
+                  linkAttachmentData: formattedLinkAttachments,
+                  postContentData: postContentText,
+                }) as any,
+              );
+              NavigationService.goBack();
+            }}>
+            <Text>POST</Text>
+          </TouchableOpacity>
+        }
+      />
       <ScrollView>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: 15,
-          paddingTop: 12,
-        }}>
-        <LMProfilePicture
-          fallbackText={memberData.name}
-          imageUrl={memberData.imageUrl}
-        />
-        <LMText
-          text={memberData.name}
-          textStyle={{
+        {/* user profile section */}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingHorizontal: 15,
+            paddingTop: 12,
+          }}>
+          {/* profile image */}
+          <LMProfilePicture
+            fallbackText={memberData.name}
+            imageUrl={memberData.imageUrl}
+          />
+          {/* user name */}
+          <LMText
+            text={memberData.name}
+            textStyle={{
+              fontSize: 16,
+              fontWeight: '500',
+              color: '#222020',
+              marginLeft: 8,
+              textTransform: 'capitalize',
+            }}
+          />
+        </View>
+        {/* text input field */}
+        <LMInputText
+          placeholderText="Write something here..."
+          placeholderTextColor="#0F1E3D66"
+          inputTextStyle={{
+            marginHorizontal: 15,
+            marginVertical: 8,
             fontSize: 16,
-            fontWeight: '500',
-            color: '#222020',
-            marginLeft: 8,
-            textTransform: 'capitalize',
+            elevation: 0,
+          }}
+          multilineField
+          inputText={postContentText}
+          onType={val => {
+            setPostContentText(val);
+            detectLinks(postContentText);
           }}
         />
-      </View>
-      <LMInputText
-        placeholderText="Write something here..."
-        placeholderTextColor="#0F1E3D66"
-        inputTextStyle={{
-          marginHorizontal: 15,
-          marginVertical: 8,
-          fontSize: 16,
-          elevation: 0,
-        }}
-        multilineField
-        inputText={postContentText}
-        onType={val => {
-          setPostContentText(val);
-          detectLinks(postContentText);
-        }}
-      />
-      <View>
-        {formattedMediaAttachments ? (
-          formattedMediaAttachments?.length > 1 ? (
-            <LMCarousel
-              attachments={formattedMediaAttachments}
+        {/* selected media section */}
+        <View>
+          {/* multi media selection section */}
+          {formattedMediaAttachments ? (
+            formattedMediaAttachments?.length > 1 ? (
+              <LMCarousel
+                attachments={formattedMediaAttachments}
+                showCancel
+                onCancel={index => removeMediaAttachment(index)}
+              />
+            ) : (
+              <>
+                {/* single image selected section */}
+                {formattedMediaAttachments[0]?.attachmentMeta.format ===
+                  'image/jpg' && (
+                  <LMImage
+                    imageUrl={`${formattedMediaAttachments[0]?.attachmentMeta.url}`}
+                    showCancel
+                    onCancel={() => removeSingleAttachment()}
+                  />
+                )}
+                {/* single video selected section  */}
+                {formattedMediaAttachments[0]?.attachmentMeta.format ===
+                  'video/mp4' && (
+                  <LMVideo
+                    videoUrl={`${formattedMediaAttachments[0]?.attachmentMeta.url}`}
+                    showCancel
+                    onCancel={() => removeSingleAttachment()}
+                  />
+                )}
+              </>
+            )
+          ) : null}
+          {/* selected document view section */}
+          {formattedDocAttachments && formattedDocAttachments.length >= 1 && (
+            <LMDocument
+              attachments={formattedDocAttachments}
               showCancel
-              onCancel={index => removeMediaAttachment(index)}
+              onCancel={index => removeDocAttachment(index)}
             />
-          ) : (
-            <>
-              {formattedMediaAttachments[0]?.attachmentMeta.format ===
-                'image/jpg' && (
-                <LMImage
-                  imageUrl={`${formattedMediaAttachments[0]?.attachmentMeta.url}`}
-                  showCancel
-                  onCancel={()=> removeSingleAttachment()}
-                />
-              )}
-              {formattedMediaAttachments[0]?.attachmentMeta.format ===
-                'video/mp4' && (
-                // <Text>video</Text>
-                <LMVideo
-                  videoUrl={`${formattedMediaAttachments[0]?.attachmentMeta.url}`}
-                  showCancel
-                  onCancel={()=> removeSingleAttachment()}
-                />
-              )}
-            </>
-          )
-        ) : null}
-        {formattedDocAttachments && formattedDocAttachments.length >= 1 && (
-          <LMDocument
-            attachments={formattedDocAttachments}
-            showCancel
-            onCancel={index => removeDocAttachment(index)}
+          )}
+          {/* added link preview section */}
+          {formattedMediaAttachments.length <= 0 &&
+            formattedDocAttachments.length <= 0 &&
+            formattedLinkAttachments &&
+            formattedLinkAttachments.length >= 1 && (
+              <LMLinkPreview
+                attachments={formattedLinkAttachments}
+                showCancel
+                onCancel={() => {
+                  setFormattedLinkAttachments([]);
+                }}
+              />
+            )}
+        </View>
+        {/* add more media button section */}
+        {(formattedMediaAttachments.length > 0 ||
+          formattedDocAttachments?.length > 0) && (
+          <LMButton
+            onTap={
+              formattedMediaAttachments.length > 0
+                ? () => handleGallery('mixed')
+                : formattedDocAttachments.length > 0
+                ? () => handleDoc()
+                : () => {}
+            }
+            icon={{
+              assetPath: require('../../assets/images/plusAdd_icon3x.png'),
+              type: 'png',
+              height: 20,
+              width: 20,
+            }}
+            text={{
+              text: 'Add More',
+              textStyle: {
+                fontSize: 14,
+                fontWeight: '500',
+                color: '#5046E5',
+                marginLeft: 5,
+              },
+            }}
+            buttonStyle={{
+              width: '35%',
+              borderColor: '#5046E5',
+              borderWidth: 1,
+              borderRadius: 8,
+              alignSelf: 'center',
+              paddingVertical: 8,
+              marginTop: 20,
+            }}
           />
         )}
-        {
-        formattedLinkAttachments && formattedLinkAttachments.length >= 1 && <LMLinkPreview attachments={formattedLinkAttachments} showCancel onCancel={() => {setFormattedLinkAttachments([])}} />
-        }
-      </View>
-      {(formattedMediaAttachments.length > 0 ||
-        formattedDocAttachments?.length > 0) && (
-        <LMButton
-          onTap={
-            formattedMediaAttachments.length > 0
-              ? () => handleGallery('mixed')
-              : formattedDocAttachments.length > 0
-              ? () => handleDoc()
-              : () => {}
-          }
-          icon={{
-            assetPath: require('../../assets/images/plusAdd_icon3x.png'),
-            type: 'png',
-            height: 20,
-            width: 20,
-          }}
-          text={{
-            text: 'Add More',
-            textStyle: {
-              fontSize: 14,
-              fontWeight: '500',
-              color: '#5046E5',
-              marginLeft: 5,
-            },
-          }}
-          buttonStyle={{
-            width: '35%',
-            borderColor: '#5046E5',
-            borderWidth: 1,
-            borderRadius: 8,
-            alignSelf: 'center',
-            paddingVertical: 8,
-            marginTop: 20,
-          }}
-        />
-      )}
       </ScrollView>
+      {/* selection options section */}
       {showOptions && (
         <View
-          style={{position: 'absolute', bottom: 0, width: Layout.window.width, backgroundColor:'#fff'}}>
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            width: Layout.window.width,
+            backgroundColor: '#fff',
+          }}>
+          {/* add photos button */}
           <TouchableOpacity
             style={{
               flexDirection: 'row',
@@ -411,6 +498,7 @@ const CreatePost = () => {
               textStyle={{marginLeft: 8, color: '#222020'}}
             />
           </TouchableOpacity>
+          {/* add video button */}
           <TouchableOpacity
             style={{
               flexDirection: 'row',
@@ -431,6 +519,7 @@ const CreatePost = () => {
               textStyle={{marginLeft: 8, color: '#222020'}}
             />
           </TouchableOpacity>
+          {/* add files button */}
           <TouchableOpacity
             style={{
               flexDirection: 'row',
