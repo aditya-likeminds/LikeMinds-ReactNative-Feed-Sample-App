@@ -100,7 +100,7 @@ const CreatePost = () => {
   };
 
   // function handles the slection of documents
-  const handleDoc = async () => {
+  const handleDocument = async () => {
     if (Platform.OS === 'ios') {
       selectDoc().then((res: any) => {
         const selectedDocuments = convertDocumentMetaData(res);
@@ -126,7 +126,7 @@ const CreatePost = () => {
   };
 
   // function removes the selected documents
-  const removeDocAttachment = (index: number) => {
+  const removeDocumentAttachment = (index: number) => {
     let newDocAttachments = [...formattedDocumentAttachments];
     if (formattedDocumentAttachments.length === 1) {
       setFormattedDocumentAttachments([]);
@@ -288,7 +288,7 @@ const CreatePost = () => {
               <LMDocument
                 attachments={formattedDocumentAttachments}
                 showCancel
-                onCancel={index => removeDocAttachment(index)}
+                onCancel={index => removeDocumentAttachment(index)}
               />
             )}
           {/* added link preview section */}
@@ -313,7 +313,7 @@ const CreatePost = () => {
               formattedMediaAttachments.length > 0
                 ? () => handleGallery(SELECT_BOTH)
                 : formattedDocumentAttachments.length > 0
-                ? () => handleDoc()
+                ? () => handleDocument()
                 : () => {}
             }
             icon={{
@@ -365,7 +365,7 @@ const CreatePost = () => {
           <TouchableOpacity
             style={styles.optionItemView}
             onPress={() => {
-              handleDoc();
+              handleDocument();
             }}>
             <LMIcon
               type="png"
