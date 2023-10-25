@@ -49,7 +49,8 @@ export const APP_TITLE = 'LikeMinds Sample App'
 export const POST_UPLOADING = 'Posting'
 
 // meta format of selected media
-export const SELECTED_IMAGE_META_FORMAT = 'image/jpg'
+export const SELECTED_IOS_IMAGE_META_FORMAT = 'image/jpg'
+export const SELECTED_ANDROID_IMAGE_META_FORMAT = 'image/jpeg'
 export const SELECTED_VIDEO_META_FORMAT = 'video/mp4'
 export const SELECTED_DOCUMENT_META_FORMAT = 'application/pdf'
 

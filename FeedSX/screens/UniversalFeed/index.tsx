@@ -1,5 +1,5 @@
 import React, {useEffect, useLayoutEffect, useState} from 'react';
-import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {Image, Platform, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import {lmFeedClient} from '../../..';
 import {
   AddPostRequest,
@@ -131,7 +131,7 @@ const UniversalFeed = () => {
 
   // this function adds a new post
   const postAdd = async () => {
-    const uploadPromises = mediaAttachmemnts.map(
+    const uploadPromises = mediaAttachmemnts?.map(
       async (item: LMAttachmentUI) => {
         return uploadFilesToAWS(item.attachmentMeta, memberData.userUniqueId).then(
           res => {
@@ -307,7 +307,7 @@ const UniversalFeed = () => {
             <Text>{POST_UPLOADING}</Text>
           </View>
           {/* progress loader */}
-          <LMLoader size={STYLES.$LMLoaderSize} />
+          <LMLoader size={Platform.OS === 'ios'? STYLES.$LMLoaderSizeiOS: STYLES.$LMLoaderSizeAndroid} />
         </View>
       )}
       {/* posts list section */}

@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 25,
     position: 'absolute',
-    top: Layout.window.height - 150,
+    top: Layout.window.height - 100,
     right: 20,
   },
   newPostText: {

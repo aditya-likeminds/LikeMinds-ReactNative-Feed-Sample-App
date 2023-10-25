@@ -15,10 +15,12 @@ import {
   IMAGE_ATTACHMENT_TYPE,
   LINK_ATTACHMENT_TYPE,
   SELECTED_DOCUMENT_META_FORMAT,
-  SELECTED_IMAGE_META_FORMAT,
+  SELECTED_ANDROID_IMAGE_META_FORMAT,
+  SELECTED_IOS_IMAGE_META_FORMAT,
   SELECTED_VIDEO_META_FORMAT,
   VIDEO_ATTACHMENT_TYPE,
 } from '../constants/strings';
+import { Platform } from 'react-native';
 
 /**
  * @param data: [GetFeedResponse]
@@ -215,7 +217,7 @@ export function convertImageVideoMetaData(
         url: item?.uri,
       },
       attachmentType:
-        item?.type === SELECTED_IMAGE_META_FORMAT
+        item?.type === (Platform.OS === 'ios' ? SELECTED_IOS_IMAGE_META_FORMAT : SELECTED_ANDROID_IMAGE_META_FORMAT)
           ? IMAGE_ATTACHMENT_TYPE
           : item?.type === SELECTED_VIDEO_META_FORMAT
           ? VIDEO_ATTACHMENT_TYPE

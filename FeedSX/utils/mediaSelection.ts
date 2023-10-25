@@ -44,10 +44,9 @@ export const selectDoc = async () => {
         }
       }
       if (!!selectedDocs) {
-        return;
+        return selectedDocs;
       }
     }
-    return selectedDocs;
   } catch (error) {
     // process error
   }

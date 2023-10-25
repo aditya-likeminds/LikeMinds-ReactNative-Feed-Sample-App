@@ -34,7 +34,8 @@ import {
   ADD_POST_TEXT,
   ADD_VIDEOS,
   CREATE_POST_PLACEHOLDER_TEXT,
-  SELECTED_IMAGE_META_FORMAT,
+  SELECTED_ANDROID_IMAGE_META_FORMAT,
+  SELECTED_IOS_IMAGE_META_FORMAT,
   SELECTED_VIDEO_META_FORMAT,
   SELECT_BOTH,
   SELECT_IMAGE,
@@ -222,7 +223,7 @@ const CreatePost = () => {
               );
               NavigationService.goBack();
             }}>
-            <Text>{ADD_POST_TEXT}</Text>
+            <Text style={{color:'#000'}}>{ADD_POST_TEXT}</Text>
           </TouchableOpacity>
         }
       />
@@ -262,8 +263,7 @@ const CreatePost = () => {
             ) : (
               <>
                 {/* single image selected section */}
-                {formattedMediaAttachments[0]?.attachmentMeta?.format ===
-                  SELECTED_IMAGE_META_FORMAT && (
+                {formattedMediaAttachments[0]?.attachmentMeta?.format === (Platform.OS === 'ios' ? SELECTED_IOS_IMAGE_META_FORMAT : SELECTED_ANDROID_IMAGE_META_FORMAT) && (
                   <LMImage
                     imageUrl={`${formattedMediaAttachments[0]?.attachmentMeta.url}`}
                     showCancel
