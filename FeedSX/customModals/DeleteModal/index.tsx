@@ -13,7 +13,7 @@ import {useDispatch} from 'react-redux';
 import {deletePost, deletePostStateHandler} from '../../store/actions/feed';
 import {DeletePostRequest} from 'testpackageforlikeminds';
 import {useAppSelector} from '../../store/store';
-import DeleteReasonsModal from '../deleteReasonsModal';
+import DeleteReasonsModal from '../DeleteReasonsModal';
 import {showToastMessage} from '../../store/actions/toast';
 import {
   CONFIRM_DELETE,
