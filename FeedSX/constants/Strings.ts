@@ -22,9 +22,9 @@ export const COMMENT_TYPE = 'comment';
 export const REPLY_TYPE = 'reply';
 
 // toast messages
-export const REPORTED_SUCCESSFULLY = 'Reported Successfully';
+export const REPORTED_SUCCESSFULLY = 'Post Reported!';
 export const SOMETHING_WENT_WRONG = 'Something Went Wrong';
-export const REASON_FOR_DELETION_PLACEHOLDER = 'Enter the reason for Reporting this post';
+export const REASON_FOR_DELETION_PLACEHOLDER = 'Enter the reason for reporting this post';
 
 // pin option in menu items
 export const PIN_THIS_POST = 'Pin this Post';
@@ -47,12 +47,6 @@ export const APP_TITLE = 'LikeMinds Sample App'
 
 // uploading post processing text
 export const POST_UPLOADING = 'Posting'
-
-// meta format of selected media
-export const SELECTED_IOS_IMAGE_META_FORMAT = 'image/jpg'
-export const SELECTED_ANDROID_IMAGE_META_FORMAT = 'image/jpeg'
-export const SELECTED_VIDEO_META_FORMAT = 'video/mp4'
-export const SELECTED_DOCUMENT_META_FORMAT = 'application/pdf'
 
 // selection types of media
 export const SELECT_IMAGE = 'photo'

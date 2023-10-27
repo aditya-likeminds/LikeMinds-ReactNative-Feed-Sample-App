@@ -1,5 +1,5 @@
 import React, {useEffect, useLayoutEffect, useState} from 'react';
-import {Image, Platform, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, Image, Platform, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import {lmFeedClient} from '../../..';
 import {
   AddPostRequest,
@@ -7,7 +7,7 @@ import {
   LikePostRequest,
   PinPostRequest,
   SavePostRequest,
-} from 'likeminds-sdk';
+} from 'testpackageforlikeminds';
 import {useDispatch} from 'react-redux';
 import {
   autoPlayPostVideo,
@@ -53,6 +53,7 @@ import {setUploadAttachments, addPost} from '../../store/actions/createPost';
 import { CREATE_POST, LIKES_LIST } from '../../constants/screenNames';
 import { uploadFilesToAWS } from '../../utils';
 import STYLES from '../../constants/styles';
+import { showToastMessage } from '../../store/actions/toast';
 
 const UniversalFeed = () => {
   const dispatch = useDispatch();
@@ -162,9 +163,9 @@ const UniversalFeed = () => {
       setPostUploading(false);
       await dispatch(clearFeed() as any);
       setFeedPageNumber(1);
-      setTimeout(() => {
+      // setTimeout(() => {
         fetchFeed();
-      }, 1000);
+      // }, 1000);
     }
     return addPostResponse;
   };
@@ -220,7 +221,7 @@ const UniversalFeed = () => {
   };
 
   // this function handles the functionality on the pin option
-  const handlePinPost = async (id: string) => {
+  const handlePinPost = async (id: string, pinned?:boolean) => {
     let payload = {
       postId: id,
     };
@@ -230,6 +231,14 @@ const UniversalFeed = () => {
         PinPostRequest.builder().setpostId(payload.postId).build(),
       ) as any,
     );
+    if(pinPostResponse) {
+      dispatch(
+        showToastMessage({
+          isToast: true,
+          message: pinned ? 'Post unpinned!' : 'Post pinned to top! ',
+        }) as any,
+      );
+    }
     return pinPostResponse;
   };
 
@@ -244,10 +253,10 @@ const UniversalFeed = () => {
   };
 
   // this function returns the id of the item selected from menu list and handles further functionalities accordingly
-  const onMenuItemSelect = (postId: string, itemId?: number) => {
+  const onMenuItemSelect = (postId: string, itemId?: number, pinnedValue?: boolean) => {
     setSelectedMenuItemPostId(postId);
     if (itemId === PIN_POST_MENU_ITEM || itemId === UNPIN_POST_MENU_ITEM) {
-      handlePinPost(postId);
+      handlePinPost(postId, pinnedValue);
     }
     if (itemId === REPORT_POST_MENU_ITEM) {
       handleReportPost();
@@ -264,7 +273,6 @@ const UniversalFeed = () => {
     );
     return postDetail;
   };
-
   return (
     <SafeAreaView style={{height: '100%'}}>
       {/* header */}
@@ -304,7 +312,7 @@ const UniversalFeed = () => {
                 width={styles.uploadingPdfIconSize.width}
               />
             )}
-            <Text>{POST_UPLOADING}</Text>
+            <Text style={{color:'#333333'}}>{POST_UPLOADING}</Text>
           </View>
           {/* progress loader */}
           <LMLoader size={Platform.OS === 'ios'? STYLES.$LMLoaderSizeiOS: STYLES.$LMLoaderSizeAndroid} />
@@ -315,6 +323,7 @@ const UniversalFeed = () => {
         <FlashList
           data={feedData}
           renderItem={({item}: {item: LMPostUI}) => (
+            <>
             <LMPost
               post={item}
               // header props
@@ -327,7 +336,7 @@ const UniversalFeed = () => {
                   modalVisible: showActionListModal,
                   onCloseModal: closePostActionListModal,
                   onSelected: (postId, itemId) =>
-                    onMenuItemSelect(postId, itemId),
+                    onMenuItemSelect(postId, itemId, item?.isPinned),
                 },
                 onTap: () => {},
                 showMenuIcon: true,
@@ -366,7 +375,7 @@ const UniversalFeed = () => {
                   videoItem: {videoUrl: '', showControls: true},
                 },
               }}
-            />
+            /></>
           )}
           estimatedItemSize={500}
           onEndReachedThreshold={0.3}
@@ -379,7 +388,7 @@ const UniversalFeed = () => {
           onViewableItemsChanged={({changed, viewableItems}) => {
             if (changed) {
               if (viewableItems) {
-                dispatch(autoPlayPostVideo(viewableItems[0]?.item.id) as any);
+                dispatch(autoPlayPostVideo(viewableItems?.[0]?.item?.id) as any);
               }
             }
           }}
@@ -388,18 +397,21 @@ const UniversalFeed = () => {
       ) : (
         <View
           style={{
-            height: '100%',
-            justifyContent: 'center',
-            alignItems: 'center',
+            flex:1, justifyContent:'center', marginBottom:30
           }}>
           <LMLoader />
         </View>
       )}
       {/* create post button section */}
-      <TouchableOpacity
-        disabled={postUploading}
+      <TouchableOpacity activeOpacity={0.8}
+      disabled={feedData.length > 0 ? false : true}
         style={styles.newPostButtonView}
-        onPress={() => NavigationService.navigate(CREATE_POST)}>
+        onPress={() => postUploading ? dispatch(
+          showToastMessage({
+            isToast: true,
+            message: 'A post is already uploading!',
+          }) as any,
+        ) : NavigationService.navigate(CREATE_POST)}>
         <Image
           source={require('../../assets/images/add_post_icon3x.png')}
           resizeMode={'contain'}

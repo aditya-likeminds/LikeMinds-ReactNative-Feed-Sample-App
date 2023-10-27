@@ -5,8 +5,9 @@ import {
   SafeAreaView,
   Text,
   ScrollView,
+  Alert,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   detectURLs,
   requestStoragePermission,
@@ -34,14 +35,14 @@ import {
   ADD_POST_TEXT,
   ADD_VIDEOS,
   CREATE_POST_PLACEHOLDER_TEXT,
-  SELECTED_ANDROID_IMAGE_META_FORMAT,
-  SELECTED_IOS_IMAGE_META_FORMAT,
-  SELECTED_VIDEO_META_FORMAT,
+  IMAGE_ATTACHMENT_TYPE,
   SELECT_BOTH,
   SELECT_IMAGE,
   SELECT_VIDEO,
+  VIDEO_ATTACHMENT_TYPE,
 } from '../../constants/strings';
-import {DecodeURLRequest} from 'likeminds-sdk';
+import {DecodeURLRequest} from 'testpackageforlikeminds';
+import _, {debounce} from 'lodash';
 import {
   getDecodedUrl,
   setUploadAttachments,
@@ -55,6 +56,8 @@ import {
   convertLinkMetaData,
 } from '../../viewDataModels';
 import {styles} from './styles';
+import {showToastMessage} from '../../store/actions/toast';
+import LMLoader from '../../../LikeMinds-ReactNative-Feed-UI/src/base/LMLoader';
 
 const CreatePost = () => {
   const memberData = useAppSelector(state => state.feed.member);
@@ -67,34 +70,98 @@ const CreatePost = () => {
   const [formattedLinkAttachments, setFormattedLinkAttachments] = useState<
     Array<LMAttachmentUI>
   >([]);
-  const [linkPreviewData, setLinkPreviewData] = useState<Array<LMAttachmentUI>>(
-    [],
-  );
+  const [showLinkPreview, setShowLinkPreview] = useState(false);
+  const [closedOnce, setClosedOnce] = useState(false);
+  // const [linkPreviewData, setLinkPreviewData] = useState<Array<LMAttachmentUI>>(
+  //   [],
+  // );
   const [showOptions, setShowOptions] = useState(true);
+  const [showSelecting, setShowSelecting] = useState(false);
   const [postContentText, setPostContentText] = useState('');
   const [addedLinks, setAddedLinks] = useState([]);
-
+  const MAX_FILE_SIZE = 104857600; // 100MB in bytes
+  const MIN_FILE_SIZE = 100000; // 100KB in bytes
   // function handles the selection of images and videos
   const handleGallery = async (type: string) => {
     if (Platform.OS === 'ios') {
-      selectImageVideo(type).then((res: any) => {
-        const selectedImagesVideos = convertImageVideoMetaData(res?.assets);
-        setFormattedMediaAttachments([
-          ...formattedMediaAttachments,
-          ...selectedImagesVideos,
-        ]);
-        setShowOptions(false);
+      selectImageVideo(type)?.then((res: any) => {
+        setShowSelecting(true)
+        if(res?.didCancel) {
+          setShowSelecting(false)
+        }
+        const mediaWithSizeCheck = [];
+        for (const media of res?.assets) {
+          if (media.fileSize > MAX_FILE_SIZE || media.fileSize < MIN_FILE_SIZE) {
+            dispatch(
+              showToastMessage({
+                isToast: true,
+                message: 'Files below 100 KB and above 100MB are not allowed',
+              }) as any,
+            );
+          } else {
+            mediaWithSizeCheck.push(media);             
+          }
+        }
+          const selectedImagesVideos = convertImageVideoMetaData(mediaWithSizeCheck);
+          if (
+            selectedImagesVideos.length + formattedMediaAttachments.length >
+            10
+          ) {
+            setFormattedMediaAttachments([...formattedMediaAttachments]);
+            setShowSelecting(false)
+            dispatch(
+              showToastMessage({
+                isToast: true,
+                message: 'You can select upto 10 items!',
+              }) as any,
+            );
+          } else {
+            setShowOptions(false);    
+            setShowSelecting(false)
+            setFormattedMediaAttachments([
+              ...formattedMediaAttachments,
+              ...selectedImagesVideos,
+            ]);
+            
+          } 
       });
     } else {
       let res = await requestStoragePermission();
       if (res === true) {
-        selectImageVideo(type).then((res: any) => {
-          const selectedImagesVideos = convertImageVideoMetaData(res?.assets);
-          setFormattedMediaAttachments([
-            ...formattedMediaAttachments,
-            ...selectedImagesVideos,
-          ]);
-          setShowOptions(false);
+        selectImageVideo(type)?.then((res: any) => {
+          const mediaWithSizeCheck = [];
+        for (const media of res?.assets) {
+          if (media.fileSize > MAX_FILE_SIZE || media.fileSize < MIN_FILE_SIZE) {
+            dispatch(
+              showToastMessage({
+                isToast: true,
+                message: 'Files below 100 KB and above 100MB are not allowed',
+              }) as any,
+            );
+          } else {
+            mediaWithSizeCheck.push(media);       
+          }
+        }
+          const selectedImagesVideos = convertImageVideoMetaData(mediaWithSizeCheck);
+          if (
+            selectedImagesVideos.length + formattedMediaAttachments.length >
+            10
+          ) {
+            setFormattedMediaAttachments([...formattedMediaAttachments]);
+            dispatch(
+              showToastMessage({
+                isToast: true,
+                message: 'You can select upto 10 items!',
+              }) as any,
+            );
+          } else {
+            setShowOptions(false);   
+            setFormattedMediaAttachments([
+              ...formattedMediaAttachments,
+              ...selectedImagesVideos,
+            ]);
+          }
+          
         });
       }
     }
@@ -103,24 +170,76 @@ const CreatePost = () => {
   // function handles the slection of documents
   const handleDocument = async () => {
     if (Platform.OS === 'ios') {
-      selectDoc().then((res: any) => {
-        const selectedDocuments = convertDocumentMetaData(res);
-        setFormattedDocumentAttachments([
-          ...formattedDocumentAttachments,
-          ...selectedDocuments,
-        ]);
-        setShowOptions(false);
-      });
-    } else {
-      let res = await requestStoragePermission();
-      if (res === true) {
-        selectDoc().then((res: any) => {
-          const selectedDocuments = convertDocumentMetaData(res);
+      selectDoc()?.then((res: any) => {
+        const mediaWithSizeCheck = [];
+        for (const media of res) {
+          if (media.size > MAX_FILE_SIZE || media.size < MIN_FILE_SIZE) {
+            dispatch(
+              showToastMessage({
+                isToast: true,
+                message: 'Files below 100 KB and above 100MB are not allowed',
+              }) as any,
+            );
+          } else {
+            mediaWithSizeCheck.push(media);      
+          }
+        }
+        const selectedDocuments = convertDocumentMetaData(mediaWithSizeCheck);
+        if (
+          selectedDocuments.length + formattedDocumentAttachments.length >
+          10
+        ) {
+          setFormattedDocumentAttachments([...formattedDocumentAttachments]);
+          dispatch(
+            showToastMessage({
+              isToast: true,
+              message: 'You can select upto 10 items!',
+            }) as any,
+          );
+        } else {
           setFormattedDocumentAttachments([
             ...formattedDocumentAttachments,
             ...selectedDocuments,
           ]);
           setShowOptions(false);
+        }
+      });
+    } else {
+      let res = await requestStoragePermission();
+      if (res === true) {
+        selectDoc()?.then((res: any) => {
+          const mediaWithSizeCheck = [];
+          for (const media of res) {
+            if (media.size > MAX_FILE_SIZE || media.size < MIN_FILE_SIZE) {
+              dispatch(
+                showToastMessage({
+                  isToast: true,
+                  message: 'Files below 100 KB and above 100MB are not allowed',
+                }) as any,
+              );
+            } else {
+              mediaWithSizeCheck.push(media);      
+            }
+          }
+          const selectedDocuments = convertDocumentMetaData(mediaWithSizeCheck);
+          if (
+            selectedDocuments.length + formattedDocumentAttachments.length >
+            10
+          ) {
+            setFormattedDocumentAttachments([...formattedDocumentAttachments]);
+            dispatch(
+              showToastMessage({
+                isToast: true,
+                message: 'You can select upto 10 items!',
+              }) as any,
+            );
+          } else {
+            setShowOptions(false);    
+            setFormattedDocumentAttachments([
+              ...formattedDocumentAttachments,
+              ...selectedDocuments,
+            ]);
+          }
         });
       }
     }
@@ -151,44 +270,67 @@ const CreatePost = () => {
     setShowOptions(true);
   };
 
-  // function finds the valid links
-  const detectLinks = async (text: string) => {
-    const links = await detectURLs(text);
-    // checks if any new link is detected or not
-    var link_is_same =
-      addedLinks?.length == links?.length &&
-      addedLinks?.every(function (element, index) {
-        return element === links[index];
-      });
-    if (links && links.length > 0 && !link_is_same) {
-      links.map((item: string) => {
-        const decodeUrlResponse = dispatch(
-          getDecodedUrl(DecodeURLRequest.builder().setURL(item).build()) as any,
-        );
-        decodeUrlResponse.then((res: any) => {
-          setAddedLinks(links);
-          const convertedLinkData = convertLinkMetaData([res?.og_tags]);
-          setFormattedLinkAttachments([
-            ...formattedLinkAttachments,
-            ...convertedLinkData,
-          ]);
-          if (linkPreviewData.length <= 0) {
-            setLinkPreviewData([...linkPreviewData, ...convertedLinkData]);
-          }
+  useEffect(() => {
+    const debouncedSearch = _.debounce(text => {
+      // Perform your search or update your component's state here
+      const links = detectURLs(text);
+
+      if (links && links.length > 0) {
+        const responsePromises = links.map((item: string) => {
+          return new Promise((resolve, reject) => {
+            const decodeUrlResponse = dispatch(
+              getDecodedUrl(
+                DecodeURLRequest.builder().setURL(item).build(),
+              ) as any,
+            );
+            decodeUrlResponse
+              .then((res: any) => {
+                resolve(res?.og_tags);
+              })
+              .catch((error: any) => {
+                reject(error);
+              });
+          });
         });
-      });
-    } else if (links === undefined) {
-      setFormattedLinkAttachments([]);
-      setLinkPreviewData([]);
-    }
-    return links ? links : [];
-  };
+
+        Promise.all(responsePromises)
+          .then(async responses => {
+            if(!responses.includes(undefined)) {
+              const convertedLinkData = await convertLinkMetaData(responses);
+              setFormattedLinkAttachments(convertedLinkData);
+              if (!closedOnce) {
+                setShowLinkPreview(true);
+              }
+            }
+            // Do something with the array of responses
+          })
+          .catch(error => {
+            console.error('An error occurred:', error);
+          });
+      } else {
+        setFormattedLinkAttachments([]);
+      }
+    }, 500); // 300ms delay
+
+    debouncedSearch(postContentText);
+
+    return () => {
+      debouncedSearch.cancel(); // Cleanup the debounced function
+    };
+  }, [postContentText]);
+
+  
 
   // all image/video/document media to be uploaded
   let allAttachment = [
     ...formattedMediaAttachments,
     ...formattedDocumentAttachments,
   ];
+
+  const onChangeText = (text: string) => {
+    setPostContentText(text)
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* screen header section*/}
@@ -198,10 +340,12 @@ const CreatePost = () => {
         heading="Create a Post"
         rightComponent={
           <TouchableOpacity
+            activeOpacity={0.8}
+            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
             disabled={
               allAttachment?.length > 0 ||
               formattedLinkAttachments?.length > 0 ||
-              postContentText != ''
+              postContentText.trim() != ''
                 ? false
                 : true
             }
@@ -209,7 +353,7 @@ const CreatePost = () => {
               opacity:
                 allAttachment?.length > 0 ||
                 formattedLinkAttachments?.length > 0 ||
-                postContentText != ''
+                postContentText.trim() != ''
                   ? 1
                   : 0.5,
             }}
@@ -218,16 +362,18 @@ const CreatePost = () => {
                 setUploadAttachments({
                   mediaAttachmentData: allAttachment,
                   linkAttachmentData: formattedLinkAttachments,
-                  postContentData: postContentText,
+                  postContentData: postContentText.trim(),
                 }) as any,
               );
               NavigationService.goBack();
             }}>
-            <Text style={{color:'#000'}}>{ADD_POST_TEXT}</Text>
+            <Text style={{color: '#5046E5', fontSize: 16, fontWeight: '500'}}>
+              {ADD_POST_TEXT}
+            </Text>
           </TouchableOpacity>
         }
       />
-      <ScrollView>
+      <ScrollView style={{flex: 1, marginBottom: showOptions ? 125 : 0}}>
         {/* user profile section */}
         <View style={styles.profileContainer}>
           {/* profile image */}
@@ -246,24 +392,30 @@ const CreatePost = () => {
           multilineField
           inputText={postContentText}
           onType={val => {
-            setPostContentText(val);
-            detectLinks(postContentText);
+            onChangeText(val);
           }}
         />
+
         {/* selected media section */}
         <View>
           {/* multi media selection section */}
-          {formattedMediaAttachments ? (
-            formattedMediaAttachments?.length > 1 ? (
-              <LMCarousel
+          {(showSelecting ? <View style={{height:300, justifyContent:'center', alignItems:'center'}}>
+                <LMLoader size={10}/>
+                <Text style={{color:'#666666', marginTop:12}}>Fetching Media</Text>
+              </View> : formattedMediaAttachments ? (
+            formattedMediaAttachments?.length > 1 ?
+              (<LMCarousel
                 attachments={formattedMediaAttachments}
                 showCancel
+                videoItem={{videoUrl: '', showControls: true}}
                 onCancel={index => removeMediaAttachment(index)}
-              />
-            ) : (
+              />)
+            
+            : (
               <>
                 {/* single image selected section */}
-                {formattedMediaAttachments[0]?.attachmentMeta?.format === (Platform.OS === 'ios' ? SELECTED_IOS_IMAGE_META_FORMAT : SELECTED_ANDROID_IMAGE_META_FORMAT) && (
+                {formattedMediaAttachments[0]?.attachmentType ===
+                  IMAGE_ATTACHMENT_TYPE && (
                   <LMImage
                     imageUrl={`${formattedMediaAttachments[0]?.attachmentMeta.url}`}
                     showCancel
@@ -271,43 +423,48 @@ const CreatePost = () => {
                   />
                 )}
                 {/* single video selected section  */}
-                {formattedMediaAttachments[0]?.attachmentMeta.format ===
-                  SELECTED_VIDEO_META_FORMAT && (
+                {formattedMediaAttachments[0]?.attachmentType ===
+                  VIDEO_ATTACHMENT_TYPE && (
                   <LMVideo
                     videoUrl={`${formattedMediaAttachments[0]?.attachmentMeta.url}`}
                     showCancel
+                    showControls
+                    looping={false}
                     onCancel={() => removeSingleAttachment()}
                   />
-                )}
+                )
+                }
               </>
             )
-          ) : null}
+          ) : null)}
           {/* selected document view section */}
           {formattedDocumentAttachments &&
             formattedDocumentAttachments.length >= 1 && (
               <LMDocument
                 attachments={formattedDocumentAttachments}
                 showCancel
+                showMoreText={false}
                 onCancel={index => removeDocumentAttachment(index)}
               />
             )}
           {/* added link preview section */}
           {formattedMediaAttachments.length <= 0 &&
             formattedDocumentAttachments.length <= 0 &&
-            linkPreviewData &&
-            linkPreviewData.length >= 1 && (
+            showLinkPreview &&
+            formattedLinkAttachments.length >= 1 && (
               <LMLinkPreview
-                attachments={linkPreviewData}
+                attachments={formattedLinkAttachments}
                 showCancel
                 onCancel={() => {
-                  setLinkPreviewData([]);
+                  setShowLinkPreview(false);
+                  setClosedOnce(true);
+                  setFormattedLinkAttachments([]);
                 }}
               />
             )}
         </View>
         {/* add more media button section */}
-        {(formattedMediaAttachments.length > 0 ||
-          formattedDocumentAttachments?.length > 0) && (
+        {(allAttachment.length > 0 && allAttachment.length < 10) && (
           <LMButton
             onTap={
               formattedMediaAttachments.length > 0
@@ -332,23 +489,23 @@ const CreatePost = () => {
       </ScrollView>
       {/* selection options section */}
       {showOptions && (
+        <View>
         <View style={styles.selectionOptionsView}>
           {/* add photos button */}
           <TouchableOpacity
+            activeOpacity={0.8}
             style={styles.optionItemView}
             onPress={() => {
               handleGallery(SELECT_IMAGE);
             }}>
             <LMIcon
-              type='png'
+              type="png"
               assetPath={require('../../assets/images/gallery_icon3x.png')}></LMIcon>
-            <LMText
-              text={ADD_IMAGES}
-              textStyle={styles.selectionOptionstext}
-            />
+            <LMText text={ADD_IMAGES} textStyle={styles.selectionOptionstext} />
           </TouchableOpacity>
           {/* add video button */}
           <TouchableOpacity
+            activeOpacity={0.8}
             style={styles.optionItemView}
             onPress={() => {
               handleGallery(SELECT_VIDEO);
@@ -356,13 +513,11 @@ const CreatePost = () => {
             <LMIcon
               type="png"
               assetPath={require('../../assets/images/video_icon3x.png')}></LMIcon>
-            <LMText
-              text={ADD_VIDEOS}
-              textStyle={styles.selectionOptionstext}
-            />
+            <LMText text={ADD_VIDEOS} textStyle={styles.selectionOptionstext} />
           </TouchableOpacity>
           {/* add files button */}
           <TouchableOpacity
+            activeOpacity={0.8}
             style={styles.optionItemView}
             onPress={() => {
               handleDocument();
@@ -370,11 +525,10 @@ const CreatePost = () => {
             <LMIcon
               type="png"
               assetPath={require('../../assets/images/paperClip_icon3x.png')}></LMIcon>
-            <LMText
-              text={ADD_FILES}
-              textStyle={styles.selectionOptionstext}
-            />
+            <LMText text={ADD_FILES} textStyle={styles.selectionOptionstext} />
           </TouchableOpacity>
+        </View>
+
         </View>
       )}
     </SafeAreaView>

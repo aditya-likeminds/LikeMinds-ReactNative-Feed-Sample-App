@@ -6,18 +6,14 @@ import {
   IOgTag,
   IPost,
   IUser,
-} from 'likeminds-sdk';
-import {GetPostLikesResponse} from 'likeminds-sdk/dist/post/model/GetPostLikesResponse';
-import Like from 'likeminds-sdk/dist/post/model/Like';
+} from 'testpackageforlikeminds';
+import {GetPostLikesResponse} from 'testpackageforlikeminds/dist/post/model/GetPostLikesResponse';
+import Like from 'testpackageforlikeminds/dist/post/model/Like';
 import {DocumentMetaData, ImageVideoMetaData} from '../models/addPostMetaData';
 import {
   DOCUMENT_ATTACHMENT_TYPE,
   IMAGE_ATTACHMENT_TYPE,
   LINK_ATTACHMENT_TYPE,
-  SELECTED_DOCUMENT_META_FORMAT,
-  SELECTED_ANDROID_IMAGE_META_FORMAT,
-  SELECTED_IOS_IMAGE_META_FORMAT,
-  SELECTED_VIDEO_META_FORMAT,
   VIDEO_ATTACHMENT_TYPE,
 } from '../constants/strings';
 import { Platform } from 'react-native';
@@ -29,7 +25,7 @@ import { Platform } from 'react-native';
 export function convertUniversalFeedPosts(data: GetFeedResponse): LMPostUI[] {
   let postData = data.posts;
   let userData = data.users;
-  return postData.map((item: IPost) => {
+  return postData?.map((item: IPost) => {
     return convertToLMPostUI(item, userData);
   });
 }
@@ -71,7 +67,7 @@ export function convertToLMPostUI(
  * @returns list of [LMAttachmentUI]
  */
 export function convertToLMAttachmentsUI(data: Attachment[]): LMAttachmentUI[] {
-  return data.map((item: Attachment) => {
+  return data?.map((item: Attachment) => {
     return {
       attachmentMeta: convertToLMAttachmentMetaUI(item.attachmentMeta),
       attachmentType: item.attachmentType,
@@ -117,7 +113,7 @@ export function convertToLMOgTagsUI(data: IOgTag): LMOGTagsUI {
  * @returns [LMMenuItemsUI]
  */
 export function convertToLMMenuItemsUI(data: IMenuItem[]): LMMenuItemsUI[] {
-  return data.map(item => {
+  return data?.map(item => {
     return {
       title: item.title,
       id: item.id,
@@ -131,16 +127,16 @@ export function convertToLMMenuItemsUI(data: IMenuItem[]): LMMenuItemsUI[] {
  */
 export function convertToLMUserUI(data: IUser): LMUserUI {
   const userData: LMUserUI = {
-    customTitle: data.customTitle,
-    id: data.id,
-    imageUrl: data.imageUrl,
-    isGuest: data.isGuest,
-    name: data.name,
-    organisationName: data.organisationName,
+    customTitle: data?.customTitle,
+    id: data?.id,
+    imageUrl: data?.imageUrl,
+    isGuest: data?.isGuest,
+    name: data?.name,
+    organisationName: data?.organisationName,
     sdkClientInfo: convertToLMSDKClientInfoUI(data),
-    updatedAt: data.updatedAt,
-    userUniqueId: data.userUniqueId,
-    uuid: data.uuid,
+    updatedAt: data?.updatedAt,
+    userUniqueId: data?.userUniqueId,
+    uuid: data?.uuid,
   };
   return userData;
 }
@@ -150,12 +146,12 @@ export function convertToLMUserUI(data: IUser): LMUserUI {
  * @returns LMSDKClientInfoUI
  */
 export function convertToLMSDKClientInfoUI(data: IUser): LMSDKClientInfoUI {
-  const sdkClientInfo = data.sdkClientInfo;
+  const sdkClientInfo = data?.sdkClientInfo;
   const sdkClientInfoConverter: LMSDKClientInfoUI = {
-    community: sdkClientInfo.community,
-    user: sdkClientInfo.user,
-    uuid: sdkClientInfo.uuid,
-    userUniqueId: sdkClientInfo.userUniqueId,
+    community: sdkClientInfo?.community,
+    user: sdkClientInfo?.user,
+    uuid: sdkClientInfo?.uuid,
+    userUniqueId: sdkClientInfo?.userUniqueId,
   };
   return sdkClientInfoConverter;
 }
@@ -165,9 +161,9 @@ export function convertToLMSDKClientInfoUI(data: IUser): LMSDKClientInfoUI {
  * @returns list of [LMLikeUI]
  */
 export function convertToLMLikesList(data: GetPostLikesResponse): LMLikeUI[] {
-  let likesListData = data.likes;
-  let userData = data.users;
-  return likesListData.map((item: Like) => {
+  let likesListData = data?.likes;
+  let userData = data?.users;
+  return likesListData?.map((item: Like) => {
     return convertToLMLikeUI(item, userData);
   });
 }
@@ -182,12 +178,12 @@ export function convertToLMLikeUI(
   users: {[key: string]: LMUserUI},
 ): LMLikeUI {
   const likesData: LMLikeUI = {
-    id: likes.id,
-    createdAt: likes.createdAt,
-    updatedAt: likes.updatedAt,
-    userId: likes.userId,
-    uuid: likes.uuid,
-    user: convertToLMUserUI(users[likes.userId]),
+    id: likes?.id,
+    createdAt: likes?.createdAt,
+    updatedAt: likes?.updatedAt,
+    userId: likes?.userId,
+    uuid: likes?.uuid,
+    user: convertToLMUserUI(users[likes?.userId]),
   };
   return likesData;
 }
@@ -217,11 +213,7 @@ export function convertImageVideoMetaData(
         url: item?.uri,
       },
       attachmentType:
-        item?.type === (Platform.OS === 'ios' ? SELECTED_IOS_IMAGE_META_FORMAT : SELECTED_ANDROID_IMAGE_META_FORMAT)
-          ? IMAGE_ATTACHMENT_TYPE
-          : item?.type === SELECTED_VIDEO_META_FORMAT
-          ? VIDEO_ATTACHMENT_TYPE
-          : 0, // You need to specify the attachment type.
+        item?.duration ?  VIDEO_ATTACHMENT_TYPE : IMAGE_ATTACHMENT_TYPE, // You need to specify the attachment type.
     };
   });
   return convertedImageVideoMetaData;
@@ -234,7 +226,7 @@ export function convertImageVideoMetaData(
 export function convertDocumentMetaData(
   data: DocumentMetaData[],
 ): LMAttachmentUI[] {
-  const convertedDocumentMetaData = data.map(item => {
+  const convertedDocumentMetaData = data?.map(item => {
     return {
       attachmentMeta: {
         entityId: '',
@@ -251,8 +243,7 @@ export function convertDocumentMetaData(
         pageCount: 0,
         url: item?.uri,
       },
-      attachmentType:
-        item?.type === SELECTED_DOCUMENT_META_FORMAT ? DOCUMENT_ATTACHMENT_TYPE : 0, // You need to specify the attachment type.
+      attachmentType: DOCUMENT_ATTACHMENT_TYPE, // You need to specify the attachment type.
     };
   });
   return convertedDocumentMetaData;
@@ -263,7 +254,7 @@ export function convertDocumentMetaData(
  * @returns list of [LMAttachmentUI]
  */
 export function convertLinkMetaData(data: LMOGTagsUI[]): LMAttachmentUI[] {
-  const convertedLinkMetaData = data.map(item => {
+  const convertedLinkMetaData = data?.map(item => {
     return {
       attachmentMeta: {
         entityId: '',

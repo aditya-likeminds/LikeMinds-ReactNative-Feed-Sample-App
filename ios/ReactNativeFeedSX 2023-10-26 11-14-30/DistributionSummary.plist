@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ReactNativeFeedSX.ipa</key>
+	<array>
+		<dict>
+			<key>architectures</key>
+			<array>
+				<string>arm64</string>
+			</array>
+			<key>buildNumber</key>
+			<string>1</string>
+			<key>certificate</key>
+			<dict>
+				<key>SHA1</key>
+				<string>44AA9FA2D411E96065FDD3A81E89E2E27ED47BCD</string>
+				<key>dateExpires</key>
+				<string>24/10/24</string>
+				<key>type</key>
+				<string>Apple Development</string>
+			</dict>
+			<key>embeddedBinaries</key>
+			<array>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>0.12.0</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>44AA9FA2D411E96065FDD3A81E89E2E27ED47BCD</string>
+						<key>dateExpires</key>
+						<string>24/10/24</string>
+						<key>type</key>
+						<string>Apple Development</string>
+					</dict>
+					<key>name</key>
+					<string>hermes.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>HPC929F5X6</string>
+						<key>name</key>
+						<string>Collabmates Private Limited</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>0.12.0</string>
+				</dict>
+			</array>
+			<key>entitlements</key>
+			<dict>
+				<key>application-identifier</key>
+				<string>HPC929F5X6.org.reactjs.native.example.ReactNativeFeedSX</string>
+				<key>com.apple.developer.team-identifier</key>
+				<string>HPC929F5X6</string>
+				<key>get-task-allow</key>
+				<true/>
+			</dict>
+			<key>name</key>
+			<string>ReactNativeFeedSX.app</string>
+			<key>profile</key>
+			<dict>
+				<key>UUID</key>
+				<string>6e4ad328-12b9-4ed8-b17e-dc58664572d6</string>
+				<key>dateExpires</key>
+				<string>24/10/24</string>
+				<key>name</key>
+				<string>iOS Team Provisioning Profile: *</string>
+			</dict>
+			<key>team</key>
+			<dict>
+				<key>id</key>
+				<string>HPC929F5X6</string>
+				<key>name</key>
+				<string>Collabmates Private Limited</string>
+			</dict>
+			<key>versionNumber</key>
+			<string>1.0</string>
+		</dict>
+	</array>
+</dict>
+</plist>

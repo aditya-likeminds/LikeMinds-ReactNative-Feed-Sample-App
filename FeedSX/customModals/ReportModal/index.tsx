@@ -6,12 +6,13 @@ import {
   TouchableOpacity,
   TextInput,
   Image,
+  Keyboard,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import styles from './styles';
 import {useDispatch} from 'react-redux';
 import {getReportTags, postReport} from '../../store/actions/feed';
-import {GetReportTagsRequest, PostReportRequest} from 'likeminds-sdk';
+import {GetReportTagsRequest, PostReportRequest} from 'testpackageforlikeminds';
 import {useAppSelector} from '../../store/store';
 import {
   COMMENT_REPORT_ENTITY_TYPE,
@@ -28,6 +29,9 @@ import {
 } from '../../constants/strings';
 import {showToastMessage} from '../../store/actions/toast';
 import LMLoader from '../../../LikeMinds-ReactNative-Feed-UI/src/base/LMLoader';
+import { SafeAreaView } from 'react-native';
+import Toast from 'react-native-toast-message';
+
 
 // interface for post report api request
 interface ReportRequest {
@@ -76,42 +80,77 @@ const ReportModal = ({visible, closeModal, reportType, postDetail} : ReportModal
     tagId,
     uuid,
   }: ReportRequest) => {
-    let payload = {
-      entityId: entityId,
-      entityType: entityType,
-      reason: reason,
-      tagId: tagId,
-      uuid: uuid,
-    };
-    let postReportResponse = await dispatch(
-      postReport(
-        PostReportRequest.builder()
-          .setEntityId(payload.entityId)
-          .setEntityType(payload.entityType)
-          .setReason(payload.reason)
-          .setTagId(payload.tagId)
-          .setUuid(payload.uuid)
-          .build(),
-      ) as any,
-    );
-    // toast message action
-    if (postReportResponse) {
-      dispatch(
-        showToastMessage({
-          isToast: true,
-          message: REPORTED_SUCCESSFULLY,
-        }) as any,
-      );
+    if(selectedIndex == 5 && otherReason === '') {
+      showToast()
     } else {
-      dispatch(
-        showToastMessage({
-          isToast: true,
-          message: SOMETHING_WENT_WRONG,
-        }) as any,
+      let payload = {
+        entityId: entityId,
+        entityType: entityType,
+        reason: reason,
+        tagId: tagId,
+        uuid: uuid,
+      };
+      setSelectedId(-1);
+      setSelectedIndex(-1);
+      closeModal();
+      let postReportResponse = await dispatch(
+        postReport(
+          PostReportRequest.builder()
+            .setEntityId(payload.entityId)
+            .setEntityType(payload.entityType)
+            .setReason(payload.reason)
+            .setTagId(payload.tagId)
+            .setUuid(payload.uuid)
+            .build(),
+        ) as any,
       );
+      // toast message action
+      if (postReportResponse) {
+        dispatch(
+          showToastMessage({
+            isToast: true,
+            message: REPORTED_SUCCESSFULLY,
+          }) as any,
+        );
+      } else {
+        dispatch(
+          showToastMessage({
+            isToast: true,
+            message: SOMETHING_WENT_WRONG,
+          }) as any,
+        );
+      }
+      return postReportResponse;
     }
-    return postReportResponse;
+   
   };
+
+  const showToast = () => {
+    Toast.show({
+      position:'bottom',
+      type: 'tomatoToast',
+      autoHide:true,
+      visibilityTime: 1500
+    },
+    );
+  }
+
+
+
+  const toastConfig = {
+   
+    tomatoToast: () => (
+        <View style={{zIndex:4000}}>
+          <View>
+            <View style={styles.modalView}>
+              <Text style={styles.filterText}>{'Please enter a reason'}</Text>
+            </View>
+          </View>
+        </View>
+    )
+  };
+
+  
 
   // this calls the fetchReportTags api when the modal gets visible
   useEffect(() => {
@@ -130,11 +169,12 @@ const ReportModal = ({visible, closeModal, reportType, postDetail} : ReportModal
         setSelectedIndex(-1);
         closeModal();
       }}>
-      <View style={styles.page}>
+      <SafeAreaView style={styles.page}>
+        <TouchableOpacity activeOpacity={1} style={{flex:1}} onPress={() => Keyboard.dismiss()}>
         {/* header section */}
         <View style={styles.titleView}>
           <Text style={styles.titleText}>Report Abuse</Text>
-          <TouchableOpacity
+          <TouchableOpacity activeOpacity={0.8} hitSlop={{top:10, bottom:10, left:10, right:10}}
             onPress={() => {
               setSelectedId(-1);
               setSelectedIndex(-1);
@@ -146,7 +186,7 @@ const ReportModal = ({visible, closeModal, reportType, postDetail} : ReportModal
             />
           </TouchableOpacity>
         </View>
-
+        
         {/* modal content */}
         <View style={styles.contentView}>
           <Text style={styles.textHeading}>{REPORT_PROBLEM}</Text>
@@ -169,8 +209,8 @@ const ReportModal = ({visible, closeModal, reportType, postDetail} : ReportModal
                       styles.reasonsBtn,
                       {
                         backgroundColor:
-                          index == selectedIndex ? 'black' : 'white',
-                        borderColor: '#777e8e',
+                          index == selectedIndex ? '#5046E5' : 'white',
+                        borderColor: index == selectedIndex ? '#5046E5':'#777e8e',
                       },
                     ]}>
                     <Text
@@ -204,13 +244,15 @@ const ReportModal = ({visible, closeModal, reportType, postDetail} : ReportModal
               style={styles.otherTextInput}
               placeholder={REASON_FOR_DELETION_PLACEHOLDER}
               value={otherReason}
+              placeholderTextColor={'#999999'}
             />
           </View>
         ) : null}
 
         {/* report button */}
+        <Toast config={toastConfig} />
         <View style={styles.reportBtnParent}>
-          <TouchableOpacity
+          <TouchableOpacity  activeOpacity={0.8}
             style={
               selectedId != -1 || otherReason
                 ? styles.reportBtn
@@ -231,16 +273,14 @@ const ReportModal = ({visible, closeModal, reportType, postDetail} : ReportModal
                       tagId: selectedId,
                       uuid: uuid,
                     });
-                    setSelectedId(-1);
-                    setSelectedIndex(-1);
-                    closeModal();
                   }
                 : () => null
             }>
             <Text style={styles.reportBtnText}>REPORT</Text>
           </TouchableOpacity>
         </View>
-      </View>
+        </TouchableOpacity>
+      </SafeAreaView>
     </Modal>
   );
 };

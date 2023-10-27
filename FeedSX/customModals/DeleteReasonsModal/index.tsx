@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import styles from './styles';
 import {useDispatch} from 'react-redux';
 import {getReportTags} from '../../store/actions/feed';
-import {GetReportTagsRequest} from 'likeminds-sdk';
+import {GetReportTagsRequest} from 'testpackageforlikeminds';
 import {useAppSelector} from '../../store/store';
 import STYLES from '../../constants/styles';
 import {DELETE_TAGS_TYPE, DELETION_REASON} from '../../constants/strings';
@@ -79,7 +79,7 @@ const DeleteReasonsModal = ({visible, closeModal, selectedReason, handleDeleteMo
 
             {/* delete reasons list */}
             {deleteTags.length > 0 ? (
-              deleteTags.map((res: any, index: number) => {
+              deleteTags?.map((res: any, index: number) => {
                 return (
                   <Pressable
                     key={res?.id}

@@ -1,11 +1,13 @@
 import {StyleSheet} from 'react-native';
 import Layout from '../../constants/layout';
 import STYLES from '../../constants/styles';
+import layout from '../../constants/layout';
 
 export const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     backgroundColor: '#fff',
+    height: layout.window.height
   },
   profileContainer: {
     flexDirection: 'row',
@@ -25,6 +27,7 @@ export const styles = StyleSheet.create({
     marginVertical: 8,
     fontSize: 16,
     elevation: 0,
+    maxHeight: 220,
   },
   addMoreButtonView: {
     width: '35%',
@@ -33,13 +36,14 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     alignSelf: 'center',
     paddingVertical: 8,
-    marginTop: 20,
+    marginVertical: 20,
   },
   selectionOptionsView: {
     position: 'absolute',
     bottom: 0,
     width: Layout.window.width,
     backgroundColor: '#fff',
+    height:122,
   },
   optionItemView: {
     flexDirection: 'row',

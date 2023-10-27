@@ -1,13 +1,16 @@
-import {View, Text, FlatList, SafeAreaView} from 'react-native';
+import {View, Text, FlatList, SafeAreaView, Platform} from 'react-native';
 import React, {useEffect} from 'react';
 import {FlashList} from '@shopify/flash-list';
-import {GetPostLikesRequest} from 'likeminds-sdk';
+import {GetPostLikesRequest} from 'testpackageforlikeminds';
 import {postLikes} from '../../store/actions/postLikes';
 import {useDispatch} from 'react-redux';
 import {useAppSelector} from '../../store/store';
 import {LMHeader, LMMemberListItem} from '../../../LikeMinds-ReactNative-Feed-UI';
 import {NavigationService} from '../../navigation';
 import { UNIVERSAL_FEED } from '../../constants/screenNames';
+import LMLoader from '../../../LikeMinds-ReactNative-Feed-UI/src/base/LMLoader';
+import STYLES from '../../constants/styles';
+import layout from '../../constants/layout';
 
 const LikesList = (props: any) => {
   const dispatch = useDispatch();
@@ -44,7 +47,7 @@ const LikesList = (props: any) => {
         onBackPress={() => NavigationService.navigate(UNIVERSAL_FEED)}
       />
       {/* post likes list */}
-      {postLike && (
+      {postLike?.length > 0  ? (
         <FlashList
           data={postLike}
           renderItem={({item}: {item: LMLikeUI}) => {
@@ -52,6 +55,13 @@ const LikesList = (props: any) => {
           }}
           estimatedItemSize={100}
         />
+      ): (
+        <View
+          style={{
+           flex:1, justifyContent:'center', marginBottom:30
+          }}>
+          <LMLoader />
+        </View>
       )}
     </SafeAreaView>
   );

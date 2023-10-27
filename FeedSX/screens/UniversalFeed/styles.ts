@@ -30,6 +30,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fff',
     marginBottom: 10,
+    height:50
   },
   uploadingImageVideoBox: {
     backgroundColor: '#fff',
@@ -39,6 +40,6 @@ export const styles = StyleSheet.create({
   },
   uploadingPdfIconSize: {
     width: 45,
-    height: 40
+    height: 32
   }
 });

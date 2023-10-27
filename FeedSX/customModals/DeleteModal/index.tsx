@@ -7,11 +7,11 @@ import {
   TextInput,
   TouchableWithoutFeedback,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from './styles';
 import {useDispatch} from 'react-redux';
 import {deletePost, deletePostStateHandler} from '../../store/actions/feed';
-import {DeletePostRequest} from 'likeminds-sdk';
+import {DeletePostRequest} from 'testpackageforlikeminds';
 import {useAppSelector} from '../../store/store';
 import DeleteReasonsModal from '../deleteReasonsModal';
 import {showToastMessage} from '../../store/actions/toast';
@@ -21,6 +21,7 @@ import {
   REASON_FOR_DELETION_PLACEHOLDER,
 } from '../../constants/strings';
 import STYLES from '../../constants/styles';
+import Toast from 'react-native-toast-message';
 
 // delete modal's props
 interface DeleteModalProps {
@@ -48,38 +49,43 @@ const DeleteModal = ({
 
   // this function calls the delete post api
   const postDelete = async () => {
-    let payload = {
-      deleteReason: otherReason ? otherReason : deletionReason,
-      postId: id,
-    };
-    displayModal(false);
-    dispatch(deletePostStateHandler(payload.postId) as any);
-    let deletePostResponse = await dispatch(
-      deletePost(
-        DeletePostRequest.builder()
-          .setdeleteReason(payload.deleteReason)
-          .setpostId(payload.postId)
-          .build(),
-      ) as any,
-    );
-    // toast message action
-    if (deletePostResponse) {
-      setDeletionReason('');
-      dispatch(
-        showToastMessage({
-          isToast: true,
-          message: 'Deleted Successfully',
-        }) as any,
-      );
+    if(!deletionReason && loggedInUser.userUniqueId != userId) {
+      showToast()
     } else {
-      dispatch(
-        showToastMessage({
-          isToast: true,
-          message: 'Something Went Wrong',
-        }) as any,
+      let payload = {
+        deleteReason: otherReason ? otherReason : deletionReason,
+        postId: id,
+      };
+      displayModal(false);
+      dispatch(deletePostStateHandler(payload.postId) as any);
+      let deletePostResponse = await dispatch(
+        deletePost(
+          DeletePostRequest.builder()
+            .setdeleteReason(payload.deleteReason)
+            .setpostId(payload.postId)
+            .build(),
+        ) as any,
       );
+      // toast message action
+      if (deletePostResponse) {
+        setDeletionReason('');
+        dispatch(
+          showToastMessage({
+            isToast: true,
+            message: 'Post Deleted!',
+          }) as any,
+        );
+      } else {
+        dispatch(
+          showToastMessage({
+            isToast: true,
+            message: 'Something Went Wrong',
+          }) as any,
+        );
+      }
+      return deletePostResponse;
     }
-    return deletePostResponse;
+   
   };
 
   // this callback function gets the reason of deletion from the reasons modal
@@ -87,14 +93,44 @@ const DeleteModal = ({
     setDeletionReason(val);
   };
 
+
+  const showToast = () => {
+    Toast.show({
+      position:'bottom',
+      type: 'tomatoToast',
+      autoHide:true,
+      visibilityTime: 1500
+    },
+    );
+  }
+
+
+
+  const toastConfig = {
+   
+    tomatoToast: () => (
+        <View>
+          <View>
+            <View style={styles.modalView}>
+              <Text style={styles.filterText}>{'Please select a reason for deletion'}</Text>
+            </View>
+          </View>
+        </View>
+    )
+  };
+
+  
+
   return (
     <>
+  
       <Modal
         visible={visible}
         animationType="fade"
         transparent={true}
         onRequestClose={() => displayModal(false)}>
         <>
+       
           {showReasons ? (
             <DeleteReasonsModal
               visible={showReasons}
@@ -105,7 +141,7 @@ const DeleteModal = ({
             />
           ) : (
             <>
-              <TouchableOpacity
+              <TouchableOpacity activeOpacity={0.8}
                 style={[
                   styles.modal,
                   {
@@ -116,8 +152,11 @@ const DeleteModal = ({
                 ]}
                 onPress={() => displayModal(false)}>
                 {/* main modal section */}
+                <Toast config={toastConfig} />
                 <TouchableWithoutFeedback>
+              
                   <View style={styles.modalContainer}>
+                
                     <Text style={styles.textHeading}>Delete {deleteType}?</Text>
                     <Text style={styles.text}>
                       {CONFIRM_DELETE(deleteType)}
@@ -125,7 +164,7 @@ const DeleteModal = ({
 
                     {/* delete reason selection section */}
                     {loggedInUser.userUniqueId != userId && (
-                      <TouchableOpacity
+                      <TouchableOpacity activeOpacity={0.8}
                         onPress={() => {
                           setShowReasons(true);
                         }}>
@@ -160,7 +199,7 @@ const DeleteModal = ({
 
                     <View style={styles.buttonsContainer}>
                       {/* cancel button section */}
-                      <TouchableOpacity
+                      <TouchableOpacity  activeOpacity={0.8}
                         onPress={() => {
                           displayModal(false);
                           setDeletionReason('');
@@ -168,14 +207,7 @@ const DeleteModal = ({
                         <Text style={styles.cancelTextBtn}>CANCEL</Text>
                       </TouchableOpacity>
                       {/* delete button section  */}
-                      <TouchableOpacity
-                        disabled={
-                          loggedInUser.userUniqueId != userId
-                            ? otherReason || deletionReason
-                              ? false
-                              : true
-                            : false
-                        }
+                      <TouchableOpacity activeOpacity={0.8}
                         onPress={() => postDelete()}>
                         <Text style={styles.deleteTextBtn}>DELETE</Text>
                       </TouchableOpacity>
