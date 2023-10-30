@@ -1,11 +1,8 @@
 import {StyleSheet} from 'react-native';
-import Layout from '../../constants/layout';
-import STYLES from '../../constants/styles';
-import layout from '../../constants/layout';
+import layout from '../../constants/Layout';
 
 export const styles = StyleSheet.create({
   container: {
-    // flex: 1,
     backgroundColor: '#fff',
     height: layout.window.height
   },
@@ -41,7 +38,7 @@ export const styles = StyleSheet.create({
   selectionOptionsView: {
     position: 'absolute',
     bottom: 0,
-    width: Layout.window.width,
+    width: layout.window.width,
     backgroundColor: '#fff',
     height:122,
   },

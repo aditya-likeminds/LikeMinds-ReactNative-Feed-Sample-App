@@ -5,9 +5,8 @@ import {
   SafeAreaView,
   Text,
   ScrollView,
-  Alert,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   detectURLs,
   requestStoragePermission,
@@ -35,13 +34,17 @@ import {
   ADD_POST_TEXT,
   ADD_VIDEOS,
   CREATE_POST_PLACEHOLDER_TEXT,
+  FILE_UPLOAD_SIZE_VALIDATION,
   IMAGE_ATTACHMENT_TYPE,
+  MAX_FILE_SIZE,
+  MEDIA_UPLOAD_COUNT_VALIDATION,
+  MIN_FILE_SIZE,
   SELECT_BOTH,
   SELECT_IMAGE,
   SELECT_VIDEO,
   VIDEO_ATTACHMENT_TYPE,
-} from '../../constants/strings';
-import {DecodeURLRequest} from 'testpackageforlikeminds';
+} from '../../constants/Strings';
+import {DecodeURLRequest} from 'likeminds-sdk';
 import _, {debounce} from 'lodash';
 import {
   getDecodedUrl,
@@ -72,77 +75,95 @@ const CreatePost = () => {
   >([]);
   const [showLinkPreview, setShowLinkPreview] = useState(false);
   const [closedOnce, setClosedOnce] = useState(false);
-  // const [linkPreviewData, setLinkPreviewData] = useState<Array<LMAttachmentUI>>(
-  //   [],
-  // );
   const [showOptions, setShowOptions] = useState(true);
   const [showSelecting, setShowSelecting] = useState(false);
   const [postContentText, setPostContentText] = useState('');
-  const [addedLinks, setAddedLinks] = useState([]);
-  const MAX_FILE_SIZE = 104857600; // 100MB in bytes
-  const MIN_FILE_SIZE = 100000; // 100KB in bytes
+
   // function handles the selection of images and videos
   const handleGallery = async (type: string) => {
     if (Platform.OS === 'ios') {
       selectImageVideo(type)?.then((res: any) => {
-        setShowSelecting(true)
-        if(res?.didCancel) {
-          setShowSelecting(false)
+        setShowSelecting(true);
+        if (res?.didCancel) {
+          setShowSelecting(false);
         }
         const mediaWithSizeCheck = [];
+        // checks the size of media
         for (const media of res?.assets) {
-          if (media.fileSize > MAX_FILE_SIZE || media.fileSize < MIN_FILE_SIZE) {
+          if (
+            media.fileSize > MAX_FILE_SIZE ||
+            media.fileSize < MIN_FILE_SIZE
+          ) {
             dispatch(
               showToastMessage({
                 isToast: true,
-                message: 'Files below 100 KB and above 100MB are not allowed',
+                message: FILE_UPLOAD_SIZE_VALIDATION,
               }) as any,
             );
           } else {
-            mediaWithSizeCheck.push(media);             
+            mediaWithSizeCheck.push(media);
           }
         }
-          const selectedImagesVideos = convertImageVideoMetaData(mediaWithSizeCheck);
+        const selectedImagesVideos =
+          convertImageVideoMetaData(mediaWithSizeCheck);
+        // checks ths count of the media
+        if (
+          selectedImagesVideos.length + formattedMediaAttachments.length >
+          10
+        ) {
+          setFormattedMediaAttachments([...formattedMediaAttachments]);
+          setShowSelecting(false);
+          dispatch(
+            showToastMessage({
+              isToast: true,
+              message: MEDIA_UPLOAD_COUNT_VALIDATION,
+            }) as any,
+          );
+        } else {
           if (
-            selectedImagesVideos.length + formattedMediaAttachments.length >
-            10
+            selectedImagesVideos.length > 0 ||
+            formattedMediaAttachments.length > 0
           ) {
-            setFormattedMediaAttachments([...formattedMediaAttachments]);
-            setShowSelecting(false)
-            dispatch(
-              showToastMessage({
-                isToast: true,
-                message: 'You can select upto 10 items!',
-              }) as any,
-            );
+            setShowOptions(false);
           } else {
-            setShowOptions(false);    
-            setShowSelecting(false)
-            setFormattedMediaAttachments([
-              ...formattedMediaAttachments,
-              ...selectedImagesVideos,
-            ]);
-            
-          } 
+            setShowOptions(true);
+          }
+          setShowSelecting(false);
+          setFormattedMediaAttachments([
+            ...formattedMediaAttachments,
+            ...selectedImagesVideos,
+          ]);
+        }
       });
     } else {
       let res = await requestStoragePermission();
       if (res === true) {
         selectImageVideo(type)?.then((res: any) => {
-          const mediaWithSizeCheck = [];
-        for (const media of res?.assets) {
-          if (media.fileSize > MAX_FILE_SIZE || media.fileSize < MIN_FILE_SIZE) {
-            dispatch(
-              showToastMessage({
-                isToast: true,
-                message: 'Files below 100 KB and above 100MB are not allowed',
-              }) as any,
-            );
-          } else {
-            mediaWithSizeCheck.push(media);       
+          setShowSelecting(true);
+          if (res?.didCancel) {
+            setShowSelecting(false);
           }
-        }
-          const selectedImagesVideos = convertImageVideoMetaData(mediaWithSizeCheck);
+          const mediaWithSizeCheck = [];
+          // checks the size of the media
+          for (const media of res?.assets) {
+            if (
+              media.fileSize > MAX_FILE_SIZE ||
+              media.fileSize < MIN_FILE_SIZE
+            ) {
+              setShowSelecting(false);
+              dispatch(
+                showToastMessage({
+                  isToast: true,
+                  message: FILE_UPLOAD_SIZE_VALIDATION,
+                }) as any,
+              );
+            } else {
+              mediaWithSizeCheck.push(media);
+            }
+          }
+          const selectedImagesVideos =
+            convertImageVideoMetaData(mediaWithSizeCheck);
+          // checks ths count of the media
           if (
             selectedImagesVideos.length + formattedMediaAttachments.length >
             10
@@ -151,17 +172,24 @@ const CreatePost = () => {
             dispatch(
               showToastMessage({
                 isToast: true,
-                message: 'You can select upto 10 items!',
+                message: MEDIA_UPLOAD_COUNT_VALIDATION,
               }) as any,
             );
           } else {
-            setShowOptions(false);   
+            if (
+              selectedImagesVideos.length > 0 ||
+              formattedMediaAttachments.length > 0
+            ) {
+              setShowOptions(false);
+            } else {
+              setShowOptions(true);
+            }
+            setShowSelecting(false);
             setFormattedMediaAttachments([
               ...formattedMediaAttachments,
               ...selectedImagesVideos,
             ]);
           }
-          
         });
       }
     }
@@ -172,19 +200,21 @@ const CreatePost = () => {
     if (Platform.OS === 'ios') {
       selectDoc()?.then((res: any) => {
         const mediaWithSizeCheck = [];
+        // checks the size of the files
         for (const media of res) {
           if (media.size > MAX_FILE_SIZE || media.size < MIN_FILE_SIZE) {
             dispatch(
               showToastMessage({
                 isToast: true,
-                message: 'Files below 100 KB and above 100MB are not allowed',
+                message: FILE_UPLOAD_SIZE_VALIDATION,
               }) as any,
             );
           } else {
-            mediaWithSizeCheck.push(media);      
+            mediaWithSizeCheck.push(media);
           }
         }
         const selectedDocuments = convertDocumentMetaData(mediaWithSizeCheck);
+        // checks the count of the files attached
         if (
           selectedDocuments.length + formattedDocumentAttachments.length >
           10
@@ -193,15 +223,22 @@ const CreatePost = () => {
           dispatch(
             showToastMessage({
               isToast: true,
-              message: 'You can select upto 10 items!',
+              message: MEDIA_UPLOAD_COUNT_VALIDATION,
             }) as any,
           );
         } else {
+          if (
+            selectedDocuments.length > 0 ||
+            formattedDocumentAttachments.length > 0
+          ) {
+            setShowOptions(false);
+          } else {
+            setShowOptions(true);
+          }
           setFormattedDocumentAttachments([
             ...formattedDocumentAttachments,
             ...selectedDocuments,
           ]);
-          setShowOptions(false);
         }
       });
     } else {
@@ -209,19 +246,21 @@ const CreatePost = () => {
       if (res === true) {
         selectDoc()?.then((res: any) => {
           const mediaWithSizeCheck = [];
+          // checks the size of the files
           for (const media of res) {
             if (media.size > MAX_FILE_SIZE || media.size < MIN_FILE_SIZE) {
               dispatch(
                 showToastMessage({
                   isToast: true,
-                  message: 'Files below 100 KB and above 100MB are not allowed',
+                  message: FILE_UPLOAD_SIZE_VALIDATION,
                 }) as any,
               );
             } else {
-              mediaWithSizeCheck.push(media);      
+              mediaWithSizeCheck.push(media);
             }
           }
           const selectedDocuments = convertDocumentMetaData(mediaWithSizeCheck);
+          // checks the count of the files
           if (
             selectedDocuments.length + formattedDocumentAttachments.length >
             10
@@ -230,11 +269,18 @@ const CreatePost = () => {
             dispatch(
               showToastMessage({
                 isToast: true,
-                message: 'You can select upto 10 items!',
+                message: MEDIA_UPLOAD_COUNT_VALIDATION,
               }) as any,
             );
           } else {
-            setShowOptions(false);    
+            if (
+              selectedDocuments.length > 0 ||
+              formattedDocumentAttachments.length > 0
+            ) {
+              setShowOptions(false);
+            } else {
+              setShowOptions(true);
+            }
             setFormattedDocumentAttachments([
               ...formattedDocumentAttachments,
               ...selectedDocuments,
@@ -278,6 +324,7 @@ const CreatePost = () => {
       if (links && links.length > 0) {
         const responsePromises = links.map((item: string) => {
           return new Promise((resolve, reject) => {
+            // calls the decodeUrl api
             const decodeUrlResponse = dispatch(
               getDecodedUrl(
                 DecodeURLRequest.builder().setURL(item).build(),
@@ -295,7 +342,7 @@ const CreatePost = () => {
 
         Promise.all(responsePromises)
           .then(async responses => {
-            if(!responses.includes(undefined)) {
+            if (!responses.includes(undefined)) {
               const convertedLinkData = await convertLinkMetaData(responses);
               setFormattedLinkAttachments(convertedLinkData);
               if (!closedOnce) {
@@ -310,7 +357,7 @@ const CreatePost = () => {
       } else {
         setFormattedLinkAttachments([]);
       }
-    }, 500); // 300ms delay
+    }, 500); // 500ms delay
 
     debouncedSearch(postContentText);
 
@@ -319,17 +366,11 @@ const CreatePost = () => {
     };
   }, [postContentText]);
 
-  
-
   // all image/video/document media to be uploaded
   let allAttachment = [
     ...formattedMediaAttachments,
     ...formattedDocumentAttachments,
   ];
-
-  const onChangeText = (text: string) => {
-    setPostContentText(text)
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -339,6 +380,7 @@ const CreatePost = () => {
         onBackPress={() => NavigationService.navigate(UNIVERSAL_FEED)}
         heading="Create a Post"
         rightComponent={
+          // post button section
           <TouchableOpacity
             activeOpacity={0.8}
             hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
@@ -358,6 +400,7 @@ const CreatePost = () => {
                   : 0.5,
             }}
             onPress={() => {
+              // store the media for uploading and navigate to feed screen
               dispatch(
                 setUploadAttachments({
                   mediaAttachmentData: allAttachment,
@@ -392,26 +435,34 @@ const CreatePost = () => {
           multilineField
           inputText={postContentText}
           onType={val => {
-            onChangeText(val);
+            setPostContentText(val);
           }}
         />
 
         {/* selected media section */}
         <View>
           {/* multi media selection section */}
-          {(showSelecting ? <View style={{height:300, justifyContent:'center', alignItems:'center'}}>
-                <LMLoader size={10}/>
-                <Text style={{color:'#666666', marginTop:12}}>Fetching Media</Text>
-              </View> : formattedMediaAttachments ? (
-            formattedMediaAttachments?.length > 1 ?
-              (<LMCarousel
+          {showSelecting ? (
+            <View
+              style={{
+                height: 300,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <LMLoader size={10} />
+              <Text style={{color: '#666666', marginTop: 12}}>
+                Fetching Media
+              </Text>
+            </View>
+          ) : formattedMediaAttachments ? (
+            formattedMediaAttachments?.length > 1 ? (
+              <LMCarousel
                 attachments={formattedMediaAttachments}
                 showCancel
                 videoItem={{videoUrl: '', showControls: true}}
                 onCancel={index => removeMediaAttachment(index)}
-              />)
-            
-            : (
+              />
+            ) : (
               <>
                 {/* single image selected section */}
                 {formattedMediaAttachments[0]?.attachmentType ===
@@ -432,11 +483,10 @@ const CreatePost = () => {
                     looping={false}
                     onCancel={() => removeSingleAttachment()}
                   />
-                )
-                }
+                )}
               </>
             )
-          ) : null)}
+          ) : null}
           {/* selected document view section */}
           {formattedDocumentAttachments &&
             formattedDocumentAttachments.length >= 1 && (
@@ -464,7 +514,7 @@ const CreatePost = () => {
             )}
         </View>
         {/* add more media button section */}
-        {(allAttachment.length > 0 && allAttachment.length < 10) && (
+        {allAttachment.length > 0 && allAttachment.length < 10 && (
           <LMButton
             onTap={
               formattedMediaAttachments.length > 0
@@ -490,45 +540,53 @@ const CreatePost = () => {
       {/* selection options section */}
       {showOptions && (
         <View>
-        <View style={styles.selectionOptionsView}>
-          {/* add photos button */}
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.optionItemView}
-            onPress={() => {
-              handleGallery(SELECT_IMAGE);
-            }}>
-            <LMIcon
-              type="png"
-              assetPath={require('../../assets/images/gallery_icon3x.png')}></LMIcon>
-            <LMText text={ADD_IMAGES} textStyle={styles.selectionOptionstext} />
-          </TouchableOpacity>
-          {/* add video button */}
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.optionItemView}
-            onPress={() => {
-              handleGallery(SELECT_VIDEO);
-            }}>
-            <LMIcon
-              type="png"
-              assetPath={require('../../assets/images/video_icon3x.png')}></LMIcon>
-            <LMText text={ADD_VIDEOS} textStyle={styles.selectionOptionstext} />
-          </TouchableOpacity>
-          {/* add files button */}
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.optionItemView}
-            onPress={() => {
-              handleDocument();
-            }}>
-            <LMIcon
-              type="png"
-              assetPath={require('../../assets/images/paperClip_icon3x.png')}></LMIcon>
-            <LMText text={ADD_FILES} textStyle={styles.selectionOptionstext} />
-          </TouchableOpacity>
-        </View>
-
+          <View style={styles.selectionOptionsView}>
+            {/* add photos button */}
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.optionItemView}
+              onPress={() => {
+                handleGallery(SELECT_IMAGE);
+              }}>
+              <LMIcon
+                type="png"
+                assetPath={require('../../assets/images/gallery_icon3x.png')}></LMIcon>
+              <LMText
+                text={ADD_IMAGES}
+                textStyle={styles.selectionOptionstext}
+              />
+            </TouchableOpacity>
+            {/* add video button */}
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.optionItemView}
+              onPress={() => {
+                handleGallery(SELECT_VIDEO);
+              }}>
+              <LMIcon
+                type="png"
+                assetPath={require('../../assets/images/video_icon3x.png')}></LMIcon>
+              <LMText
+                text={ADD_VIDEOS}
+                textStyle={styles.selectionOptionstext}
+              />
+            </TouchableOpacity>
+            {/* add files button */}
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.optionItemView}
+              onPress={() => {
+                handleDocument();
+              }}>
+              <LMIcon
+                type="png"
+                assetPath={require('../../assets/images/paperClip_icon3x.png')}></LMIcon>
+              <LMText
+                text={ADD_FILES}
+                textStyle={styles.selectionOptionstext}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
       )}
     </SafeAreaView>
