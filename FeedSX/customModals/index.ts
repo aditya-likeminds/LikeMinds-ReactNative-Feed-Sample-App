@@ -1,6 +1,6 @@
-import DeleteModal from "./deleteModal"
-import DeleteReasonsModal from "./deleteReasonsModal"
-import ReportModal from "./reportModal"
+import DeleteModal from "./DeleteModal"
+import DeleteReasonsModal from "./DeleteReasonsModal"
+import ReportModal from "./ReportModal"
 export {
     DeleteModal,
     DeleteReasonsModal,

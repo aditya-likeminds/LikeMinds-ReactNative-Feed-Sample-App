@@ -1,7 +1,8 @@
-import {View, Text, Modal} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {View, Text} from 'react-native';
+import React, {useEffect} from 'react';
 import {styles} from './styles';
 import {useAppSelector} from '../../store/store';
+import Toast from 'react-native-toast-message';
 import {useDispatch} from 'react-redux';
 import {showToastMessage} from '../../store/actions/toast';
 
@@ -9,38 +10,43 @@ const LMToast = () => {
   const dispatch = useDispatch();
   const {isToast, message} = useAppSelector(state => state.loader);
 
-  // this function dismiss the toast message
-  const onDismiss = () => {
-    dispatch(showToastMessage({isToast: false, message: ''}) as any);
+  // handles the visibility of the toast
+  useEffect(() => {
+    showToast();
+  }, []);
+
+  // this functions makes the toast visible
+  const showToast = () => {
+    Toast.show({
+      position: 'bottom',
+      type: 'toastView',
+      autoHide: true,
+      visibilityTime: 1500,
+      onHide: () =>
+        dispatch(
+          showToastMessage({
+            isToast: false,
+          }) as any,
+        ),
+    });
   };
 
-  // this handles the visibilty of toast message
-  useEffect(() => {
-    if (!!isToast) {
-      setTimeout(() => {
-        onDismiss();
-      }, 2000);
-    }
-  }, [isToast]);
-
-  return (
-    <View>
-      <Modal
-        animationType='slide'
-        transparent={true}
-        visible={isToast}
-        onRequestClose={() => {
-          onDismiss();
-        }}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalParent}>
-            <View style={styles.modalView}>
-              <Text style={styles.filterText}>{message}</Text>
-            </View>
+  // toast UI config
+  const toastConfig = {
+    toastView: () => (
+      <View>
+        <View>
+          <View style={styles.modalView}>
+            <Text style={styles.filterText}>{message}</Text>
           </View>
         </View>
-      </Modal>
-    </View>
+      </View>
+    ),
+  };
+
+  return (
+    // toast component
+      <Toast config={toastConfig} />
   );
 };
 

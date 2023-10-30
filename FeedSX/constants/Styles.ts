@@ -55,5 +55,7 @@ export default {
       XL: 25,
       XXL: 30
     },
+    $LMLoaderSizeiOS: 10,
+    $LMLoaderSizeAndroid: 25
   };
   

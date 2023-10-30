@@ -79,7 +79,7 @@ const DeleteReasonsModal = ({visible, closeModal, selectedReason, handleDeleteMo
 
             {/* delete reasons list */}
             {deleteTags.length > 0 ? (
-              deleteTags.map((res: any, index: number) => {
+              deleteTags?.map((res: any, index: number) => {
                 return (
                   <Pressable
                     key={res?.id}

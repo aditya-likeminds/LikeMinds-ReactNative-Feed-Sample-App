@@ -1,22 +1,7 @@
 import {StyleSheet} from 'react-native';
-import Layout from '../../constants/Layout';
 import STYLES from '../../constants/Styles';
 
 export const styles = StyleSheet.create({
-  centeredView: {
-    flex: 1,
-    marginTop: 20,
-  },
-  modalParent: {
-    position: 'absolute',
-    bottom: 100,
-    display:'flex',
-    flexDirection:'row',
-    justifyContent:'center',
-    alignItems:'center',
-    zIndex:1,
-    width: Layout.window.width
-  },
   modalView: {
     padding:10,
     borderRadius: 8,

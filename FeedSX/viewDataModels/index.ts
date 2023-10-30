@@ -7,8 +7,15 @@ import {
   IPost,
   IUser,
 } from 'likeminds-sdk';
-import { GetPostLikesResponse } from 'likeminds-sdk/dist/post/model/GetPostLikesResponse';
+import {GetPostLikesResponse} from 'likeminds-sdk/dist/post/model/GetPostLikesResponse';
 import Like from 'likeminds-sdk/dist/post/model/Like';
+import {DocumentMetaData, ImageVideoMetaData} from '../models/addPostMetaData';
+import {
+  DOCUMENT_ATTACHMENT_TYPE,
+  IMAGE_ATTACHMENT_TYPE,
+  LINK_ATTACHMENT_TYPE,
+  VIDEO_ATTACHMENT_TYPE,
+} from '../constants/Strings';
 
 /**
  * @param data: [GetFeedResponse]
@@ -17,7 +24,7 @@ import Like from 'likeminds-sdk/dist/post/model/Like';
 export function convertUniversalFeedPosts(data: GetFeedResponse): LMPostUI[] {
   let postData = data.posts;
   let userData = data.users;
-  return postData.map((item: IPost) => {
+  return postData?.map((item: IPost) => {
     return convertToLMPostUI(item, userData);
   });
 }
@@ -59,7 +66,7 @@ export function convertToLMPostUI(
  * @returns list of [LMAttachmentUI]
  */
 export function convertToLMAttachmentsUI(data: Attachment[]): LMAttachmentUI[] {
-  return data.map((item: Attachment) => {
+  return data?.map((item: Attachment) => {
     return {
       attachmentMeta: convertToLMAttachmentMetaUI(item.attachmentMeta),
       attachmentType: item.attachmentType,
@@ -105,7 +112,7 @@ export function convertToLMOgTagsUI(data: IOgTag): LMOGTagsUI {
  * @returns [LMMenuItemsUI]
  */
 export function convertToLMMenuItemsUI(data: IMenuItem[]): LMMenuItemsUI[] {
-  return data.map(item => {
+  return data?.map(item => {
     return {
       title: item.title,
       id: item.id,
@@ -119,16 +126,16 @@ export function convertToLMMenuItemsUI(data: IMenuItem[]): LMMenuItemsUI[] {
  */
 export function convertToLMUserUI(data: IUser): LMUserUI {
   const userData: LMUserUI = {
-    customTitle: data.customTitle,
-    id: data.id,
-    imageUrl: data.imageUrl,
-    isGuest: data.isGuest,
-    name: data.name,
-    organisationName: data.organisationName,
+    customTitle: data?.customTitle,
+    id: data?.id,
+    imageUrl: data?.imageUrl,
+    isGuest: data?.isGuest,
+    name: data?.name,
+    organisationName: data?.organisationName,
     sdkClientInfo: convertToLMSDKClientInfoUI(data),
-    updatedAt: data.updatedAt,
-    userUniqueId: data.userUniqueId,
-    uuid: data.uuid,
+    updatedAt: data?.updatedAt,
+    userUniqueId: data?.userUniqueId,
+    uuid: data?.uuid,
   };
   return userData;
 }
@@ -138,12 +145,12 @@ export function convertToLMUserUI(data: IUser): LMUserUI {
  * @returns LMSDKClientInfoUI
  */
 export function convertToLMSDKClientInfoUI(data: IUser): LMSDKClientInfoUI {
-  const sdkClientInfo = data.sdkClientInfo;
+  const sdkClientInfo = data?.sdkClientInfo;
   const sdkClientInfoConverter: LMSDKClientInfoUI = {
-    community: sdkClientInfo.community,
-    user: sdkClientInfo.user,
-    uuid: sdkClientInfo.uuid,
-    userUniqueId: sdkClientInfo.userUniqueId,
+    community: sdkClientInfo?.community,
+    user: sdkClientInfo?.user,
+    uuid: sdkClientInfo?.uuid,
+    userUniqueId: sdkClientInfo?.userUniqueId,
   };
   return sdkClientInfoConverter;
 }
@@ -153,30 +160,118 @@ export function convertToLMSDKClientInfoUI(data: IUser): LMSDKClientInfoUI {
  * @returns list of [LMLikeUI]
  */
 export function convertToLMLikesList(data: GetPostLikesResponse): LMLikeUI[] {
-  let likesListData = data.likes;
-  let userData = data.users;
-  return likesListData.map((item: Like) => {
+  let likesListData = data?.likes;
+  let userData = data?.users;
+  return likesListData?.map((item: Like) => {
     return convertToLMLikeUI(item, userData);
   });
 }
 
 /**
- * @param post: [Like]
- * @param user: [Map] of String to User
+ * @param likes: [Like]
+ * @param users: [Map] of String to User
  * @returns LMLikeUI
  */
 export function convertToLMLikeUI(
   likes: Like,
   users: {[key: string]: LMUserUI},
-): LMLikeUI
- {
+): LMLikeUI {
   const likesData: LMLikeUI = {
-    id: likes.id,
-    createdAt: likes.createdAt,
-    updatedAt: likes.updatedAt,
-    userId: likes.userId,
-    uuid: likes.uuid,
-    user: convertToLMUserUI(users[likes.userId]),
+    id: likes?.id,
+    createdAt: likes?.createdAt,
+    updatedAt: likes?.updatedAt,
+    userId: likes?.userId,
+    uuid: likes?.uuid,
+    user: convertToLMUserUI(users[likes?.userId]),
   };
   return likesData;
+}
+
+/**
+ * @param data: [ImageVideoMetaData]
+ * @returns list of [LMAttachmentUI]
+ */
+export function convertImageVideoMetaData(
+  data: ImageVideoMetaData[],
+): LMAttachmentUI[] {
+  const convertedImageVideoMetaData = data?.map(item => {
+    return {
+      attachmentMeta: {
+        entityId: '',
+        format: item?.type,
+        name: item?.fileName,
+        ogTags: {
+          description: '',
+          title: '',
+          url: '',
+          image: '',
+        },
+        size: item?.fileSize,
+        duration: item?.duration,
+        pageCount: 0,
+        url: item?.uri,
+      },
+      attachmentType:
+        item?.duration ?  VIDEO_ATTACHMENT_TYPE : IMAGE_ATTACHMENT_TYPE, // You need to specify the attachment type.
+    };
+  });
+  return convertedImageVideoMetaData;
+}
+
+/**
+ * @param data: [DocumentMetaData]
+ * @returns list of [LMAttachmentUI]
+ */
+export function convertDocumentMetaData(
+  data: DocumentMetaData[],
+): LMAttachmentUI[] {
+  const convertedDocumentMetaData = data?.map(item => {
+    return {
+      attachmentMeta: {
+        entityId: '',
+        format: item?.type,
+        name: item?.name,
+        ogTags: {
+          description: '',
+          title: '',
+          url: '',
+          image: '',
+        },
+        size: item?.size,
+        duration: 0,
+        pageCount: 0,
+        url: item?.uri,
+      },
+      attachmentType: DOCUMENT_ATTACHMENT_TYPE, // You need to specify the attachment type.
+    };
+  });
+  return convertedDocumentMetaData;
+}
+
+/**
+ * @param data: [LMOGTagsUI]
+ * @returns list of [LMAttachmentUI]
+ */
+export function convertLinkMetaData(data: LMOGTagsUI[]): LMAttachmentUI[] {
+  const convertedLinkMetaData = data?.map(item => {
+    return {
+      attachmentMeta: {
+        entityId: '',
+        format: '',
+        name: '',
+        ogTags: {
+          description: item?.description,
+          title: item?.title,
+          url: item?.url,
+          image: item?.image,
+        },
+        size: 0,
+        duration: 0,
+        pageCount: 0,
+        url: '',
+      },
+      attachmentType: LINK_ATTACHMENT_TYPE, // You need to specify the attachment type.
+    };
+  });
+  return convertedLinkMetaData;
 }

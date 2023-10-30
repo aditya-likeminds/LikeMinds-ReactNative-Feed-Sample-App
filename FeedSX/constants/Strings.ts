@@ -22,9 +22,9 @@ export const COMMENT_TYPE = 'comment';
 export const REPLY_TYPE = 'reply';
 
 // toast messages
-export const REPORTED_SUCCESSFULLY = 'Reported Successfully';
+export const REPORTED_SUCCESSFULLY = 'Post Reported!';
 export const SOMETHING_WENT_WRONG = 'Something Went Wrong';
-export const REASON_FOR_DELETION_PLACEHOLDER = 'Enter the reason for Reporting this post';
+export const REASON_FOR_DELETION_PLACEHOLDER = 'Enter the reason for reporting this post';
 
 // pin option in menu items
 export const PIN_THIS_POST = 'Pin this Post';
@@ -41,3 +41,43 @@ export const CONFIRM_DELETE = (type:string) => (`Are you sure you want to delete
 export const REPORT_INSTRUSTION = (type: string) => (`You would be able to report this ${type} after selecting a problem`)
 export const REPORT_PROBLEM = 'Please specify the problem to continue'
 export const DELETION_REASON = 'Reason for deletion'
+
+// app name
+export const APP_TITLE = 'LikeMinds Sample App'
+
+// uploading post processing text
+export const POST_UPLOADING = 'Posting'
+
+// selection types of media
+export const SELECT_IMAGE = 'photo'
+export const SELECT_BOTH = 'mixed'
+export const SELECT_VIDEO = 'video'
+
+// create post screen's text
+export const ADD_FILES = 'Attach Files'
+export const ADD_IMAGES = 'Add Photo'
+export const ADD_VIDEOS = 'Add Video'
+export const CREATE_POST_PLACEHOLDER_TEXT = "Write something here..."
+export const ADD_MORE_MEDIA = "Add More"
+export const ADD_POST_TEXT = "POST"
+
+// android storage permession's text
+export const STORAGE_PERMISSION = 'Storage Permission'
+export const STORAGE_PERMISSION_MESSAGE = 'App needs permission to access your storage'
+export const STORAGE_PERMISSION_ALERT_HEADING = 'Storage Permission Required'
+export const STORAGE_PERMISSION_ALERT_DESCRIPTION = 'App needs access to your storage to read files. Please go to app settings and grant permission.'
+
+// toast messages 
+export const POST_DELETE = 'Post Deleted!'
+export const REPORT_REASON_VALIDATION = 'Please enter a reason'
+export const POST_UPLOADED = 'Your post was shared'
+export const POST_PIN_SUCCESS = 'Post pinned to top!'
+export const POST_UNPIN_SUCCESS = 'Post unpinned!'
+export const POST_UPLOAD_INPROGRESS = 'A post is already uploading!'
+export const CREATE_POST_PERMISSION = 'You do not have permission to create a post.'
+export const FILE_UPLOAD_SIZE_VALIDATION = 'Files below 100 KB and above 100MB are not allowed'
+export const MEDIA_UPLOAD_COUNT_VALIDATION = 'You can select upto 10 items!'
+
+// file size validation
+export const MAX_FILE_SIZE = 104857600; // 100MB in bytes
+export const MIN_FILE_SIZE = 100000; // 100KB in bytes

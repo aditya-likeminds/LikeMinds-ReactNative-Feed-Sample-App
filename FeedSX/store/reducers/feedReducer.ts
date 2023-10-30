@@ -20,6 +20,7 @@ import {
   PIN_POST_STATE,
   DELETE_POST_STATE,
   AUTO_PLAY_POST_VIDEO,
+  CLEAR_FEED,
 } from '../types/types';
 
 const initialState = {
@@ -40,8 +41,8 @@ export function feedReducer(state = initialState, action: any) {
       return {...state, community: community};
     }
     case MEMBER_STATE_SUCCESS: {
-      const {member = {}, member_rights = []} = action.body;
-      return {...state, member: member, memberRights: member_rights, feed: []};
+      const {member = {}, memberRights = []} = action.body;
+      return {...state, member: member, memberRights: memberRights, feed: []};
     }
     case UNIVERSAL_FEED_SUCCESS: {
       const {users = {}} = action.body;
@@ -147,6 +148,9 @@ export function feedReducer(state = initialState, action: any) {
     }
     case AUTO_PLAY_POST_VIDEO: {
       return {...state, autoPlayVideoPostId: action.body};
+    }
+    case CLEAR_FEED: {
+      return {...state, feed: []}
     }
     default:
       return state;
