@@ -6,17 +6,16 @@ import {
   IOgTag,
   IPost,
   IUser,
-} from 'testpackageforlikeminds';
-import {GetPostLikesResponse} from 'testpackageforlikeminds/dist/post/model/GetPostLikesResponse';
-import Like from 'testpackageforlikeminds/dist/post/model/Like';
+} from 'likeminds-sdk';
+import {GetPostLikesResponse} from 'likeminds-sdk/dist/post/model/GetPostLikesResponse';
+import Like from 'likeminds-sdk/dist/post/model/Like';
 import {DocumentMetaData, ImageVideoMetaData} from '../models/addPostMetaData';
 import {
   DOCUMENT_ATTACHMENT_TYPE,
   IMAGE_ATTACHMENT_TYPE,
   LINK_ATTACHMENT_TYPE,
   VIDEO_ATTACHMENT_TYPE,
-} from '../constants/strings';
-import { Platform } from 'react-native';
+} from '../constants/Strings';
 
 /**
  * @param data: [GetFeedResponse]

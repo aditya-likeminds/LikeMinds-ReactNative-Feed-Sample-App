@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
-import Layout from '../../constants/layout';
-import STYLES from '../../constants/styles';
+import Layout from '../../constants//Layout';
+import STYLES from '../../constants/Styles';
 
 export const styles = StyleSheet.create({
   newPostButtonView: {
@@ -14,6 +14,14 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     top: Layout.window.height - 100,
     right: 20,
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 2.5,
+      height: 2.5,
+    },
   },
   newPostText: {
     fontSize: 15,

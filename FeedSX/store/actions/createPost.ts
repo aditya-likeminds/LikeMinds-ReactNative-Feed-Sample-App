@@ -46,7 +46,7 @@ export const addPost = (payload?: any) => async (dispatch: Dispatch) => {
   }
 };
 
-// store media to be uploaded action
+// selected media to be uploaded action
 export const setUploadAttachments = (payload?: any) => async (dispatch: Dispatch) => {
   try {
     return await dispatch({

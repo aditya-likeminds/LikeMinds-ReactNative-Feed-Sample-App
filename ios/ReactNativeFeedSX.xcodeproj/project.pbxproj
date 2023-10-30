@@ -488,7 +488,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = HPC929F5X6;
+				DEVELOPMENT_TEAM = 82RNPX66BL;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = ReactNativeFeedSX/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -519,7 +519,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = HPC929F5X6;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = ReactNativeFeedSX/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

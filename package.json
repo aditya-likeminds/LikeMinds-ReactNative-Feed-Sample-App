@@ -29,8 +29,7 @@
     "react-native-toast-message": "^2.1.7",
     "react-native-video": "5.2.1",
     "react-redux": "8.1.2",
-    "redux-thunk": "2.4.2",
-    "testpackageforlikeminds": "^1.4.4"
+    "redux-thunk": "2.4.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

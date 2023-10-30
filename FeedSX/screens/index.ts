@@ -1,4 +1,4 @@
-import UniversalFeed from "./universalFeed";
+import UniversalFeed from "./UniversalFeed";
 import LikesList from "./likesList";
 import CreatePost from "./createPost";
 

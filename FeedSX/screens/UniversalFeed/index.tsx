@@ -1,5 +1,13 @@
 import React, {useEffect, useLayoutEffect, useState} from 'react';
-import {Alert, Image, Platform, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Alert,
+  Image,
+  Platform,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {lmFeedClient} from '../../..';
 import {
   AddPostRequest,
@@ -7,7 +15,7 @@ import {
   LikePostRequest,
   PinPostRequest,
   SavePostRequest,
-} from 'testpackageforlikeminds';
+} from 'likeminds-sdk';
 import {useDispatch} from 'react-redux';
 import {
   autoPlayPostVideo,
@@ -36,24 +44,29 @@ import {
 import {NavigationService} from '../../navigation';
 import {
   APP_TITLE,
+  CREATE_POST_PERMISSION,
   DELETE_POST_MENU_ITEM,
   DOCUMENT_ATTACHMENT_TYPE,
   IMAGE_ATTACHMENT_TYPE,
   PIN_POST_MENU_ITEM,
+  POST_PIN_SUCCESS,
   POST_TYPE,
+  POST_UNPIN_SUCCESS,
+  POST_UPLOADED,
   POST_UPLOADING,
+  POST_UPLOAD_INPROGRESS,
   REPORT_POST_MENU_ITEM,
   UNPIN_POST_MENU_ITEM,
   VIDEO_ATTACHMENT_TYPE,
-} from '../../constants/strings';
+} from '../../constants/Strings';
 import {DeleteModal, ReportModal} from '../../customModals';
 import LMLoader from '../../../LikeMinds-ReactNative-Feed-UI/src/base/LMLoader';
 import {postLikesClear} from '../../store/actions/postLikes';
 import {setUploadAttachments, addPost} from '../../store/actions/createPost';
-import { CREATE_POST, LIKES_LIST } from '../../constants/screenNames';
-import { uploadFilesToAWS } from '../../utils';
-import STYLES from '../../constants/styles';
-import { showToastMessage } from '../../store/actions/toast';
+import {CREATE_POST, LIKES_LIST} from '../../constants/screenNames';
+import {uploadFilesToAWS} from '../../utils';
+import STYLES from '../../constants/Styles';
+import {showToastMessage} from '../../store/actions/toast';
 
 const UniversalFeed = () => {
   const dispatch = useDispatch();
@@ -71,7 +84,9 @@ const UniversalFeed = () => {
   const [showDeleteModal, setDeleteModal] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const memberData = useAppSelector(state => state.feed.member);
+  const memberRight = useAppSelector(state => state.feed.memberRights);
   const [postUploading, setPostUploading] = useState(false);
+  const [showCreatePost, setShowCreatePost] = useState(true);
   let uploadingMediaAttachmentType = mediaAttachmemnts[0]?.attachmentType;
   let uploadingMediaAttachment = mediaAttachmemnts[0]?.attachmentMeta.url;
 
@@ -134,12 +149,13 @@ const UniversalFeed = () => {
   const postAdd = async () => {
     const uploadPromises = mediaAttachmemnts?.map(
       async (item: LMAttachmentUI) => {
-        return uploadFilesToAWS(item.attachmentMeta, memberData.userUniqueId).then(
-          res => {
-            item.attachmentMeta.url = res.Location;
-            return item; // Return the updated item
-          },
-        );
+        return uploadFilesToAWS(
+          item.attachmentMeta,
+          memberData.userUniqueId,
+        ).then(res => {
+          item.attachmentMeta.url = res.Location;
+          return item; // Return the updated item
+        });
       },
     );
     // Wait for all upload operations to complete
@@ -163,9 +179,15 @@ const UniversalFeed = () => {
       setPostUploading(false);
       await dispatch(clearFeed() as any);
       setFeedPageNumber(1);
-      // setTimeout(() => {
+      setTimeout(() => {
         fetchFeed();
-      // }, 1000);
+        dispatch(
+          showToastMessage({
+            isToast: true,
+            message: POST_UPLOADED,
+          }) as any,
+        );
+      }, 1000);
     }
     return addPostResponse;
   };
@@ -211,7 +233,15 @@ const UniversalFeed = () => {
   // this calls the getFeed api whenever the page number gets changed
   useEffect(() => {
     if (accessToken) {
+      // fetch feed
       fetchFeed();
+      // handles members right
+      if (memberData.state != 1) {
+        let members_right = memberRight.find((item: any) => item.state === 9);
+        if (members_right.isSelected === false) {
+          setShowCreatePost(false);
+        }
+      }
     }
   }, [accessToken, feedPageNumber]);
 
@@ -221,7 +251,7 @@ const UniversalFeed = () => {
   };
 
   // this function handles the functionality on the pin option
-  const handlePinPost = async (id: string, pinned?:boolean) => {
+  const handlePinPost = async (id: string, pinned?: boolean) => {
     let payload = {
       postId: id,
     };
@@ -231,11 +261,11 @@ const UniversalFeed = () => {
         PinPostRequest.builder().setpostId(payload.postId).build(),
       ) as any,
     );
-    if(pinPostResponse) {
+    if (pinPostResponse) {
       dispatch(
         showToastMessage({
           isToast: true,
-          message: pinned ? 'Post unpinned!' : 'Post pinned to top! ',
+          message: pinned ? POST_UNPIN_SUCCESS : POST_PIN_SUCCESS,
         }) as any,
       );
     }
@@ -253,7 +283,11 @@ const UniversalFeed = () => {
   };
 
   // this function returns the id of the item selected from menu list and handles further functionalities accordingly
-  const onMenuItemSelect = (postId: string, itemId?: number, pinnedValue?: boolean) => {
+  const onMenuItemSelect = (
+    postId: string,
+    itemId?: number,
+    pinnedValue?: boolean,
+  ) => {
     setSelectedMenuItemPostId(postId);
     if (itemId === PIN_POST_MENU_ITEM || itemId === UNPIN_POST_MENU_ITEM) {
       handlePinPost(postId, pinnedValue);
@@ -279,8 +313,7 @@ const UniversalFeed = () => {
       <LMHeader heading={APP_TITLE} />
       {/* post uploading section */}
       {postUploading && (
-        <View
-          style={styles.postUploadingView}>
+        <View style={styles.postUploadingView}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             {/* post uploading media preview */}
             {uploadingMediaAttachmentType === IMAGE_ATTACHMENT_TYPE && (
@@ -312,10 +345,16 @@ const UniversalFeed = () => {
                 width={styles.uploadingPdfIconSize.width}
               />
             )}
-            <Text style={{color:'#333333'}}>{POST_UPLOADING}</Text>
+            <Text style={{color: '#333333'}}>{POST_UPLOADING}</Text>
           </View>
           {/* progress loader */}
-          <LMLoader size={Platform.OS === 'ios'? STYLES.$LMLoaderSizeiOS: STYLES.$LMLoaderSizeAndroid} />
+          <LMLoader
+            size={
+              Platform.OS === 'ios'
+                ? STYLES.$LMLoaderSizeiOS
+                : STYLES.$LMLoaderSizeAndroid
+            }
+          />
         </View>
       )}
       {/* posts list section */}
@@ -324,58 +363,59 @@ const UniversalFeed = () => {
           data={feedData}
           renderItem={({item}: {item: LMPostUI}) => (
             <>
-            <LMPost
-              post={item}
-              // header props
-              headerProps={{
-                post: item,
-                postMenu: {
-                  postId: item?.id,
-                  menuItems: item?.menuItems,
-                  modalPosition: modalPosition,
-                  modalVisible: showActionListModal,
-                  onCloseModal: closePostActionListModal,
-                  onSelected: (postId, itemId) =>
-                    onMenuItemSelect(postId, itemId, item?.isPinned),
-                },
-                onTap: () => {},
-                showMenuIcon: true,
-                showMemberStateLabel: true,
-              }}
-              // footer props
-              footerProps={{
-                isLiked: item?.isLiked,
-                isSaved: item?.isSaved,
-                likesCount: item?.likesCount,
-                commentsCount: item?.commentsCount,
-                showBookMarkIcon: true,
-                showShareIcon: true,
-                likeIconButton: {
-                  onTap: () => {
-                    postLikeHandler(item?.id);
+              <LMPost
+                post={item}
+                // header props
+                headerProps={{
+                  post: item,
+                  postMenu: {
+                    postId: item?.id,
+                    menuItems: item?.menuItems,
+                    modalPosition: modalPosition,
+                    modalVisible: showActionListModal,
+                    onCloseModal: closePostActionListModal,
+                    onSelected: (postId, itemId) =>
+                      onMenuItemSelect(postId, itemId, item?.isPinned),
                   },
-                },
-                saveButton: {
-                  onTap: () => {
-                    savePostHandler(item?.id);
+                  onTap: () => {},
+                  showMenuIcon: true,
+                  showMemberStateLabel: true,
+                }}
+                // footer props
+                footerProps={{
+                  isLiked: item?.isLiked,
+                  isSaved: item?.isSaved,
+                  likesCount: item?.likesCount,
+                  commentsCount: item?.commentsCount,
+                  showBookMarkIcon: true,
+                  showShareIcon: true,
+                  likeIconButton: {
+                    onTap: () => {
+                      postLikeHandler(item?.id);
+                    },
                   },
-                },
-                likeTextButton: {
-                  onTap: () => {
-                    dispatch(postLikesClear() as any);
-                    NavigationService.navigate(LIKES_LIST, item?.id);
+                  saveButton: {
+                    onTap: () => {
+                      savePostHandler(item?.id);
+                    },
                   },
-                },
-              }}
-              mediaProps={{
-                attachments: item?.attachments ? item.attachments : [],
-                videoProps: {videoUrl: '', showControls: true},
-                carouselProps: {
+                  likeTextButton: {
+                    onTap: () => {
+                      dispatch(postLikesClear() as any);
+                      NavigationService.navigate(LIKES_LIST, item?.id);
+                    },
+                  },
+                }}
+                mediaProps={{
                   attachments: item?.attachments ? item.attachments : [],
-                  videoItem: {videoUrl: '', showControls: true},
-                },
-              }}
-            /></>
+                  videoProps: {videoUrl: '', showControls: true},
+                  carouselProps: {
+                    attachments: item?.attachments ? item.attachments : [],
+                    videoItem: {videoUrl: '', showControls: true},
+                  },
+                }}
+              />
+            </>
           )}
           estimatedItemSize={500}
           onEndReachedThreshold={0.3}
@@ -388,7 +428,9 @@ const UniversalFeed = () => {
           onViewableItemsChanged={({changed, viewableItems}) => {
             if (changed) {
               if (viewableItems) {
-                dispatch(autoPlayPostVideo(viewableItems?.[0]?.item?.id) as any);
+                dispatch(
+                  autoPlayPostVideo(viewableItems?.[0]?.item?.id) as any,
+                );
               }
             }
           }}
@@ -397,21 +439,36 @@ const UniversalFeed = () => {
       ) : (
         <View
           style={{
-            flex:1, justifyContent:'center', marginBottom:30
+            flex: 1,
+            justifyContent: 'center',
+            marginBottom: 30,
           }}>
           <LMLoader />
         </View>
       )}
       {/* create post button section */}
-      <TouchableOpacity activeOpacity={0.8}
-      disabled={feedData.length > 0 ? false : true}
-        style={styles.newPostButtonView}
-        onPress={() => postUploading ? dispatch(
-          showToastMessage({
-            isToast: true,
-            message: 'A post is already uploading!',
-          }) as any,
-        ) : NavigationService.navigate(CREATE_POST)}>
+      <TouchableOpacity
+        activeOpacity={0.8}
+        disabled={feedData.length > 0 ? false : true}
+        style={[styles.newPostButtonView, {opacity: showCreatePost ? 1 : 0.8}]}
+        // handles post uploading status and member rights to create post
+        onPress={() =>
+          showCreatePost
+            ? postUploading
+              ? dispatch(
+                  showToastMessage({
+                    isToast: true,
+                    message: POST_UPLOAD_INPROGRESS,
+                  }) as any,
+                )
+              : NavigationService.navigate(CREATE_POST)
+            : dispatch(
+                showToastMessage({
+                  isToast: true,
+                  message: CREATE_POST_PERMISSION,
+                }) as any,
+              )
+        }>
         <Image
           source={require('../../assets/images/add_post_icon3x.png')}
           resizeMode={'contain'}

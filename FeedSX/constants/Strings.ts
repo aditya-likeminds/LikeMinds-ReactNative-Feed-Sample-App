@@ -66,3 +66,12 @@ export const STORAGE_PERMISSION = 'Storage Permission'
 export const STORAGE_PERMISSION_MESSAGE = 'App needs permission to access your storage'
 export const STORAGE_PERMISSION_ALERT_HEADING = 'Storage Permission Required'
 export const STORAGE_PERMISSION_ALERT_DESCRIPTION = 'App needs access to your storage to read files. Please go to app settings and grant permission.'
+
+// toast messages 
+export const POST_DELETE = 'Post Deleted!'
+export const REPORT_REASON_VALIDATION = 'Please enter a reason'
+export const POST_UPLOADED = 'Your post was shared'
+export const POST_PIN_SUCCESS = 'Post pinned to top!'
+export const POST_UNPIN_SUCCESS = 'Post unpinned!'
+export const POST_UPLOAD_INPROGRESS = 'A post is already uploading!'
+export const CREATE_POST_PERMISSION = 'You do not have permission to create a post.'

@@ -4,7 +4,7 @@ import {
   STORAGE_PERMISSION_ALERT_DESCRIPTION,
   STORAGE_PERMISSION_ALERT_HEADING,
   STORAGE_PERMISSION_MESSAGE,
-} from '../constants/strings';
+} from '../constants/Strings';
 
 // function checks if we have access of storage in Android.
 export async function requestStoragePermission() {

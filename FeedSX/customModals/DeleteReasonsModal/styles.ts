@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import STYLES from '../../constants/styles';
+import STYLES from '../../constants/Styles';
 
 const styles = StyleSheet.create({
   modal: {

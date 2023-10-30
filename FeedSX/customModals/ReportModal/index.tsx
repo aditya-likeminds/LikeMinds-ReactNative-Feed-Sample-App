@@ -12,7 +12,7 @@ import React, {useEffect, useState} from 'react';
 import styles from './styles';
 import {useDispatch} from 'react-redux';
 import {getReportTags, postReport} from '../../store/actions/feed';
-import {GetReportTagsRequest, PostReportRequest} from 'testpackageforlikeminds';
+import {GetReportTagsRequest, PostReportRequest} from 'likeminds-sdk';
 import {useAppSelector} from '../../store/store';
 import {
   COMMENT_REPORT_ENTITY_TYPE,
@@ -24,14 +24,14 @@ import {
   REPORTED_SUCCESSFULLY,
   REPORT_INSTRUSTION,
   REPORT_PROBLEM,
+  REPORT_REASON_VALIDATION,
   REPORT_TAGS_TYPE,
   SOMETHING_WENT_WRONG,
-} from '../../constants/strings';
+} from '../../constants/Strings';
 import {showToastMessage} from '../../store/actions/toast';
 import LMLoader from '../../../LikeMinds-ReactNative-Feed-UI/src/base/LMLoader';
-import { SafeAreaView } from 'react-native';
+import {SafeAreaView} from 'react-native';
 import Toast from 'react-native-toast-message';
-
 
 // interface for post report api request
 interface ReportRequest {
@@ -47,10 +47,15 @@ interface ReportModalProps {
   visible: boolean;
   closeModal: () => void;
   reportType: string;
-  postDetail: LMPostUI
+  postDetail: LMPostUI;
 }
 
-const ReportModal = ({visible, closeModal, reportType, postDetail} : ReportModalProps) => {
+const ReportModal = ({
+  visible,
+  closeModal,
+  reportType,
+  postDetail,
+}: ReportModalProps) => {
   const {id, uuid} = {...postDetail};
 
   const dispatch = useDispatch();
@@ -80,8 +85,8 @@ const ReportModal = ({visible, closeModal, reportType, postDetail} : ReportModal
     tagId,
     uuid,
   }: ReportRequest) => {
-    if(selectedIndex == 5 && otherReason === '') {
-      showToast()
+    if (selectedIndex == 5 && otherReason === '') {
+      showToast();
     } else {
       let payload = {
         entityId: entityId,
@@ -122,35 +127,30 @@ const ReportModal = ({visible, closeModal, reportType, postDetail} : ReportModal
       }
       return postReportResponse;
     }
-   
   };
 
+  // this functions make the toast visible
   const showToast = () => {
     Toast.show({
-      position:'bottom',
-      type: 'tomatoToast',
-      autoHide:true,
-      visibilityTime: 1500
-    },
-    );
-  }
-
-
-
-  const toastConfig = {
-   
-    tomatoToast: () => (
-        <View style={{zIndex:4000}}>
-          <View>
-            <View style={styles.modalView}>
-              <Text style={styles.filterText}>{'Please enter a reason'}</Text>
-            </View>
-          </View>
-        </View>
-    )
+      position: 'bottom',
+      type: 'reportToastView',
+      autoHide: true,
+      visibilityTime: 1500,
+    });
   };
 
-  
+  // toast message view UI
+  const toastConfig = {
+    reportToastView: () => (
+      <View style={{zIndex: 4000}}>
+        <View>
+          <View style={styles.modalView}>
+            <Text style={styles.filterText}>{REPORT_REASON_VALIDATION}</Text>
+          </View>
+        </View>
+      </View>
+    ),
+  };
 
   // this calls the fetchReportTags api when the modal gets visible
   useEffect(() => {
@@ -170,115 +170,127 @@ const ReportModal = ({visible, closeModal, reportType, postDetail} : ReportModal
         closeModal();
       }}>
       <SafeAreaView style={styles.page}>
-        <TouchableOpacity activeOpacity={1} style={{flex:1}} onPress={() => Keyboard.dismiss()}>
-        {/* header section */}
-        <View style={styles.titleView}>
-          <Text style={styles.titleText}>Report Abuse</Text>
-          <TouchableOpacity activeOpacity={0.8} hitSlop={{top:10, bottom:10, left:10, right:10}}
-            onPress={() => {
-              setSelectedId(-1);
-              setSelectedIndex(-1);
-              closeModal();
-            }}>
-            <Image
-              source={require('../../assets/images/close_icon3x.png')}
-              style={styles.dropdownIcon}
-            />
-          </TouchableOpacity>
-        </View>
-        
-        {/* modal content */}
-        <View style={styles.contentView}>
-          <Text style={styles.textHeading}>{REPORT_PROBLEM}</Text>
-          <Text style={styles.text}>{REPORT_INSTRUSTION(reportType)}</Text>
-        </View>
+        <TouchableOpacity
+          activeOpacity={1}
+          style={{flex: 1}}
+          onPress={() => Keyboard.dismiss()}>
+          {/* header section */}
+          <View style={styles.titleView}>
+            <Text style={styles.titleText}>Report Abuse</Text>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+              onPress={() => {
+                setSelectedId(-1);
+                setSelectedIndex(-1);
+                closeModal();
+              }}>
+              <Image
+                source={require('../../assets/images/close_icon3x.png')}
+                style={styles.dropdownIcon}
+              />
+            </TouchableOpacity>
+          </View>
 
-        {/* report tags list section */}
-        <View style={styles.tagView}>
-          {reportTags.length > 0 ? (
-            reportTags?.map((res: any, index: number) => {
-              return (
-                <Pressable
-                  key={res?.id}
-                  onPress={() => {
-                    setSelectedIndex(index);
-                    setSelectedId(res.id);
-                  }}>
-                  <View
-                    style={[
-                      styles.reasonsBtn,
-                      {
-                        backgroundColor:
-                          index == selectedIndex ? '#5046E5' : 'white',
-                        borderColor: index == selectedIndex ? '#5046E5':'#777e8e',
-                      },
-                    ]}>
-                    <Text
+          {/* modal content */}
+          <View style={styles.contentView}>
+            <Text style={styles.textHeading}>{REPORT_PROBLEM}</Text>
+            <Text style={styles.text}>{REPORT_INSTRUSTION(reportType)}</Text>
+          </View>
+
+          {/* report tags list section */}
+          <View style={styles.tagView}>
+            {reportTags.length > 0 ? (
+              reportTags?.map((res: any, index: number) => {
+                return (
+                  <Pressable
+                    key={res?.id}
+                    onPress={() => {
+                      setSelectedIndex(index);
+                      setSelectedId(res.id);
+                    }}>
+                    <View
                       style={[
-                        styles.btnText,
+                        styles.reasonsBtn,
                         {
-                          color: selectedIndex == index ? 'white' : '#777e8e',
+                          backgroundColor:
+                            index == selectedIndex ? '#5046E5' : 'white',
+                          borderColor:
+                            index == selectedIndex ? '#5046E5' : '#777e8e',
                         },
                       ]}>
-                      {res.name}
-                    </Text>
-                  </View>
-                </Pressable>
-              );
-            })
-          ) : (
-            <View
-              style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-              <LMLoader />
-            </View>
-          )}
-        </View>
-
-        {/* text input view for other reason text*/}
-        {selectedIndex == 5 ? (
-          <View style={styles.otherSection}>
-            <TextInput
-              onChangeText={e => {
-                setOtherReason(e);
-              }}
-              style={styles.otherTextInput}
-              placeholder={REASON_FOR_DELETION_PLACEHOLDER}
-              value={otherReason}
-              placeholderTextColor={'#999999'}
-            />
+                      <Text
+                        style={[
+                          styles.btnText,
+                          {
+                            color: selectedIndex == index ? 'white' : '#777e8e',
+                          },
+                        ]}>
+                        {res.name}
+                      </Text>
+                    </View>
+                  </Pressable>
+                );
+              })
+            ) : (
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <LMLoader />
+              </View>
+            )}
           </View>
-        ) : null}
 
-        {/* report button */}
-        <Toast config={toastConfig} />
-        <View style={styles.reportBtnParent}>
-          <TouchableOpacity  activeOpacity={0.8}
-            style={
-              selectedId != -1 || otherReason
-                ? styles.reportBtn
-                : styles.disabledReportBtn
-            }
-            onPress={
-              selectedId != -1 || otherReason
-                ? () => {
-                    reportPost({
-                      entityId: id,
-                      entityType:
-                        reportType === POST_TYPE
-                          ? POST_REPORT_ENTITY_TYPE
-                          : reportType === COMMENT_TYPE
-                          ? COMMENT_REPORT_ENTITY_TYPE
-                          : REPLY_REPORT_ENTITY_TYPE, // different entityType value for post/comment/reply
-                      reason: otherReason,
-                      tagId: selectedId,
-                      uuid: uuid,
-                    });
-                  }
-                : () => null
-            }>
-            <Text style={styles.reportBtnText}>REPORT</Text>
-          </TouchableOpacity>
-        </View>
+          {/* text input view for other reason text*/}
+          {selectedIndex == 5 ? (
+            <View style={styles.otherSection}>
+              <TextInput
+                onChangeText={e => {
+                  setOtherReason(e);
+                }}
+                style={styles.otherTextInput}
+                placeholder={REASON_FOR_DELETION_PLACEHOLDER}
+                value={otherReason}
+                placeholderTextColor={'#999999'}
+              />
+            </View>
+          ) : null}
+
+          {/* toast component */}
+          <Toast config={toastConfig} />
+          {/* report button */}
+          <View style={styles.reportBtnParent}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={
+                selectedId != -1 || otherReason
+                  ? styles.reportBtn
+                  : styles.disabledReportBtn
+              }
+              onPress={
+                selectedId != -1 || otherReason
+                  ? () => {
+                      reportPost({
+                        entityId: id,
+                        entityType:
+                          reportType === POST_TYPE
+                            ? POST_REPORT_ENTITY_TYPE
+                            : reportType === COMMENT_TYPE
+                            ? COMMENT_REPORT_ENTITY_TYPE
+                            : REPLY_REPORT_ENTITY_TYPE, // different entityType value for post/comment/reply
+                        reason: otherReason,
+                        tagId: selectedId,
+                        uuid: uuid,
+                      });
+                    }
+                  : () => null
+              }>
+              <Text style={styles.reportBtnText}>REPORT</Text>
+            </TouchableOpacity>
+          </View>
         </TouchableOpacity>
       </SafeAreaView>
     </Modal>

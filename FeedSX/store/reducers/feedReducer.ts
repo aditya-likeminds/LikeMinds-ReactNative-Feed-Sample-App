@@ -3,7 +3,7 @@ import {
   PIN_THIS_POST,
   UNPIN_POST_ID,
   UNPIN_THIS_POST,
-} from '../../constants/strings';
+} from '../../constants/Strings';
 import { convertUniversalFeedPosts } from '../../viewDataModels';
 import {
   UNIVERSAL_FEED_SUCCESS,
@@ -41,8 +41,8 @@ export function feedReducer(state = initialState, action: any) {
       return {...state, community: community};
     }
     case MEMBER_STATE_SUCCESS: {
-      const {member = {}, member_rights = []} = action.body;
-      return {...state, member: member, memberRights: member_rights, feed: []};
+      const {member = {}, memberRights = []} = action.body;
+      return {...state, member: member, memberRights: memberRights, feed: []};
     }
     case UNIVERSAL_FEED_SUCCESS: {
       const {users = {}} = action.body;
