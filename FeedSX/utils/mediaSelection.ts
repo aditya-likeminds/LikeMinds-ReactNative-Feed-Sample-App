@@ -20,7 +20,7 @@ export const selectImageVideo = async (type: string) => {
 };
 
 //select Documents From Gallery
-export const selectDoc = async () => {
+export const selectDocument = async () => {
   try {
     const response = await DocumentPicker.pick({
       type: [DocumentPicker.types.pdf],

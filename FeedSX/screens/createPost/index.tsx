@@ -79,214 +79,130 @@ const CreatePost = () => {
   const [showSelecting, setShowSelecting] = useState(false);
   const [postContentText, setPostContentText] = useState('');
 
-  // function handles the selection of images and videos
-  const handleGallery = async (type: string) => {
-    if (Platform.OS === 'ios') {
-      selectImageVideo(type)?.then((res: any) => {
-        setShowSelecting(true);
-        if (res?.didCancel) {
-          setShowSelecting(false);
-        }
-        const mediaWithSizeCheck = [];
-        // checks the size of media
-        for (const media of res?.assets) {
-          if (
-            media.fileSize > MAX_FILE_SIZE ||
-            media.fileSize < MIN_FILE_SIZE
-          ) {
-            dispatch(
-              showToastMessage({
-                isToast: true,
-                message: FILE_UPLOAD_SIZE_VALIDATION,
-              }) as any,
-            );
-          } else {
-            mediaWithSizeCheck.push(media);
-          }
-        }
-        const selectedImagesVideos =
-          convertImageVideoMetaData(mediaWithSizeCheck);
-        // checks ths count of the media
+   // function handles the selection of images and videos
+  const setSelectedImageVideo = (type: string) => {
+    selectImageVideo(type)?.then((res: any) => {
+      setShowSelecting(true);
+      if (res?.didCancel) {
+        setShowSelecting(false);
+      }
+      const mediaWithSizeCheck = [];
+      // checks the size of media
+      for (const media of res?.assets) {
         if (
-          selectedImagesVideos.length + formattedMediaAttachments.length >
-          10
+          media.fileSize > MAX_FILE_SIZE ||
+          media.fileSize < MIN_FILE_SIZE
         ) {
-          setFormattedMediaAttachments([...formattedMediaAttachments]);
-          setShowSelecting(false);
           dispatch(
             showToastMessage({
               isToast: true,
-              message: MEDIA_UPLOAD_COUNT_VALIDATION,
+              message: FILE_UPLOAD_SIZE_VALIDATION,
             }) as any,
           );
         } else {
-          if (
-            selectedImagesVideos.length > 0 ||
-            formattedMediaAttachments.length > 0
-          ) {
-            setShowOptions(false);
-          } else {
-            setShowOptions(true);
-          }
-          setShowSelecting(false);
-          setFormattedMediaAttachments([
-            ...formattedMediaAttachments,
-            ...selectedImagesVideos,
-          ]);
+          mediaWithSizeCheck.push(media);
         }
-      });
+      }
+      const selectedImagesVideos =
+        convertImageVideoMetaData(mediaWithSizeCheck);
+      // checks ths count of the media
+      if (
+        selectedImagesVideos.length + formattedMediaAttachments.length >
+        10
+      ) {
+        setFormattedMediaAttachments([...formattedMediaAttachments]);
+        setShowSelecting(false);
+        dispatch(
+          showToastMessage({
+            isToast: true,
+            message: MEDIA_UPLOAD_COUNT_VALIDATION,
+          }) as any,
+        );
+      } else {
+        if (
+          selectedImagesVideos.length > 0 ||
+          formattedMediaAttachments.length > 0
+        ) {
+          setShowOptions(false);
+        } else {
+          setShowOptions(true);
+        }
+        setShowSelecting(false);
+        setFormattedMediaAttachments([
+          ...formattedMediaAttachments,
+          ...selectedImagesVideos,
+        ]);
+      }
+    });
+  }
+
+   // function handles the slection of documents
+  const setSelectedDocuments = () => {
+    selectDoc()?.then((res: any) => {
+      const mediaWithSizeCheck = [];
+      // checks the size of the files
+      for (const media of res) {
+        if (media.size > MAX_FILE_SIZE || media.size < MIN_FILE_SIZE) {
+          dispatch(
+            showToastMessage({
+              isToast: true,
+              message: FILE_UPLOAD_SIZE_VALIDATION,
+            }) as any,
+          );
+        } else {
+          mediaWithSizeCheck.push(media);
+        }
+      }
+      const selectedDocuments = convertDocumentMetaData(mediaWithSizeCheck);
+      // checks the count of the files attached
+      if (
+        selectedDocuments.length + formattedDocumentAttachments.length >
+        10
+      ) {
+        setFormattedDocumentAttachments([...formattedDocumentAttachments]);
+        dispatch(
+          showToastMessage({
+            isToast: true,
+            message: MEDIA_UPLOAD_COUNT_VALIDATION,
+          }) as any,
+        );
+      } else {
+        if (
+          selectedDocuments.length > 0 ||
+          formattedDocumentAttachments.length > 0
+        ) {
+          setShowOptions(false);
+        } else {
+          setShowOptions(true);
+        }
+        setFormattedDocumentAttachments([
+          ...formattedDocumentAttachments,
+          ...selectedDocuments,
+        ]);
+      }
+    });
+  }
+
+  // function handles the permission for image/video selection
+  const handleGallery = async (type: string) => {
+    if (Platform.OS === 'ios') {
+      setSelectedImageVideo(type)
     } else {
       let res = await requestStoragePermission();
       if (res === true) {
-        selectImageVideo(type)?.then((res: any) => {
-          setShowSelecting(true);
-          if (res?.didCancel) {
-            setShowSelecting(false);
-          }
-          const mediaWithSizeCheck = [];
-          // checks the size of the media
-          for (const media of res?.assets) {
-            if (
-              media.fileSize > MAX_FILE_SIZE ||
-              media.fileSize < MIN_FILE_SIZE
-            ) {
-              setShowSelecting(false);
-              dispatch(
-                showToastMessage({
-                  isToast: true,
-                  message: FILE_UPLOAD_SIZE_VALIDATION,
-                }) as any,
-              );
-            } else {
-              mediaWithSizeCheck.push(media);
-            }
-          }
-          const selectedImagesVideos =
-            convertImageVideoMetaData(mediaWithSizeCheck);
-          // checks ths count of the media
-          if (
-            selectedImagesVideos.length + formattedMediaAttachments.length >
-            10
-          ) {
-            setFormattedMediaAttachments([...formattedMediaAttachments]);
-            dispatch(
-              showToastMessage({
-                isToast: true,
-                message: MEDIA_UPLOAD_COUNT_VALIDATION,
-              }) as any,
-            );
-          } else {
-            if (
-              selectedImagesVideos.length > 0 ||
-              formattedMediaAttachments.length > 0
-            ) {
-              setShowOptions(false);
-            } else {
-              setShowOptions(true);
-            }
-            setShowSelecting(false);
-            setFormattedMediaAttachments([
-              ...formattedMediaAttachments,
-              ...selectedImagesVideos,
-            ]);
-          }
-        });
+        setSelectedImageVideo(type)
       }
     }
   };
 
-  // function handles the slection of documents
+  // function handles the permission for selection of documents
   const handleDocument = async () => {
     if (Platform.OS === 'ios') {
-      selectDoc()?.then((res: any) => {
-        const mediaWithSizeCheck = [];
-        // checks the size of the files
-        for (const media of res) {
-          if (media.size > MAX_FILE_SIZE || media.size < MIN_FILE_SIZE) {
-            dispatch(
-              showToastMessage({
-                isToast: true,
-                message: FILE_UPLOAD_SIZE_VALIDATION,
-              }) as any,
-            );
-          } else {
-            mediaWithSizeCheck.push(media);
-          }
-        }
-        const selectedDocuments = convertDocumentMetaData(mediaWithSizeCheck);
-        // checks the count of the files attached
-        if (
-          selectedDocuments.length + formattedDocumentAttachments.length >
-          10
-        ) {
-          setFormattedDocumentAttachments([...formattedDocumentAttachments]);
-          dispatch(
-            showToastMessage({
-              isToast: true,
-              message: MEDIA_UPLOAD_COUNT_VALIDATION,
-            }) as any,
-          );
-        } else {
-          if (
-            selectedDocuments.length > 0 ||
-            formattedDocumentAttachments.length > 0
-          ) {
-            setShowOptions(false);
-          } else {
-            setShowOptions(true);
-          }
-          setFormattedDocumentAttachments([
-            ...formattedDocumentAttachments,
-            ...selectedDocuments,
-          ]);
-        }
-      });
+      setSelectedDocuments()
     } else {
       let res = await requestStoragePermission();
       if (res === true) {
-        selectDoc()?.then((res: any) => {
-          const mediaWithSizeCheck = [];
-          // checks the size of the files
-          for (const media of res) {
-            if (media.size > MAX_FILE_SIZE || media.size < MIN_FILE_SIZE) {
-              dispatch(
-                showToastMessage({
-                  isToast: true,
-                  message: FILE_UPLOAD_SIZE_VALIDATION,
-                }) as any,
-              );
-            } else {
-              mediaWithSizeCheck.push(media);
-            }
-          }
-          const selectedDocuments = convertDocumentMetaData(mediaWithSizeCheck);
-          // checks the count of the files
-          if (
-            selectedDocuments.length + formattedDocumentAttachments.length >
-            10
-          ) {
-            setFormattedDocumentAttachments([...formattedDocumentAttachments]);
-            dispatch(
-              showToastMessage({
-                isToast: true,
-                message: MEDIA_UPLOAD_COUNT_VALIDATION,
-              }) as any,
-            );
-          } else {
-            if (
-              selectedDocuments.length > 0 ||
-              formattedDocumentAttachments.length > 0
-            ) {
-              setShowOptions(false);
-            } else {
-              setShowOptions(true);
-            }
-            setFormattedDocumentAttachments([
-              ...formattedDocumentAttachments,
-              ...selectedDocuments,
-            ]);
-          }
-        });
+        setSelectedDocuments()
       }
     }
   };
