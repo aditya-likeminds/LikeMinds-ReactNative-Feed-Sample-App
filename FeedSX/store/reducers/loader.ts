@@ -1,13 +1,13 @@
 import {
-  START_CHATROOM_LOADING,
+  SHOW_TOAST,
   START_LOADING,
-  STOP_CHATROOM_LOADING,
   STOP_LOADING,
 } from '../types/loader';
 
 const initialState = {
   count: 0,
-  chatroomCount: 0,
+  isToast: false,
+  message: ''
 };
 
 export function loader(state = initialState, action: any) {
@@ -18,11 +18,9 @@ export function loader(state = initialState, action: any) {
     case STOP_LOADING: {
       return {...state, count: Math.max(0, --state.count)};
     }
-    case START_CHATROOM_LOADING: {
-      return {...state, chatroomCount: ++state.chatroomCount};
-    }
-    case STOP_CHATROOM_LOADING: {
-      return {...state, chatroomCount: Math.max(0, --state.chatroomCount)};
+    case SHOW_TOAST: {
+      const {isToast, message} = action.body
+      return {...state, isToast: isToast, message: message};
     }
     default:
       return state;
