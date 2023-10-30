@@ -4,7 +4,7 @@ import {requestStoragePermission} from './permissions';
 import {postShare} from './postShare';
 import {getAWS} from './AWSConfig';
 import {uploadFilesToAWS} from './uploadFilesToAWS';
-import {selectDoc, selectImageVideo} from './mediaSelection';
+import {selectDocument, selectImageVideo} from './mediaSelection';
 import { detectURLs } from './detectLinks';
 
 export {
@@ -14,7 +14,7 @@ export {
   postShare,
   getAWS,
   uploadFilesToAWS,
-  selectDoc,
+  selectDocument,
   selectImageVideo,
   detectURLs
 };

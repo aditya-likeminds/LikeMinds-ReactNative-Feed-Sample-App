@@ -10,7 +10,7 @@ import React, {useEffect, useState} from 'react';
 import {
   detectURLs,
   requestStoragePermission,
-  selectDoc,
+  selectDocument,
   selectImageVideo,
 } from '../../utils';
 import {useAppSelector} from '../../store/store';
@@ -138,7 +138,7 @@ const CreatePost = () => {
 
    // function handles the slection of documents
   const setSelectedDocuments = () => {
-    selectDoc()?.then((res: any) => {
+    selectDocument()?.then((res: any) => {
       const mediaWithSizeCheck = [];
       // checks the size of the files
       for (const media of res) {
