@@ -79,64 +79,65 @@ const CreatePost = () => {
   const [showSelecting, setShowSelecting] = useState(false);
   const [postContentText, setPostContentText] = useState('');
 
-   // function handles the selection of images and videos
+  // function handles the selection of images and videos
   const setSelectedImageVideo = (type: string) => {
+    setShowSelecting(true);
     selectImageVideo(type)?.then((res: any) => {
-      setShowSelecting(true);
       if (res?.didCancel) {
         setShowSelecting(false);
-      }
-      const mediaWithSizeCheck = [];
-      // checks the size of media
-      for (const media of res?.assets) {
+      } else {
+        const mediaWithSizeCheck = [];
+        // checks the size of media
+        for (const media of res?.assets) {
+          if (
+            media.fileSize > MAX_FILE_SIZE ||
+            media.fileSize < MIN_FILE_SIZE
+          ) {
+            dispatch(
+              showToastMessage({
+                isToast: true,
+                message: FILE_UPLOAD_SIZE_VALIDATION,
+              }) as any,
+            );
+          } else {
+            mediaWithSizeCheck.push(media);
+          }
+        }
+        const selectedImagesVideos =
+          convertImageVideoMetaData(mediaWithSizeCheck);
+        // checks ths count of the media
         if (
-          media.fileSize > MAX_FILE_SIZE ||
-          media.fileSize < MIN_FILE_SIZE
+          selectedImagesVideos.length + formattedMediaAttachments.length >
+          10
         ) {
+          setFormattedMediaAttachments([...formattedMediaAttachments]);
+          setShowSelecting(false);
           dispatch(
             showToastMessage({
               isToast: true,
-              message: FILE_UPLOAD_SIZE_VALIDATION,
+              message: MEDIA_UPLOAD_COUNT_VALIDATION,
             }) as any,
           );
         } else {
-          mediaWithSizeCheck.push(media);
+          if (
+            selectedImagesVideos.length > 0 ||
+            formattedMediaAttachments.length > 0
+          ) {
+            setShowOptions(false);
+          } else {
+            setShowOptions(true);
+          }
+          setShowSelecting(false);
+          setFormattedMediaAttachments([
+            ...formattedMediaAttachments,
+            ...selectedImagesVideos,
+          ]);
         }
-      }
-      const selectedImagesVideos =
-        convertImageVideoMetaData(mediaWithSizeCheck);
-      // checks ths count of the media
-      if (
-        selectedImagesVideos.length + formattedMediaAttachments.length >
-        10
-      ) {
-        setFormattedMediaAttachments([...formattedMediaAttachments]);
-        setShowSelecting(false);
-        dispatch(
-          showToastMessage({
-            isToast: true,
-            message: MEDIA_UPLOAD_COUNT_VALIDATION,
-          }) as any,
-        );
-      } else {
-        if (
-          selectedImagesVideos.length > 0 ||
-          formattedMediaAttachments.length > 0
-        ) {
-          setShowOptions(false);
-        } else {
-          setShowOptions(true);
-        }
-        setShowSelecting(false);
-        setFormattedMediaAttachments([
-          ...formattedMediaAttachments,
-          ...selectedImagesVideos,
-        ]);
       }
     });
-  }
+  };
 
-   // function handles the slection of documents
+  // function handles the slection of documents
   const setSelectedDocuments = () => {
     selectDocument()?.then((res: any) => {
       const mediaWithSizeCheck = [];
@@ -155,10 +156,7 @@ const CreatePost = () => {
       }
       const selectedDocuments = convertDocumentMetaData(mediaWithSizeCheck);
       // checks the count of the files attached
-      if (
-        selectedDocuments.length + formattedDocumentAttachments.length >
-        10
-      ) {
+      if (selectedDocuments.length + formattedDocumentAttachments.length > 10) {
         setFormattedDocumentAttachments([...formattedDocumentAttachments]);
         dispatch(
           showToastMessage({
@@ -181,16 +179,16 @@ const CreatePost = () => {
         ]);
       }
     });
-  }
+  };
 
   // function handles the permission for image/video selection
   const handleGallery = async (type: string) => {
     if (Platform.OS === 'ios') {
-      setSelectedImageVideo(type)
+      setSelectedImageVideo(type);
     } else {
       let res = await requestStoragePermission();
       if (res === true) {
-        setSelectedImageVideo(type)
+        setSelectedImageVideo(type);
       }
     }
   };
@@ -198,11 +196,11 @@ const CreatePost = () => {
   // function handles the permission for selection of documents
   const handleDocument = async () => {
     if (Platform.OS === 'ios') {
-      setSelectedDocuments()
+      setSelectedDocuments();
     } else {
       let res = await requestStoragePermission();
       if (res === true) {
-        setSelectedDocuments()
+        setSelectedDocuments();
       }
     }
   };
@@ -372,7 +370,7 @@ const CreatePost = () => {
             </View>
           ) : formattedMediaAttachments ? (
             formattedMediaAttachments?.length > 1 ? (
-              <LMCarousel
+               <LMCarousel
                 attachments={formattedMediaAttachments}
                 showCancel
                 videoItem={{videoUrl: '', showControls: true}}
