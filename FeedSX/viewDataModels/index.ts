@@ -207,7 +207,7 @@ export function convertImageVideoMetaData(
           image: '',
         },
         size: item?.fileSize,
-        duration: item?.duration,
+        duration: Math.round(item?.duration ? item.duration : 0),
         pageCount: 0,
         url: item?.uri,
       },
