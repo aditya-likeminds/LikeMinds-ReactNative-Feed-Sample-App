@@ -12,7 +12,7 @@ import React, {useEffect, useState} from 'react';
 import styles from './styles';
 import {useDispatch} from 'react-redux';
 import {getReportTags, postReport} from '../../store/actions/feed';
-import {GetReportTagsRequest, PostReportRequest} from 'likeminds-sdk';
+import {GetReportTagsRequest, PostReportRequest} from '@likeminds.community/feed-js';
 import {useAppSelector} from '../../store/store';
 import {
   COMMENT_REPORT_ENTITY_TYPE,

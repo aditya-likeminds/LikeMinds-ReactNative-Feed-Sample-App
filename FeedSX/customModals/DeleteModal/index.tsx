@@ -11,7 +11,7 @@ import React, {useState} from 'react';
 import styles from './styles';
 import {useDispatch} from 'react-redux';
 import {deletePost, deletePostStateHandler} from '../../store/actions/feed';
-import {DeletePostRequest} from 'likeminds-sdk';
+import {DeletePostRequest} from '@likeminds.community/feed-js';
 import {useAppSelector} from '../../store/store';
 import DeleteReasonsModal from '../DeleteReasonsModal';
 import {showToastMessage} from '../../store/actions/toast';

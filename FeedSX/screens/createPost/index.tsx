@@ -44,7 +44,7 @@ import {
   SELECT_VIDEO,
   VIDEO_ATTACHMENT_TYPE,
 } from '../../constants/Strings';
-import {DecodeURLRequest} from 'likeminds-sdk';
+import {DecodeURLRequest} from '@likeminds.community/feed-js';
 import _, {debounce} from 'lodash';
 import {
   getDecodedUrl,

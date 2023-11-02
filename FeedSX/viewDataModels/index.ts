@@ -6,9 +6,9 @@ import {
   IOgTag,
   IPost,
   IUser,
-} from 'likeminds-sdk';
-import {GetPostLikesResponse} from 'likeminds-sdk/dist/post/model/GetPostLikesResponse';
-import Like from 'likeminds-sdk/dist/post/model/Like';
+} from '@likeminds.community/feed-js';
+import {GetPostLikesResponse} from '@likeminds.community/feed-js/dist/post/model/GetPostLikesResponse';
+import Like from '@likeminds.community/feed-js/dist/post/model/Like';
 import {DocumentMetaData, ImageVideoMetaData} from '../models/addPostMetaData';
 import {
   DOCUMENT_ATTACHMENT_TYPE,
