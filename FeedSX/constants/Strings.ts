@@ -77,6 +77,8 @@ export const POST_UPLOAD_INPROGRESS = 'A post is already uploading!'
 export const CREATE_POST_PERMISSION = 'You do not have permission to create a post.'
 export const FILE_UPLOAD_SIZE_VALIDATION = 'Files below 100 KB and above 100MB are not allowed'
 export const MEDIA_UPLOAD_COUNT_VALIDATION = 'You can select upto 10 items!'
+export const POST_SAVED_SUCCESS = 'Post saved!'
+export const POST_UNSAVED_SUCCESS = 'Post unsaved!'
 
 // file size validation
 export const MAX_FILE_SIZE = 104857600; // 100MB in bytes

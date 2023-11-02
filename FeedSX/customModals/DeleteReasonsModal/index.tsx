@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import styles from './styles';
 import {useDispatch} from 'react-redux';
 import {getReportTags} from '../../store/actions/feed';
-import {GetReportTagsRequest} from 'likeminds-sdk';
+import {GetReportTagsRequest} from 'testpackageforlikeminds';
 import {useAppSelector} from '../../store/store';
 import STYLES from '../../constants/Styles';
 import {DELETE_TAGS_TYPE, DELETION_REASON} from '../../constants/Strings';

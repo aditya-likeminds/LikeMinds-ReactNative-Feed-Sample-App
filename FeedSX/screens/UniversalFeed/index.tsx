@@ -15,7 +15,7 @@ import {
   LikePostRequest,
   PinPostRequest,
   SavePostRequest,
-} from 'likeminds-sdk';
+} from 'testpackageforlikeminds';
 import {useDispatch} from 'react-redux';
 import {
   autoPlayPostVideo,
@@ -50,8 +50,10 @@ import {
   IMAGE_ATTACHMENT_TYPE,
   PIN_POST_MENU_ITEM,
   POST_PIN_SUCCESS,
+  POST_SAVED_SUCCESS,
   POST_TYPE,
   POST_UNPIN_SUCCESS,
+  POST_UNSAVED_SUCCESS,
   POST_UPLOADED,
   POST_UPLOADING,
   POST_UPLOAD_INPROGRESS,
@@ -169,6 +171,7 @@ const UniversalFeed = () => {
       ) as any,
     );
     if (addPostResponse) {
+      setPostUploading(false);
       dispatch(
         setUploadAttachments({
           allAttachment: [],
@@ -176,18 +179,17 @@ const UniversalFeed = () => {
           conText: '',
         }) as any,
       );
-      setPostUploading(false);
       await dispatch(clearFeed() as any);
       setFeedPageNumber(1);
-      setTimeout(() => {
+      if (feedPageNumber === 1) {
         fetchFeed();
-        dispatch(
-          showToastMessage({
-            isToast: true,
-            message: POST_UPLOADED,
-          }) as any,
-        );
-      }, 1000);
+      }
+      dispatch(
+        showToastMessage({
+          isToast: true,
+          message: POST_UPLOADED,
+        }) as any,
+      );
     }
     return addPostResponse;
   };
@@ -210,7 +212,7 @@ const UniversalFeed = () => {
   }
 
   // this functions hanldes the post save functionality
-  async function savePostHandler(id: string) {
+  async function savePostHandler(id: string, saved?: boolean) {
     let payload = {
       postId: id,
     };
@@ -221,8 +223,12 @@ const UniversalFeed = () => {
         SavePostRequest.builder().setpostId(payload.postId).build(),
       ) as any,
     );
-    if (savePostResponse) {
-    }
+    await dispatch(
+      showToastMessage({
+        isToast: true,
+        message: saved ? POST_UNSAVED_SUCCESS : POST_SAVED_SUCCESS,
+      }) as any,
+    );
     return savePostResponse;
   }
 
@@ -236,9 +242,9 @@ const UniversalFeed = () => {
       // fetch feed
       fetchFeed();
       // handles members right
-      if (memberData.state != 1) {
-        let members_right = memberRight.find((item: any) => item.state === 9);
-        if (members_right.isSelected === false) {
+      if (memberData?.state != 1) {
+        let members_right = memberRight?.find((item: any) => item?.state === 9);
+        if (members_right?.isSelected === false) {
           setShowCreatePost(false);
         }
       }
@@ -396,7 +402,7 @@ const UniversalFeed = () => {
                   },
                   saveButton: {
                     onTap: () => {
-                      savePostHandler(item?.id);
+                      savePostHandler(item?.id, item?.isSaved);
                     },
                   },
                   likeTextButton: {

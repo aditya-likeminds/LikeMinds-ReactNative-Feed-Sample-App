@@ -1,7 +1,7 @@
 import {View, SafeAreaView} from 'react-native';
 import React, {useEffect} from 'react';
 import {FlashList} from '@shopify/flash-list';
-import {GetPostLikesRequest} from 'likeminds-sdk';
+import {GetPostLikesRequest} from 'testpackageforlikeminds';
 import {postLikes} from '../../store/actions/postLikes';
 import {useDispatch} from 'react-redux';
 import {useAppSelector} from '../../store/store';

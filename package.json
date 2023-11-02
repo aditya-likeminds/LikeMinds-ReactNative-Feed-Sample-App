@@ -19,7 +19,6 @@
     "@reduxjs/toolkit": "1.9.5",
     "@shopify/flash-list": "1.4.3",
     "aws-sdk": "2.1475.0",
-    "likeminds-sdk": "file:../LikeMinds-Javascript-Feed-SDK/likeminds-sdk-1.0.1.tgz",
     "lodash": "^4.17.21",
     "react": "18.2.0",
     "react-native": "0.72.3",
@@ -33,7 +32,8 @@
     "react-native-toast-message": "^2.1.7",
     "react-native-video": "5.2.1",
     "react-redux": "8.1.2",
-    "redux-thunk": "2.4.2"
+    "redux-thunk": "2.4.2",
+    "testpackageforlikeminds": "1.4.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
