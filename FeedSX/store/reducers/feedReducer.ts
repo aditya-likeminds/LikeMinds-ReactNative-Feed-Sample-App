@@ -4,7 +4,7 @@ import {
   UNPIN_POST_ID,
   UNPIN_THIS_POST,
 } from '../../constants/Strings';
-import { convertUniversalFeedPosts } from '../../viewDataModels';
+import {convertUniversalFeedPosts} from '../../viewDataModels';
 import {
   UNIVERSAL_FEED_SUCCESS,
   INITIATE_API_SUCCESS,
@@ -47,7 +47,7 @@ export function feedReducer(state = initialState, action: any) {
     case UNIVERSAL_FEED_SUCCESS: {
       const {users = {}} = action.body;
       // model converter function
-      let post = convertUniversalFeedPosts(action.body)
+      let post = convertUniversalFeedPosts(action.body);
       // this handles pagination and appends new post data with previous data
       let feedData = state.feed;
       feedData = [...feedData, ...post];
@@ -150,7 +150,7 @@ export function feedReducer(state = initialState, action: any) {
       return {...state, autoPlayVideoPostId: action.body};
     }
     case CLEAR_FEED: {
-      return {...state, feed: []}
+      return {...state, feed: []};
     }
     default:
       return state;

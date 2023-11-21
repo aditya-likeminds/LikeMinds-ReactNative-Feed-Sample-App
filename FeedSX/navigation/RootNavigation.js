@@ -11,7 +11,4 @@ function goBack() {
   navigationRef.goBack();
 }
 
-export {
-  navigate,
-  goBack
-}
+export {navigate, goBack};

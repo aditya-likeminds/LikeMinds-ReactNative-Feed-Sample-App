@@ -370,7 +370,7 @@ const CreatePost = () => {
             </View>
           ) : formattedMediaAttachments ? (
             formattedMediaAttachments?.length > 1 ? (
-               <LMCarousel
+              <LMCarousel
                 attachments={formattedMediaAttachments}
                 showCancel
                 videoItem={{videoUrl: '', showControls: true}}

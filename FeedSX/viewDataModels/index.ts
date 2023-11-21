@@ -211,8 +211,9 @@ export function convertImageVideoMetaData(
         pageCount: 0,
         url: item?.uri,
       },
-      attachmentType:
-        item?.duration ?  VIDEO_ATTACHMENT_TYPE : IMAGE_ATTACHMENT_TYPE, // You need to specify the attachment type.
+      attachmentType: item?.duration
+        ? VIDEO_ATTACHMENT_TYPE
+        : IMAGE_ATTACHMENT_TYPE, // You need to specify the attachment type.
     };
   });
   return convertedImageVideoMetaData;

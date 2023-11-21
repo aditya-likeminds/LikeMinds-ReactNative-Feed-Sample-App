@@ -46,7 +46,7 @@ const LMToast = () => {
 
   return (
     // toast component
-      <Toast config={toastConfig} />
+    <Toast config={toastConfig} />
   );
 };
 

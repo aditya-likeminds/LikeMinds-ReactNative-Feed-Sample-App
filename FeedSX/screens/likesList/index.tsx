@@ -39,7 +39,7 @@ const LikesList = (props: any) => {
   useEffect(() => {
     postLikesList(props.route.params);
   }, []);
-  
+
   return (
     <SafeAreaView style={{backgroundColor: '#fff', flex: 1}}>
       <LMHeader

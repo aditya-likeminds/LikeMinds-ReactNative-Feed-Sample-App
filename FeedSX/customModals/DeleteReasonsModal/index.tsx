@@ -15,11 +15,16 @@ interface DeleteReasonsModalProps {
   closeModal: () => void;
   selectedReason: (value: string) => void;
   handleDeleteModal: (value: boolean) => void;
-  modalBackdropColor?: string
+  modalBackdropColor?: string;
 }
 
-const DeleteReasonsModal = ({visible, closeModal, selectedReason, handleDeleteModal, modalBackdropColor}: DeleteReasonsModalProps) => {
-
+const DeleteReasonsModal = ({
+  visible,
+  closeModal,
+  selectedReason,
+  handleDeleteModal,
+  modalBackdropColor,
+}: DeleteReasonsModalProps) => {
   const dispatch = useDispatch();
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const deleteTags = useAppSelector(state => state.feed.reportTags);

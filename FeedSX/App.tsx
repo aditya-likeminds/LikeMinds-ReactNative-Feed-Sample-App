@@ -16,7 +16,7 @@ function App(): JSX.Element {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{flex: 1}}>
-            <SwitchComponent />
+        <SwitchComponent />
       </KeyboardAvoidingView>
     </ReduxProvider>
   );
