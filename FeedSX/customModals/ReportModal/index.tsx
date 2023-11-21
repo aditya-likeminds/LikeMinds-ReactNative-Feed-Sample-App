@@ -69,10 +69,10 @@ const ReportModal = ({
 
   // this function calls the get report tags api for reporting a post
   const fetchReportTags = async () => {
-    let payload = {
+    const payload = {
       type: REPORT_TAGS_TYPE, // type 3 for report tags
     };
-    let reportTagsResponse = await dispatch(
+    const reportTagsResponse = await dispatch(
       getReportTags(
         GetReportTagsRequest.builder().settype(payload.type).build(),
       ) as any,
@@ -91,7 +91,7 @@ const ReportModal = ({
     if (selectedIndex == 5 && otherReason === '') {
       showToast();
     } else {
-      let payload = {
+      const payload = {
         entityId: entityId,
         entityType: entityType,
         reason: reason,
@@ -101,7 +101,7 @@ const ReportModal = ({
       setSelectedId(-1);
       setSelectedIndex(-1);
       closeModal();
-      let postReportResponse = await dispatch(
+      const postReportResponse = await dispatch(
         postReport(
           PostReportRequest.builder()
             .setEntityId(payload.entityId)
@@ -276,19 +276,19 @@ const ReportModal = ({
               onPress={
                 selectedId != -1 || otherReason
                   ? () => {
-                      reportPost({
-                        entityId: id,
-                        entityType:
+                    reportPost({
+                      entityId: id,
+                      entityType:
                           reportType === POST_TYPE
                             ? POST_REPORT_ENTITY_TYPE
                             : reportType === COMMENT_TYPE
-                            ? COMMENT_REPORT_ENTITY_TYPE
-                            : REPLY_REPORT_ENTITY_TYPE, // different entityType value for post/comment/reply
-                        reason: otherReason,
-                        tagId: selectedId,
-                        uuid: uuid,
-                      });
-                    }
+                              ? COMMENT_REPORT_ENTITY_TYPE
+                              : REPLY_REPORT_ENTITY_TYPE, // different entityType value for post/comment/reply
+                      reason: otherReason,
+                      tagId: selectedId,
+                      uuid: uuid,
+                    });
+                  }
                   : () => null
               }>
               <Text style={styles.reportBtnText}>REPORT</Text>

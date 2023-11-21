@@ -30,7 +30,7 @@ export const uploadFilesToAWS = async (
   userUniqueId: string,
 ) => {
   const blob = await uriToBlob(media.url ? media.url : '');
-  let mediaObject = getAWS()
+  const mediaObject = getAWS()
     .upload({
       Key: `files/post/${userUniqueId}/${media.name}`,
       Bucket: `${process.env.S3_BUCKET}`,

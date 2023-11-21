@@ -54,13 +54,13 @@ const DeleteModal = ({
     if (!deletionReason && loggedInUser.userUniqueId != userId) {
       showToast();
     } else {
-      let payload = {
+      const payload = {
         deleteReason: otherReason ? otherReason : deletionReason,
         postId: id,
       };
       displayModal(false);
       dispatch(deletePostStateHandler(payload.postId) as any);
-      let deletePostResponse = await dispatch(
+      const deletePostResponse = await dispatch(
         deletePost(
           DeletePostRequest.builder()
             .setdeleteReason(payload.deleteReason)

@@ -68,10 +68,10 @@ const CreatePost = () => {
   const [formattedDocumentAttachments, setFormattedDocumentAttachments] =
     useState<Array<LMAttachmentUI>>([]);
   const [formattedMediaAttachments, setFormattedMediaAttachments] = useState<
-    Array<LMAttachmentUI>
+  Array<LMAttachmentUI>
   >([]);
   const [formattedLinkAttachments, setFormattedLinkAttachments] = useState<
-    Array<LMAttachmentUI>
+  Array<LMAttachmentUI>
   >([]);
   const [showLinkPreview, setShowLinkPreview] = useState(false);
   const [closedOnce, setClosedOnce] = useState(false);
@@ -186,7 +186,7 @@ const CreatePost = () => {
     if (Platform.OS === 'ios') {
       setSelectedImageVideo(type);
     } else {
-      let res = await requestStoragePermission();
+      const res = await requestStoragePermission();
       if (res === true) {
         setSelectedImageVideo(type);
       }
@@ -198,7 +198,7 @@ const CreatePost = () => {
     if (Platform.OS === 'ios') {
       setSelectedDocuments();
     } else {
-      let res = await requestStoragePermission();
+      const res = await requestStoragePermission();
       if (res === true) {
         setSelectedDocuments();
       }
@@ -207,7 +207,7 @@ const CreatePost = () => {
 
   // function removes the selected documents
   const removeDocumentAttachment = (index: number) => {
-    let newDocAttachments = [...formattedDocumentAttachments];
+    const newDocAttachments = [...formattedDocumentAttachments];
     if (formattedDocumentAttachments.length === 1) {
       setFormattedDocumentAttachments([]);
       setShowOptions(true);
@@ -219,7 +219,7 @@ const CreatePost = () => {
 
   // function removes multiple images/videos selected
   const removeMediaAttachment = (index: number) => {
-    let newMediaAttachments = [...formattedMediaAttachments];
+    const newMediaAttachments = [...formattedMediaAttachments];
     newMediaAttachments.splice(index, 1);
     setFormattedMediaAttachments(newMediaAttachments);
   };
@@ -281,7 +281,7 @@ const CreatePost = () => {
   }, [postContentText]);
 
   // all image/video/document media to be uploaded
-  let allAttachment = [
+  const allAttachment = [
     ...formattedMediaAttachments,
     ...formattedDocumentAttachments,
   ];
@@ -404,28 +404,28 @@ const CreatePost = () => {
           {/* selected document view section */}
           {formattedDocumentAttachments &&
             formattedDocumentAttachments.length >= 1 && (
-              <LMDocument
-                attachments={formattedDocumentAttachments}
-                showCancel
-                showMoreText={false}
-                onCancel={index => removeDocumentAttachment(index)}
-              />
-            )}
+            <LMDocument
+              attachments={formattedDocumentAttachments}
+              showCancel
+              showMoreText={false}
+              onCancel={index => removeDocumentAttachment(index)}
+            />
+          )}
           {/* added link preview section */}
           {formattedMediaAttachments.length <= 0 &&
             formattedDocumentAttachments.length <= 0 &&
             showLinkPreview &&
             formattedLinkAttachments.length >= 1 && (
-              <LMLinkPreview
-                attachments={formattedLinkAttachments}
-                showCancel
-                onCancel={() => {
-                  setShowLinkPreview(false);
-                  setClosedOnce(true);
-                  setFormattedLinkAttachments([]);
-                }}
-              />
-            )}
+            <LMLinkPreview
+              attachments={formattedLinkAttachments}
+              showCancel
+              onCancel={() => {
+                setShowLinkPreview(false);
+                setClosedOnce(true);
+                setFormattedLinkAttachments([]);
+              }}
+            />
+          )}
         </View>
         {/* add more media button section */}
         {allAttachment.length > 0 && allAttachment.length < 10 && (
@@ -434,8 +434,8 @@ const CreatePost = () => {
               formattedMediaAttachments.length > 0
                 ? () => handleGallery(SELECT_BOTH)
                 : formattedDocumentAttachments.length > 0
-                ? () => handleDocument()
-                : () => {}
+                  ? () => handleDocument()
+                  : () => {}
             }
             icon={{
               assetPath: require('../../assets/images/plusAdd_icon3x.png'),

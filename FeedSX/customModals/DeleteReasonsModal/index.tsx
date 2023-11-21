@@ -31,10 +31,10 @@ const DeleteReasonsModal = ({
 
   // this function calls the get reason tags api for deletion
   const fetchReasonTags = async () => {
-    let payload = {
+    const payload = {
       type: DELETE_TAGS_TYPE, // type 0 for delete reason tags
     };
-    let reportTagsResponse = await dispatch(
+    const reportTagsResponse = await dispatch(
       getReportTags(
         GetReportTagsRequest.builder().settype(payload.type).build(),
       ) as any,

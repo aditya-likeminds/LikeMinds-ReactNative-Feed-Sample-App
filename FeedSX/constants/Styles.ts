@@ -18,10 +18,10 @@ export default {
     XXL: 20,
   },
   $FONT_WEIGHTS: {
-    LIGHT: '200' as '200',
-    REGULAR: '400' as '400',
-    MEDIUM: '500' as '500',
-    BOLD: '700' as '700',
+    LIGHT: '200' as const,
+    REGULAR: '400' as const,
+    MEDIUM: '500' as const,
+    BOLD: '700' as const,
   },
   $FONT_FAMILY: {
     LIGHT: 'Roboto-Light',

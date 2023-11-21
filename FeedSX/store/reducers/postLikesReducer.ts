@@ -11,7 +11,7 @@ export function postLikesReducer(state = initialState, action: any) {
   switch (action.type) {
     case POST_LIKES_SUCCESS: {
       const {likes = {}, totalCount, users = {}} = action.body;
-      let postLikesData = convertToLMLikesList(action?.body);
+      const postLikesData = convertToLMLikesList(action?.body);
       return {
         ...state,
         postLike: postLikesData,

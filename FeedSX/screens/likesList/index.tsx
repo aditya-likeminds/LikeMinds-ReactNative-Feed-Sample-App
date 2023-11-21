@@ -19,11 +19,11 @@ const LikesList = (props: any) => {
 
   // this function calls the post likes api
   async function postLikesList(id: string) {
-    let payload = {
+    const payload = {
       postId: id,
     };
     // calling post likes api
-    let postLikesResponse = await dispatch(
+    const postLikesResponse = await dispatch(
       postLikes(
         GetPostLikesRequest.builder()
           .setpostId(payload.postId)
